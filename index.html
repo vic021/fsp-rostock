@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSP Rostock – Prüfungsvorbereitung Hauptmenü</title>
+<style>
+  :root {
+    --primary: #1b4965;
+    --accent: #5fa8d3;
+    --bg: #f7f9fb;
+    --card: #ffffff;
+    --border: #d9e2ec;
+    --text: #1f2937;
+    --muted: #5b6b7c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    line-height: 1.6;
+  }
+  header.page-header {
+    background: var(--primary);
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  header.page-header h1 { margin: 0 0 8px 0; font-size: 2rem; }
+  header.page-header p { margin: 0; opacity: 0.9; font-size: 1.05rem; }
+
+  main { max-width: 950px; margin: 0 auto; padding: 40px 20px 60px; }
+
+  section.teil {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 6px solid var(--accent);
+    border-radius: 10px;
+    padding: 26px 28px;
+    margin-bottom: 26px;
+  }
+  section.teil h2 {
+    margin-top: 0;
+    color: var(--primary);
+    font-size: 1.4rem;
+  }
+  section.teil p.desc {
+    color: var(--muted);
+    margin-top: -6px;
+    margin-bottom: 18px;
+    font-size: 0.95rem;
+  }
+  ul.link-list { list-style: none; padding: 0; margin: 0; }
+  ul.link-list li { margin-bottom: 12px; }
+  ul.link-list a {
+    display: block;
+    background: #eef6fb;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 14px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    transition: background 0.15s, transform 0.1s;
+  }
+  ul.link-list a:hover {
+    background: var(--accent);
+    color: white;
+    transform: translateX(4px);
+  }
+  ul.link-list a .subtitle {
+    display: block;
+    font-weight: 400;
+    font-size: 0.85rem;
+    opacity: 0.8;
+    margin-top: 3px;
+  }
+
+  footer.page-footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+</style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b4965">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FSP Rostock">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  .home-btn {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    background: #1b4965;
+    color: #ffffff;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 1000;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .home-btn:hover { background: #5fa8d3; transform: scale(1.08); }
+  .home-btn svg { width: 20px; height: 20px; }
+  @media (max-width: 600px) {
+    .home-btn { top: 10px; left: 10px; width: 38px; height: 38px; }
+    .home-btn svg { width: 18px; height: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>FSP Rostock – Prüfungsvorbereitung</h1>
+  <p>Zentrales Menü — Fachsprachprüfung &amp; Vorbereitung auf die Kenntnisprüfung Bayern</p>
+</header>
+
+<main>
+
+  <section class="teil">
+    <h2>Teil 1: Patientenvorstellung &amp; Dokumentation</h2>
+    <p class="desc">Anamnese-Fragenkataloge, mündliche Fallpräsentation, Patientenaufklärung und Arztbrief-Vorlagen.</p>
+    <ul class="link-list">
+      <li><a href="Briefvorlagen.html">Arztbrief-Vorlagen &amp; korrigierte Musterbriefe
+        <span class="subtitle">Vorlage A/B, feste Bausteine, 8 korrigierte Entlassungsbriefe</span>
+      </a></li>
+      <li><a href="Anamnese.html">Anamnese-Fragenkatalog
+        <span class="subtitle">Allgemeine + organspezifische Anamnese (Urologie, Gastro, Chirurgie, HNO)</span>
+      </a></li>
+      <li><a href="Finale.html">Patientenvorstellung &amp; Aufklärungsgespräche
+        <span class="subtitle">8 mündliche Fallpräsentationen + 8 Aufklärungsgespräche vor OP/Untersuchung</span>
+      </a></li>
+    </ul>
+  </section>
+
+  <section class="teil">
+    <h2>Teil 2: Kommunikation &amp; Fachsprache</h2>
+    <p class="desc">Arzt-Patient- und Arzt-Arzt-Gespräche sowie systematisch geordnete Fachbegriffe.</p>
+    <ul class="link-list">
+      <li><a href="Arzt_Patient-Arzt_Arzt.html">Arzt-Patient- &amp; Arzt-Arzt-Gespräch
+        <span class="subtitle">Dialoge, Patientenfragen mit Antworten, Prüfergespräche</span>
+      </a></li>
+      <li><a href="FSP_Fachbegriffe_NachSystem.html">Fachbegriffe nach Organsystem
+        <span class="subtitle">Fachsprache ↔ Umgangssprache, systematisch geordnet</span>
+      </a></li>
+    </ul>
+  </section>
+
+  <section class="teil">
+    <h2>Teil 3: Operationen &amp; Untersuchungen</h2>
+    <p class="desc">Übersicht der wichtigsten diagnostischen und operativen Verfahren für die Prüfung.</p>
+    <ul class="link-list">
+      <li><a href="OP_und_Untersuchungen.html">OP- und Untersuchungsverfahren
+        <span class="subtitle">Ablauf, Indikationen, Komplikationen der wichtigsten Eingriffe</span>
+      </a></li>
+    </ul>
+  </section>
+  <section class="teil">
+    <h2>Teil 4: Lernkarten</h2>
+    <p class="desc">Interaktive Karteikarten zum Wiederholen — nach Thema und Gesprächsart filterbar.</p>
+    <ul class="link-list">
+      <li><a href="fsp_lernkarten.html">FSP Lernkarten
+        <span class="subtitle">217 Karten: Arzt-Arzt, Patient-Arzt, Tableau clinique, Differentialdiagnosen</span>
+      </a></li>
+    </ul>
+  </section>
+
+  <section class="teil" style="border-left-color:#22c55e;">
+    <h2>📲 App installieren</h2>
+    <p class="desc">Diese Seite ist als App installierbar und funktioniert danach auch offline.</p>
+    <p style="font-size:0.92rem; color:var(--muted); line-height:1.7;">
+      <strong>iPhone (Safari):</strong> Teilen-Symbol antippen → „Zum Home-Bildschirm"<br>
+      <strong>Android (Chrome):</strong> Menü (⋮) antippen → „App installieren" / „Zum Startbildschirm hinzufügen"
+    </p>
+  </section>
+
+</main>
+
+<footer class="page-footer">
+  FSP-Rostock-Vorbereitung — Zusammengestellt für die mündlich-praktische Prüfung
+</footer>
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
