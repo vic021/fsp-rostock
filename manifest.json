@@ -1,0 +1,25 @@
+{
+  "name": "FSP Rostock Vorbereitung",
+  "short_name": "FSP Rostock",
+  "description": "Vollständige Prüfungsvorbereitung: Anamnese, Arztbriefe, Fallpräsentationen, Fachbegriffe, OP-Übersicht und Lernkarten für die Fachsprachprüfung.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f7f9fb",
+  "theme_color": "#1b4965",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

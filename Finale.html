@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSP Rostock – Patientenvorstellung &amp; Aufklärungsgespräche</title>
+<style>
+  :root {
+    --primary: #1b4965;
+    --accent: #5fa8d3;
+    --bg: #f7f9fb;
+    --card: #ffffff;
+    --border: #d9e2ec;
+    --text: #1f2937;
+    --muted: #5b6b7c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    line-height: 1.6;
+  }
+  header.page-header { background: var(--primary); color: white; padding: 24px 20px; }
+  header.page-header h1 { margin: 0 0 6px 0; font-size: 1.6rem; }
+  header.page-header p { margin: 0; opacity: 0.85; font-size: 0.95rem; }
+  .back-link { display: inline-block; margin-top: 10px; color: #cfe8ff; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+
+  main { max-width: 950px; margin: 0 auto; padding: 24px 20px 60px; }
+
+  nav.toc { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 22px; margin-bottom: 30px; }
+  nav.toc h2 { margin-top: 0; font-size: 1.1rem; color: var(--primary); }
+  nav.toc ul { columns: 2; -webkit-columns: 2; padding-left: 20px; margin: 0; }
+  nav.toc li { margin-bottom: 6px; }
+  nav.toc a { color: var(--primary); text-decoration: none; font-size: 0.92rem; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  h2.section-title { color: var(--primary); border-bottom: 3px solid var(--accent); padding-bottom: 6px; margin-top: 46px; }
+  h3.sub-title { color: var(--primary); margin-top: 28px; font-size: 1.1rem; }
+
+  article.case, section.aufklaerung {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  article.case h4, section.aufklaerung h4 {
+    margin-top: 22px;
+    margin-bottom: 8px;
+    color: var(--primary);
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 6px;
+  }
+  section.aufklaerung h4:first-child { margin-top: 0; }
+  .field { color: var(--primary); font-weight: 600; }
+  .placeholder { background: #fff3cd; padding: 1px 4px; border-radius: 3px; }
+  ul.compact { padding-left: 20px; margin: 8px 0; }
+  ul.compact li { margin-bottom: 4px; }
+  ol.compact { padding-left: 20px; margin: 8px 0; }
+  ol.compact li { margin-bottom: 6px; }
+  .note { font-style: italic; color: var(--muted); }
+
+  footer.page-footer { text-align: center; padding: 24px; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 40px; }
+
+  .toc-float-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(27,73,101,0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 999;
+    transition: background 0.15s, transform 0.15s;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .toc-float-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .toc-float-btn:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+  }
+  .toc-float-btn svg { width: 16px; height: 16px; }
+
+  @media (max-width: 600px) {
+    .toc-float-btn { bottom: 16px; right: 16px; padding: 10px 16px; font-size: 0.82rem; }
+  }
+
+  @media (max-width: 600px) { nav.toc ul { columns: 1; } }
+</style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b4965">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FSP Rostock">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  .home-btn {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    background: #1b4965;
+    color: #ffffff;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 1000;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .home-btn:hover { background: #5fa8d3; transform: scale(1.08); }
+  .home-btn svg { width: 20px; height: 20px; }
+  @media (max-width: 600px) {
+    .home-btn { top: 10px; left: 10px; width: 38px; height: 38px; }
+    .home-btn svg { width: 18px; height: 18px; }
+  }
+</style>
+</head>
+<body>
+<a href="index.html" class="home-btn" title="Zum Hauptmenü" aria-label="Zum Hauptmenü">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+</a>
+
+
+<header class="page-header">
+  <h1>FSP Rostock – Patientenvorstellung &amp; Patientenaufklärung</h1>
+  <p>Teil 1: Mündliche Fallpräsentation und Aufklärungsgespräche vor Untersuchung/Operation</p>
+  <a class="back-link" href="index.html">← Zurück zum Hauptmenü</a>
+</header>
+
+<main>
+
+<nav class="toc" id="toc">
+  <h2>Inhaltsverzeichnis</h2>
+  <ul>
+    <li><a href="#aufkl-1">Aufklärung: Urethrozystoskopie</a></li>
+    <li><a href="#fall-1">Fallpräsentation: Hämaturie</a></li>
+    <li><a href="#aufkl-2">Aufklärung: Magenspiegelung</a></li>
+    <li><a href="#fall-2">Fallpräsentation: Ulkuskrankheit</a></li>
+    <li><a href="#aufkl-3">Aufklärung: Darmspiegelung</a></li>
+    <li><a href="#fall-3">Fallpräsentation: Reizdarmsyndrom</a></li>
+    <li><a href="#aufkl-4">Aufklärung: Appendektomie</a></li>
+    <li><a href="#fall-4">Fallpräsentation: Appendizitis</a></li>
+    <li><a href="#aufkl-5">Aufklärung: Cholezystektomie</a></li>
+    <li><a href="#fall-5">Fallpräsentation: Cholezystitis</a></li>
+    <li><a href="#aufkl-6">Aufklärung: Leistenhernien-OP</a></li>
+    <li><a href="#fall-6">Fallpräsentation: Inguinalhernie</a></li>
+    <li><a href="#aufkl-7">Aufklärung: Tonsillektomie</a></li>
+    <li><a href="#fall-7">Fallpräsentation: Tonsillitis</a></li>
+    <li><a href="#aufkl-8">Aufklärung: Lymphknotenexstirpation</a></li>
+    <li><a href="#fall-8">Fallpräsentation: Lymphadenopathie</a></li>
+  </ul>
+</nav>
+
+<h2 class="section-title" id="aufkl-1">1 – Urethrozystoskopie (Blasenspiegelung)</h2>
+<section class="aufklaerung">
+  <h4>Einleitung</h4>
+  <p><strong>Herr/ Frau [Name], Ihre Beschwerden sprechen stark für eine Erkrankung in der Harnblase.</strong> Das bedeutet, dass eine <strong>Blasenspiegelung</strong> erforderlich ist bzw. empfohlen wird.</p>
+  <p>Ich werde Ihnen alle wichtigen Informationen dazu geben, damit Sie eine informierte Entscheidung treffen können. Wenn Sie etwas nicht verstehen oder Fragen haben, unterbrechen Sie mich bitte jederzeit – ich erkläre es Ihnen gern noch einmal. Sind Sie damit einverstanden? Vielen Dank.</p>
+
+  <h4>Warum wird gespiegelt?</h4>
+  <p><strong>Es besteht bei Ihnen der Verdacht auf</strong> Erkrankungen in der Harnröhre oder der Blase. <strong>Die beste Untersuchungsmethode hierfür ist die</strong> Blasenspiegelung. <strong>Eine andere Methode wäre zwar möglich, bietet jedoch nicht dieselbe Genauigkeit. Ohne diese Untersuchung wäre es deutlich schwieriger,</strong> Dinge wie Verengungen der Harnröhre, eine vergrößerte Prostata, Probleme mit dem Schließmuskel, Tumoren oder Blasensteine <strong>frühzeitig zu erkennen oder sicher auszuschließen.</strong></p>
+  <p><strong>Nun möchte ich über den Ablauf der Untersuchung sprechen, und dann werden wir die möglichen Risiken besprechen. Anschließend werde ich Sie auch darüber aufklären, was Sie vor und nach der Untersuchung beachten müssen.</strong></p>
+
+  <h4>Wie wird gespiegelt?</h4>
+  <p><strong>Die Untersuchung dauert in der Regel etwa 5 Minuten.</strong> Sie erfolgt <strong>unter lokaler Betäubung.</strong> <strong>Zuerst wird</strong> die Harnröhrenöffnung desinfiziert und ein betäubendes Gleitmittel eingebracht. Danach wird ein dünnes Gerät mit einer Kamera, das Zystoskop, eingeführt und bis zur Blase vorgeschoben.</p>
+  <p><strong>Mithilfe dieser Kamera können wir die Harnblase von innen betrachten und mögliche Auffälligkeiten beurteilen.</strong> Damit wir eine bessere Sicht haben, füllen wir die Blase mit einer Flüssigkeit. Falls erforderlich, können wir über einen Kanal im Gerät Gewebeproben entnehmen, Steine entfernen oder Polypen abtragen. <strong>Am Ende wird das Gerät wieder entfernt.</strong></p>
+  <ul class="compact">
+    <li>Bei Frauen ist der Weg kurz und gerade, deshalb nutzen wir ein starres Instrument.</li>
+    <li>Bei Männern ist der Weg länger und gebogen, weshalb wir ein biegsames Instrument verwenden.</li>
+  </ul>
+
+  <h4>Das Thema Komplikationen</h4>
+  <p><strong>Jetzt reden wir über die möglichen Risiken: Zu den allgemeinen Risiken gehören Blutungen, Schmerzen, allergische Reaktionen oder Infektionen. Bei dieser Untersuchung können zusätzlich folgende spezielle Risiken auftreten:</strong></p>
+  <ul class="compact">
+    <li>Es kann zu Blasenkrämpfen oder Schmerzen beim Wasserlassen kommen.</li>
+    <li>Durch Instrumente, Laser oder Strom können Haut-, Gewebe- oder Nervenschäden entstehen.</li>
+    <li>Bei starken Blutungen ist ganz selten eine Bluttransfusion nötig, wobei ein minimales Risiko für HIV oder Hepatitis besteht.</li>
+    <li>Infektionen können zur Nierenbeckenentzündung aufsteigen. Bei Männern kann eine Prostata- oder Nebenhodenentzündung zur Unfruchtbarkeit führen.</li>
+    <li>Verletzungen der Harnröhre können zu späteren Verengungen oder einer Schädigung des Schließmuskels (Inkontinenz) führen.</li>
+  </ul>
+  <p><strong>Frau/Herr [Name], ich weiß, dass diese Risiken etwas beängstigend klingen können. Das bedeutet nicht, dass wir diese Komplikationen erwarten, sie können jedoch nicht vollständig ausgeschlossen werden. Zudem ist unser Team gut vorbereitet, um im Bedarfsfall schnell reagieren zu können.</strong></p>
+
+  <h4>Bezüglich der Vorbereitung</h4>
+  <p><strong>Vor der Untersuchung müssen Sie</strong> uns sagen, welche Medikamente Sie nehmen, besonders Blutverdünner oder Metformin gegen Diabetes. Diese dürfen nur nach Rücksprache abgesetzt werden.</p>
+  <p><strong>Nach der Untersuchung bleiben Sie etwa</strong> zur Überwachung bei uns. Bitte trinken Sie in den nächsten zwei Tagen reichlich Wasser, um alles gut durchzuspülen. Falls Sie ein Beruhigungsmittel bekommen, <strong>dürfen Sie kein Auto fahren, nicht allein nach Hause gehen, keinen Alkohol trinken, nicht rauchen und keine wichtigen Entscheidungen treffen.</strong> Bitte informieren Sie uns sofort bei starken Schmerzen, Fieber oder anhaltenden Blutungen.</p>
+
+  <h4>Abschluss</h4>
+  <p>Das war von meiner Seite alles. Haben Sie alles verstanden? Haben Sie noch Fragen? Wenn Sie einverstanden sind, bitte ich Sie, hier zu unterschreiben. Vielen Dank und auf Wiedersehen.</p>
+</section>
+
+<h2 class="section-title" id="fall-1">Fallpräsentation: Hämaturie</h2>
+<article class="case">
+  <h4>Herr Erich Karenz</h4>
+  <p>Schönen guten Tag, Herr Chefarzt. Ich möchte Ihnen gerne einen neuen Patienten, Herrn Erich Karenz, vorstellen. Darf ich? Vielen Dank.</p>
+  <p>Es handelt sich um einen 63-jährigen Patienten, geboren am 18.07.1960, 73 Kilogramm schwer und 178 cm groß, der sich mit einer hausärztlichen Einweisung wegen seit anderthalb Jahren bestehender, rezidivierender, indolenter Makrohämaturie in der Rettungsstelle vorstellte. Der Patient befand sich zum Zeitpunkt des Gesprächs in einem leicht reduzierten Allgemeinzustand und war vollständig orientiert. Herr Karenz ist fußläufig in die Notaufnahme gekommen.</p>
+  <p><span class="field">Zur aktuellen Anamnese:</span> Begleitend klagte er über Pollakisurie und Nykturie und manchmal ein brennendes Gefühl beim Wasserlassen. Zudem berichtete er über Flankenschmerzen mit Ausstrahlung in den Hoden und eine Verbesserung nach der Miktion. Der Patient fügte hinzu, er glaube, dass sich die Farbe des Urins geändert habe, weil er zu viel Kirschenschnaps getrunken habe. Die Fragen nach anderen Miktionsstörungen, B-Symptomatik oder Schwellungen in den Lymphknotenstationen wurden verneint. Die vegetative Anamnese war unauffällig.</p>
+  <p>An relevanten Vorerkrankungen ist eine arterielle Hypertonie seit 10 Jahren bekannt, die mit Bisoprolol 2,5 mg behandelt werde. An Voroperationen sei er im Alter von 6 Jahren wegen einer Klavikulafraktur chirurgisch behandelt worden.</p>
+  <p><span class="field">Medikation &amp; Allergien:</span> In Bezug auf die Medikation nehme er außer Bisoprolol keine weiteren Medikamente ein. Bezüglich Allergien und Unverträglichkeiten berichtete Herr Karenz über eine Nussallergie, die er bei Bedarf mit Nasentropfen behandle.</p>
+  <p><span class="field">Noxen &amp; Soziales:</span> Er sei aktiver Raucher mit 80 Packungsjahren. Er trinke täglich 1 bis 2 Gläser Kirschlikör. Die Frage nach Drogenkonsum wurde verneint. Zur Sozialanamnese gab der Patient an, dass er als Mechaniker arbeite, verheiratet sei und eine Tochter habe. Die Reiseanamnese ergab einen 6-monatigen Auslandsaufenthalt in Barcelona vor den Beschwerden. Die Familienanamnese ergab, dass der Vater an einer Leistenhernie gelitten habe.</p>
+  <p><span class="field">Diagnostik &amp; Befunde:</span> Es wurde Blut abgenommen und das Labor zeigte Erythrozyten im Urin. In der Sonographie zeigte sich eine unregelmäßige rechte Blasenwand. Die anschließende Zystoskopie zeigte einen erbsgroßen, zottigen und gestielten Tumor im Bereich des rechten Ostiums. Dieser wurde mittels elektrischer Schlinge entfernt und die Probe zur Histopathologie eingeschickt.</p>
+  <p><span class="field">Verdachtsdiagnose &amp; DD:</span> Aufgrund der Symptomatik habe ich den Verdacht auf ein Blasenkarzinom. Differentialdiagnostisch kommen Harnwegsinfektionen, eine Urolithiasis, Prostataerkrankungen oder, aufgrund des Spanienaufenthalts, eine Schistosomiasis in Betracht.</p>
+  <p>Beim Verdacht auf ein Blasenkarzinom führe ich zunächst eine orientierende körperliche Untersuchung durch. Dabei achte ich insbesondere auf typische klinische Zeichen wie Klopfschmerz in den Flanken oder tastbare Resistenzen. Bei der Palpation beurteile ich die Lymphknotenstationen, bei der Inspektion achte ich auf das Genitale und bei der Auskultation höre ich gezielt auf die Darmgeräusche. Anschließend erfolgt die Labordiagnostik. Ich lasse das kleine Blutbild, CRP, BSG sowie die Elektrolyte und Nierenwerte bestimmen. Zusätzlich fordere ich eine Urinzytologie an. Bei der Bildgebung achte ich auf Wandunregelmäßigkeiten sowie mögliche Hinweise auf Filiae. In komplexen Fällen erfolgt die weitere Diagnostik interdisziplinär in Rücksprache mit der Radiologie.</p>
+  <p><span class="field">Therapie:</span> Die Therapie richtet sich nach der Ursache und dem klinischen Zustand. Symptomatisch beginne ich mit einer ausreichenden Flüssigkeitssubstitution. Kausal therapiere ich, je nach Histologie, durch eine transurethrale Resektion (TUR-B) oder bei invasivem Wachstum durch eine Zystektomie. Zusätzlich erfolgt eine gezielte Therapie der Grunderkrankung, insbesondere die dringende Empfehlung zur Nikotinkarenz.</p>
+</article>
+
+<h2 class="section-title" id="aufkl-2">2 – Magenspiegelung (Ösophagogastroskopie)</h2>
+<section class="aufklaerung">
+  <h4>Einleitung</h4>
+  <p>Herr/ Frau [Name], Ihre Beschwerden sprechen stark für eine <strong>Magenerkrankung</strong>. Das bedeutet, dass eine <strong>Magenspiegelung</strong> erforderlich ist bzw. empfohlen wird.</p>
+  <p>Ich werde Ihnen alle wichtigen Informationen dazu geben, damit Sie eine informierte Entscheidung treffen können. Wenn Sie etwas nicht verstehen oder Fragen haben, unterbrechen Sie mich bitte jederzeit – ich erkläre es Ihnen gern noch einmal. <strong>Sind Sie damit einverstanden? Vielen Dank.</strong></p>
+
+  <h4>Warum wird gespiegelt?</h4>
+  <p><strong>Es besteht bei Ihnen der Verdacht auf</strong> eine Erkrankung im oberen Verdauungstrakt. <strong>Die beste Untersuchungsmethode hierfür ist die</strong> Magenspiegelung, bei der wir die Speiseröhre, den Magen und den oberen Teil des Zwölffingerdarms genau anschauen und Gewebeproben entnehmen können. <strong>Eine andere Methode wäre zwar möglich, bietet jedoch nicht dieselbe Genauigkeit. Ohne diese Untersuchung wäre es deutlich schwieriger,</strong> krankhafte Veränderungen, Entzündungen oder Geschwüre <strong>frühzeitig zu erkennen oder sicher auszuschließen.</strong></p>
+  <p><strong>Nun möchte ich über den Ablauf der Untersuchung sprechen, und dann werden wir die möglichen Risiken besprechen. Anschließend werde ich Sie auch darüber aufklären, was Sie vor und nach der Untersuchung beachten müssen.</strong></p>
+
+  <h4>Wie wird gespiegelt?</h4>
+  <p><strong>Die Untersuchung dauert in der Regel weniger als 10 Minuten und</strong> <strong>erfolgt unter einer leichten Sedierung (Beruhigungsmittel)</strong> und zusätzlich wird Ihr Rachen örtlich betäubt.</p>
+  <p><strong>Zuerst wird</strong> Ihnen ein Zahnschutz eingesetzt und Sie legen sich auf die linke Seite. Dann wird ein <strong>biegsames, dünnes optisches Instrument</strong> durch den Mund eingeführt. <strong>Währenddessen wird</strong> ein wenig Luft in den Magen geblasen, damit er sich entfaltet und wir die Schleimhaut <strong>genau beurteilen können.</strong> Über einen Kanal im Gerät können wir Proben entnehmen, Blutungen stillen oder Krampfadern unterbinden. Manchmal sprühen wir auch einen Farbstoff auf, um Veränderungen besser sichtbar zu machen. <strong>Am Ende wird das Gerät wieder entfernt.</strong></p>
+
+  <h4>Das Thema Komplikationen</h4>
+  <p><strong>Jetzt reden wir über die möglichen Risiken: Zu den allgemeinen Risiken gehören Blutungen, Schmerzen, allergische Reaktionen oder Infektionen. Bei dieser Untersuchung können zusätzlich folgende spezielle Risiken auftreten:</strong></p>
+  <ul class="compact">
+    <li><strong>Allergien</strong> auf Betäubungsmittel können im Extremfall zu Kreislaufschock oder Organschäden führen.</li>
+    <li><strong>Haut-, Gewebe- oder Nervenschäden</strong> können durch die Lagerung oder Begleitmaßnahmen (Laser/Strom) entstehen.</li>
+    <li><strong>Blutungen</strong> sind selten und können meist direkt gestoppt werden. Falls eine Bluttransfusion nötig wird, besteht ein winziges Risiko für HIV oder Hepatitis.</li>
+    <li><strong>Verletzungen</strong> an Kehlkopf, Luftröhre, Nase oder Zähnen können vorkommen.</li>
+    <li><strong>Durchstoßung (Perforation):</strong> Wenn die Wand des Verdauungstrakts verletzt wird, können Bakterien in den Brust- oder Bauchraum gelangen und lebensgefährliche Entzündungen (z. B. am Bauchfell oder Herzbeutel) auslösen.</li>
+    <li><strong>Infektionen</strong> wie Blutvergiftung oder Herzinnenwandentzündung sind sehr selten.</li>
+    <li><strong>Rachenbeschwerden:</strong> Heiserkeit, Brechreiz oder Missempfindungen klingen meist von selbst ab.</li>
+    <li><strong>Aspiration:</strong> Das Einatmen von Mageninhalt kann zu einer Lungenentzündung führen.</li>
+  </ul>
+  <p><strong>Frau/Herr [Name], ich weiß, dass diese Risiken etwas beängstigend klingen können. Das bedeutet nicht, dass wir diese Komplikationen erwarten, sie können jedoch nicht vollständig ausgeschlossen werden. Zudem ist unser Team gut vorbereitet, um im Bedarfsfall schnell reagieren zu können.</strong></p>
+
+  <h4>Bezüglich der Vorbereitung</h4>
+  <p><strong>Vor der Untersuchung müssen Sie nüchtern sein.</strong> Das heißt: Mindestens <strong>6 Stunden</strong> vorher nichts essen und bis zu <strong>2 Stunden</strong> vorher nur kleine Mengen klare Flüssigkeit. Bitte informieren Sie uns über Ihre Medikamente, besonders <strong>Blutverdünner</strong> oder <strong>Metformin</strong> bei Diabetes; diese dürfen nur nach Rücksprache abgesetzt werden.</p>
+  <p><strong>Nach der Untersuchung</strong> dürfen Sie für <strong>2 Stunden nichts essen oder trinken</strong>, solange die Rachenbetäubung noch wirkt (wegen der Verschluckungsgefahr). Falls Sie ein Beruhigungsmittel bekommen, bleiben Sie zur Überwachung bei uns, bis Sie wach sind. Sie werden sich danach noch müde fühlen. Sie <strong>dürfen kein Auto fahren, nicht allein nach Hause gehen, keinen Alkohol trinken, nicht rauchen und keine wichtigen Entscheidungen treffen.</strong> Bitte stellen Sie für 12 bis 24 Stunden eine häusliche Betreuung sicher.</p>
+  <p>Sollten Sie danach Bauchschmerzen, Übelkeit, Schweißausbrüche, Fieber über 38°C oder dunklen Stuhlgang (<strong>Teerstuhl/Bluterbrechen</strong>) bemerken, informieren Sie bitte sofort uns oder die Notaufnahme.</p>
+
+  <h4>Abschluss</h4>
+  <p>Das war von meiner Seite alles. Haben Sie alles verstanden? Haben Sie noch Fragen? Wenn Sie einverstanden sind, bitte ich Sie, hier zu unterschreiben. Vielen Dank und auf Wiedersehen.</p>
+</section>
+
+<h2 class="section-title" id="fall-2">Fallpräsentation: Ulkuskrankheit</h2>
+<article class="case">
+  <h4>Herr Friedrich Nieberg</h4>
+  <p>Schönen guten Tag, Herr Chefarzt. Ich möchte Ihnen gerne einen neuen Patienten, Herrn Friedrich Nieberg, vorstellen. Darf ich? Vielen Dank.</p>
+  <p>Es handelt sich um einen 63-jährigen Patienten, geboren am 18.07.1960, 73 Kilogramm schwer und 178 cm groß, der sich mit einer hausärztlichen Einweisung wegen seit 3 Wochen bestehender, drückender, essenabhängiger und stressabhängiger Bauchschmerzen im Epigastriumbereich in der Rettungsstelle vorstellte. Die Schmerzen seien ohne Ausstrahlung oder Wanderung. Der Patient befand sich zum Zeitpunkt des Gesprächs in einem reduzierten Allgemeinzustand und war vollständig orientiert. Er ist fußläufig in die Notaufnahme gekommen.</p>
+  <p><span class="field">Zur aktuellen Anamnese:</span> Begleitend klagte er über zweimalige kaffeesatzartige Emesis und Nausea. Darüber hinaus berichtete er, dass die Schmerzen direkt nach dem Essen aufgetreten seien und sich unter Stress verstärkt hätten. Die Schmerzintensität wurde mit 8 von 10 nach dem Essen auf der Skala bewertet. Außerdem klagte er über Inappetenz, Nausea und Pyrosis. Die Fragen nach Pyrexie, Diarrhö, Obstipation und Abgeschlagenheit wurden verneint.</p>
+  <p><span class="field">Vegetative Anamnese:</span> Bis auf Inappetenz und einen Gewichtsverlust von ca. 5 kg binnen 8 Wochen sei die vegetative Anamnese unauffällig.</p>
+  <p><span class="field">Vorerkrankungen &amp; Operationen:</span> An relevanten Vorerkrankungen sei eine arterielle Hypertonie seit 10 Jahren bekannt. Er sei im Alter von 40 Jahren aufgrund einer Nabelhernie operiert worden.</p>
+  <p><span class="field">Medikation &amp; Allergien:</span> In Bezug auf die Medikation nehme er Bisoprolol ein. Bezüglich Allergien berichtete Herr Nieberg über eine Pflasterallergie.</p>
+  <p><span class="field">Noxen &amp; Soziales:</span> Er sei aktiver Raucher mit 80 Packungsjahren. Er trinke täglich 1 bis 2 Gläser Kirschlikör. Die Frage nach Drogenkonsum wurde verneint. Zur Sozialanamnese gab der Patient an, dass er geschieden sei und eine Tochter habe, von Beruf Änderungsschneider. Die Familienanamnese ergab, dass der Vater an einem Blasenkarzinom gelitten habe und die Mutter einen Apoplex cerebri gehabt habe.</p>
+  <p><span class="field">Verdacht &amp; Weiteres Vorgehen:</span> Aufgrund der Symptomatik habe ich den Verdacht auf ein Ulkus ventriculi. Differentialdiagnostisch kommen Ulkus duodeni, Cholezystitis, Pankreatitis, Myokardinfarkt oder ein Magenkarzinom in Betracht.</p>
+  <p>Beim Verdacht auf ein Ulkus ventriculi führe ich zunächst eine orientierende körperliche Untersuchung durch. Dabei achte ich insbesondere auf typische klinische Zeichen wie Abwehrspannung oder Druckschmerz. Bei der Palpation beurteile ich Leber und Milz, bei der Inspektion achte ich auf Anämiezeichen, und bei der Auskultation höre ich gezielt auf Bauchgeräusche. Anschließend erfolgt die Labordiagnostik: kleines Blutbild, CRP, BSG sowie die Elektrolyte. Je nach Fragestellung fordere ich zusätzlich Amylase, Lipase und Herzenzyme an. Bei der Bildgebung achte ich auf freie Luft unter dem Zwerchfell sowie mögliche Hinweise auf Perforation.</p>
+  <p>Die ÖGD zeigte eine Refluxösophagitis sowie ein Ulkus mit hochgradiger Malignität an der kleinen Kurvatur des Magens. Es wurden Biopsien vom Duodenum, Korpus und vom Ulkus entnommen.</p>
+  <p><span class="field">Therapie:</span> Die Therapie richtet sich nach der Ursache und dem klinischen Zustand des Patienten. Symptomatisch beginne ich mit Flüssigkeitssubstitution. Kausal therapiere ich durch Helicobacter-pylori-Eradikation (Triple-Therapie) oder Gabe von PPI. Falls notwendig, plane ich chirurgische Maßnahmen wie eine Ulkusübernähung. Zusätzlich erfolgt eine gezielte Therapie der Grunderkrankung, z. B. Nikotin- und Alkoholkarenz.</p>
+</article>
+
+<h2 class="section-title" id="aufkl-3">3 – Darmspiegelung (Koloskopie)</h2>
+<section class="aufklaerung">
+  <h4>Einleitung</h4>
+  <p><strong>Herr/ Frau [Name], Ihre Beschwerden sprechen stark für eine Erkrankung des Dickdarms.</strong> Das bedeutet, dass <strong>eine Darmspiegelung</strong> erforderlich ist bzw. empfohlen wird.</p>
+  <p>Ich werde Ihnen alle wichtigen Informationen dazu geben, damit Sie eine informierte Entscheidung treffen können. Wenn Sie etwas nicht verstehen oder Fragen haben, unterbrechen Sie mich bitte jederzeit – ich erkläre es Ihnen gern noch einmal. Sind Sie damit einverstanden? Vielen Dank.</p>
+
+  <h4>Warum wird gespiegelt?</h4>
+  <p><strong>Es besteht bei Ihnen der Verdacht auf</strong> eine Erkrankung des Dickdarms. <strong>Die beste Untersuchungsmethode hierfür ist die</strong> Koloskopie, bei der wir den Dickdarm genau anschauen und Gewebeproben entnehmen können. <strong>Eine andere Methode wäre zwar möglich, bietet jedoch nicht dieselbe Genauigkeit. Ohne diese Untersuchung wäre es deutlich schwieriger,</strong> krankhafte Veränderungen, Entzündungen oder Geschwüre <strong>frühzeitig zu erkennen oder sicher auszuschließen.</strong></p>
+  <p><strong>Nun möchte ich über den Ablauf der Untersuchung sprechen, und dann werden wir die möglichen Risiken besprechen. Anschließend werde ich Sie auch darüber aufklären, was Sie vor und nach der Untersuchung beachten müssen.</strong></p>
+
+  <h4>Wie wird gespiegelt?</h4>
+  <p><strong>Die Untersuchung dauert in der Regel etwa 20 Minuten und erfolgt unter einer leichten Sedierung (Beruhigungsmittel).</strong> Gelegentlich geben wir zusätzlich ein krampflösendes Mittel, um den Darm ruhigzustellen.</p>
+  <p><strong>Zuerst</strong> legen Sie sich auf die linke Seite. Dann wird ein <strong>biegsames, dünnes optisches Instrument</strong> vorsichtig durch den After in den Dickdarm eingeführt. <strong>Währenddessen wird</strong> Luft in den Darm geblasen, <strong>sodass wir</strong> die Darmwände <strong>genau beurteilen können.</strong> Mit Hilfe dieses Gerätes können wir schmerzfreie Gewebeproben entnehmen oder Polypen (Wucherungen) direkt mit einer Schlinge entfernen, manchmal sprühen wir einen Farbstoff aus, um einen bessere Sicht zu erhalten. Am Ende <strong>wird das Gerät wieder entfernt.</strong></p>
+  <p class="note">(Falls nötig, überwachen wir dabei Ihren Vitalparameter. Hier haben wir zwei Möglichkeiten: <strong>Propofol</strong> wirkt kurz, sodass Sie schnell wieder wach sind. <strong>Midazolam</strong> wirkt länger, weshalb Sie danach länger überwacht werden müssen.)</p>
+
+  <h4>Das Thema Komplikationen</h4>
+  <p><strong>Jetzt reden wir über die möglichen Risiken: Zu den allgemeinen Risiken gehören Blutungen, Schmerzen, allergische Reaktionen oder Infektionen. Bei dieser Untersuchung können zusätzlich folgende spezielle Risiken auftreten:</strong></p>
+  <ul class="compact">
+    <li><strong>Allergien</strong> auf Medikamente oder Farbstoffe können selten zu einem Schock führen.</li>
+    <li><strong>Haut-, Gewebe- oder Nervenschäden</strong> durch Lagerung oder den Einsatz von Strom/Laser.</li>
+    <li><strong>Blutungen:</strong> Diese können bei Probenentnahmen oder Polypenentfernungen auftreten. Wir können diese meist direkt mit Klammern oder Hitze stoppen. Bei einer seltenen Bluttransfusion besteht ein minimales Risiko für HIV oder Hepatitis.</li>
+    <li><strong>Verletzungen:</strong> Es kann zu Verletzungen der Darmwand oder des Schließmuskels kommen. Ein <strong>Darmdurchbruch (Perforation)</strong> ist selten, würde aber eine Operation erfordern und könnte zu einer Bauchfellentzündung führen. Auch Nachbarorgane wie Milz könnten theoretisch verletzt werden.</li>
+    <li><strong>Infektionen:</strong> Bakterien können Entzündungen oder im Extremfall eine Blutvergiftung auslösen.</li>
+    <li><strong>Sedierung:</strong> Es kann zu Atemstörungen oder Blutdruckabfall kommen, was wir aber mit Sauerstoff und Medikamenten gut behandeln können.</li>
+    <li><strong>Narben:</strong> Nach der Entfernung von Polypen können narbige Engstellen entstehen.</li>
+  </ul>
+  <p><strong>Frau/Herr [Name], ich weiß, dass diese Risiken etwas beängstigend klingen können. Das bedeutet nicht, dass wir diese Komplikationen erwarten, sie können jedoch nicht vollständig ausgeschlossen werden. Zudem ist unser Team gut vorbereitet, um im Bedarfsfall schnell reagieren zu können.</strong></p>
+
+  <h4>Bezüglich der Vorbereitung</h4>
+  <p><strong>Vor der Untersuchung</strong> müssen Sie den Darm gründlich reinigen. <strong>4 Tage vorher</strong> dürfen Sie keine Körner, Nüsse oder dunklen Getränke (Kaffee/Tee) mehr zu sich nehmen. Am Vortag ist nur leichte Kost erlaubt, ab 18 Uhr dürfen Sie nichts mehr essen. Sie müssen dann <strong>2 bis 3 Liter Abführlösung</strong> trinken. Bitte beachten Sie: Durch das Abführen können andere Medikamente (z. B. die Pille) schlechter wirken. Informieren Sie uns bitte über <strong>Blutverdünner</strong> oder <strong>Metformin</strong>, da diese nur nach Rücksprache genommen werden dürfen.</p>
+  <p><strong>Nach der Untersuchung</strong> kann die eingeblasene Luft Blähungen verursachen; hier hilft Bewegung. Falls Sie ein Beruhigungsmittel bekommen haben, dürfen Sie <strong>mindestens 2 Stunden nichts essen oder trinken.</strong> Zudem dürfen Sie für <strong>24 Stunden kein Auto fahren, nicht allein nach Hause gehen, keinen Alkohol trinken und keine wichtigen Entscheidungen treffen.</strong> Bitte stellen Sie für den ersten Tag eine häusliche Betreuung sicher. Informieren Sie uns sofort bei starken Bauchschmerzen, Fieber über 38°C, Schwindel oder wenn Blut aus dem After austritt.</p>
+
+  <h4>Abschluss</h4>
+  <p>Das war von meiner Seite alles. Haben Sie alles verstanden? Haben Sie noch Fragen? Wenn Sie einverstanden sind, bitte ich Sie, hier zu unterschreiben. Vielen Dank und auf Wiedersehen.</p>
+</section>
+
+<h2 class="section-title" id="fall-3">Fallpräsentation: Reizdarmsyndrom</h2>
+<article class="case">
+  <h4>Frau Christiane Lange</h4>
+  <p>Schönen guten Tag, Herr Dr. XX. Ich möchte Ihnen gerne eine neue Patientin, Frau Christiane Lange, vorstellen. Darf ich? Vielen Dank.</p>
+  <p>Es handelt sich um eine 62-jährige Patientin, geboren am 18.07.1961, 75 Kilogramm schwer und 160 cm groß, die sich mit einer hausärztlichen Einweisung wegen seit 4 Monaten bestehender, rezidivierender, dumpfartiger, umbilikaler Schmerzen bei uns vorstellte. Die Schmerzen seien ohne Ausstrahlung oder Wanderung. Die Schmerzintensität wurde mit 6 von 10 bei Belastung und vor dem Stuhlgang auf der Skala bewertet. Die Patientin befand sich zum Zeitpunkt des Gesprächs in einem guten Allgemeinzustand und war vollständig orientiert.</p>
+  <p><span class="field">Zur aktuellen Anamnese:</span> Begleitend klagte sie über unblutige breiige Diarrhö im Wechsel mit Obstipation sowie schmerzhaften Meteorismus. Darüber hinaus gab sie an, dass sich die Schmerzen vor dem Stuhlgang sowie insbesondere unter Stress verstärkt hätten und sich nach der Defäkation sowie durch Wärmeanwendung gebessert hätten. Außerdem klagte sie über ein Gefühl der unvollständigen Darmentleerung nach dem Stuhlgang. Die Fragen nach Fieber, Hämatochezie, Bleistiftstuhl, Nausea, Emesis, Meläna, Inappetenz sowie Insomnie wurden verneint.</p>
+  <p><span class="field">Vegetative Anamnese:</span> Die vegetative Anamnese sei unauffällig.</p>
+  <p><span class="field">Vorerkrankungen &amp; Operationen:</span> An relevanten Vorerkrankungen sei eine arterielle Hypertonie seit 10 Jahren bekannt. Die Patientin sei noch nie operiert worden.</p>
+  <p><span class="field">Medikation &amp; Allergien:</span> In Bezug auf die Medikation nehme sie Bisoprolol 2,5 mg ein. Bezüglich Allergien berichtete Frau Lange über eine Birkenpollenallergie (Heuschnupfen).</p>
+  <p><span class="field">Noxen &amp; Soziales:</span> Sie sei aktive Raucherin mit 40 Packungsjahren, trinke am Wochenende gelegentlich ein Glas Wein oder Kräuterlikör. Die Frage nach Drogenkonsum wurde verneint. Zur Sozialanamnese gab die Patientin an, dass sie verheiratet sei und zwei Töchter habe. Sie erwähnte zudem viel Stress bei der Arbeit.</p>
+  <p><span class="field">Familienanamnese:</span> Die Familienanamnese ergab keine Besonderheiten.</p>
+  <p><span class="field">Diagnostik &amp; Befunde:</span> Die durchgeführte Koloskopie mit Ileoskopie unter Sedierung zeigte keinen Hinweis auf entzündliche Schleimhautveränderungen. Bei Rückzug des Endoskops fand sich ein gestielter Polyp in der rechten Flexur des Kolons, der mit einer Schlinge entfernt wurde. Die DRU war unauffällig.</p>
+  <p><span class="field">Verdacht &amp; Weiteres Vorgehen:</span> Aufgrund der Symptomatik und der unauffälligen Befunde habe ich den Verdacht auf ein Reizdarmsyndrom. Der gefundene Polyp wird als Zufallsbefund gewertet und hat kein Korrelat mit den aktuellen Beschwerden. Differentialdiagnostisch müssen chronisch-entzündliche Darmerkrankungen, infektiöse Kolitiden, ein Kolonkarzinom sowie Nahrungsmittelunverträglichkeiten ausgeschlossen werden.</p>
+  <p><span class="field">Therapie &amp; Empfehlung:</span> Die weitere Therapie des Reizdarmsyndroms erfolgt symptomatisch und umfasst neben einer Ernährungsberatung auch Stressmanagement sowie ggf. medikamentöse Unterstützung je nach führendem Symptom. Eine Nikotinkarenz wird dringend empfohlen.</p>
+</article>
+
+<h2 class="section-title" id="aufkl-4">4 – Blinddarmoperation (Appendektomie)</h2>
+<section class="aufklaerung">
+  <h4>Einleitung</h4>
+  <p>Herr / Frau [Name], wie Sie wissen, wurde bei Ihnen eine <strong>akute Blinddarmentzündung</strong> (Appendizitis) festgestellt. Das bedeutet, dass eine Operation erforderlich ist bzw. empfohlen wird.</p>
+  <p>Ich werde Ihnen alle wichtigen Informationen dazu geben, damit Sie eine informierte Entscheidung treffen können. Wenn Sie etwas nicht verstehen oder Fragen haben, unterbrechen Sie mich bitte jederzeit – ich erkläre es Ihnen gern noch einmal. <strong>Sind Sie damit einverstanden? Vielen Dank.</strong></p>
+
+  <h4>Warum wird operiert?</h4>
+  <p>Eine Blinddarmentzündung ist eigentlich eine Entzündung des Wurmfortsatzes, eines kleinen Anhängsels ohne relevante Funktion, weshalb seine Entfernung keine negativen Auswirkungen auf Ihre Verdauung hat.</p>
+  <p>Ohne Operation kehren die Beschwerden immer wieder zurück und es kann zu schweren Komplikationen wie einem Blinddarmdurchbruch mit lebensgefährlicher Bauchfellentzündung kommen. <strong>Die beste Operationsmethode hierfür ist heute</strong> die Laparoskopie; eine andere Methode wäre zwar möglich, bietet jedoch nicht dieselbe Übersicht. Deshalb ist die <strong>laparoskopische Entfernung des Blinddarms</strong> die beste bzw. sicherste Behandlungsoption.</p>
+  <p><strong>Nun möchte ich über den Ablauf der Operation sprechen, und dann werden wir die möglichen Risiken besprechen. Anschließend werde ich Sie auch darüber aufklären, was Sie vor und nach der Operation beachten müssen.</strong></p>
+
+  <h4>Wie wird operiert?</h4>
+  <p><strong>Die Operation dauert in der Regel etwa weniger als eine Stunde</strong> und erfolgt <strong>unter Vollnarkose</strong>, sodass Sie während der gesamten Operation keine Schmerzen spüren.</p>
+  <p>Es gibt zwei Möglichkeiten:</p>
+  <ol class="compact">
+    <li><strong>Die offene Operation:</strong> Hierbei macht der Chirurg einen größeren Schnitt im Unterbauch. Das macht man heute eher selten, zum Beispiel bei starken Verwachsungen.</li>
+    <li><strong>Die laparoskopische Operation (Schlüsselloch-Chirurgie):</strong> Diese Methode führen wir hier durch und empfehlen sie Ihnen auch. Der Vorteil liegt darin, dass wir die gesamte Bauchhöhle anschauen und andere Ursachen ausschließen können. Zudem sind die Narben viel kleiner.</li>
+  </ol>
+  <p>Zunächst wird die <strong>Operationsstelle</strong> gründlich desinfiziert. Danach werden 3 kleine Hautschnitte <strong>gesetzt</strong>, um Zugang zum <strong>Operationsgebiet</strong> zu <strong>erhalten.</strong> Über diese <strong>Zugänge</strong> werden die Operationsinstrumente sowie ein schlauchartiges Gerät mit einer Kamera an der Spitze <strong>eingeführt. Dann wird der Bauch mit Kohlendioxid aufgeblasen</strong>, um die Sicht zu verbessern. Mit Hilfe dieser Instrumente wird der entzündete Blinddarm sorgfältig vom umgebenden Gewebe gelöst und vollständig entfernt. Gegebenenfalls werden <strong>Drainageschläuche eingelegt</strong>, um Blut oder Wundsekret abfließen zu lassen. Wenn alles gut verläuft, können wir die Drainagen in der Regel am nächsten Tag entfernen, und die Wunden werden vernäht. Sie bleiben danach etwa 3 bis 5 Tage zur Überwachung bei uns.</p>
+
+  <h4>Das Thema Komplikationen</h4>
+  <p><strong>Jetzt reden wir über die möglichen Risiken: Zu den allgemeinen Risiken gehören Blutungen, Schmerzen, allergische Reaktionen oder Infektionen. Bei dieser Operation können zusätzlich folgende spezielle Risiken auftreten:</strong></p>
+  <ul class="compact">
+    <li>Haut-, Gewebe- oder Nervenschäden sowie Thrombosen oder Embolien.</li>
+    <li>Verletzungen von Darmteilen, der Harnblase, Harnleitern oder Gefäßen.</li>
+    <li>Nachblutungen: Sehr selten sind Bluttransfusionen nötig (minimales Risiko für HIV/Hepatitis).</li>
+    <li><strong>Bauchfellentzündung</strong> durch austretenden Darminhalt oder die Bildung von Fisteln.</li>
+    <li>Wundheilungsstörungen, Narbenwucherungen oder ein "Platzbauch".</li>
+    <li>Beschwerden durch das Gas: Schulterschmerzen, Druckgefühl oder Hautknistern.</li>
+    <li>Langfristige Verwachsungen, die zu Schmerzen oder einem Darmverschluss führen können.</li>
+  </ul>
+  <p><strong>Frau/Herr [Name], ich weiß, dass diese Risiken etwas beängstigend klingen können. Das bedeutet nicht, dass wir diese Komplikationen erwarten, sie können jedoch nicht vollständig ausgeschlossen werden. Zudem ist unser Team gut vorbereitet, um im Bedarfsfall schnell reagieren zu können.</strong></p>
+
+  <h4>Bezüglich der Vorbereitung</h4>
+  <p><strong>Vor der Operation müssen Sie</strong> nüchtern sein. Das heißt: 8 Stunden vorher nichts essen und nicht rauchen, bis zu 2 Stunden vorher nichts mehr trinken. Informieren Sie uns bitte über <strong>Blutverdünner</strong> oder <strong>Metformin</strong>, da diese nur nach Rücksprache genommen werden dürfen.</p>
+  <p><strong>Nach der Operation</strong> dürfen Sie für ca. 4 Stunden nichts essen oder trinken, danach beginnen wir langsam mit dem Kostaufbau. Zur Vermeidung eines Narbenbruchs sollten Sie für <strong>3 bis 4 Wochen nichts Schweres über 5 kg heben</strong>. Bitte informieren Sie uns sofort bei starken Schmerzen oder Fieber.</p>
+
+  <h4>Abschluss</h4>
+  <p>Das war von meiner Seite alles. Haben Sie alles verstanden? Haben Sie noch Fragen? Wenn Sie einverstanden sind, bitte ich Sie, hier zu unterschreiben. Vielen Dank und auf Wiedersehen.</p>
+</section>
+
+<h2 class="section-title" id="fall-4">Fallpräsentation: Appendizitis</h2>
+<article class="case">
+  <h4>Herr Johannes Schulz</h4>
+  <p>Schönen guten Tag, Herr Chefarzt. Ich möchte Ihnen gerne einen neuen Patienten, Herrn Johannes Schulz, vorstellen. Darf ich? Vielen Dank.</p>
+  <p>Es handelt sich um einen 64-jährigen Patienten, geboren am 18.07.1957, 76 Kilogramm schwer und 1,75 Meter groß, der sich mit einer hausärztlichen Einweisung wegen seit gestern Abend plötzlich aufgetretener, krampfartiger abdominaler Schmerzen im rechten Unterbauch in der Rettungsstelle vorstellte. Der Patient befand sich zum Zeitpunkt des Gesprächs in einem leicht reduzierten Allgemeinzustand und war vollständig orientiert.</p>
+  <p><span class="field">Zur aktuellen Anamnese:</span> Er berichtete, dass die Schmerzen zunächst periumbilikal begonnen hätten, anschließend in den rechten Unterbauch gewandert seien und sich im weiteren Verlauf verschlimmert hätten. Die Schmerzintensität wurde mit 8 von 10 bei Belastung auf der Skala bewertet. Die Schmerzen seien ohne Ausstrahlung. Begleitend klagte er über Nausea, zweimalige unblutige Emesis. Zudem berichtete er über eine Verstärkung der Beschwerden bei Bewegung. Die Fragen nach Fieber, Diarrhö und Obstipation wurden verneint.</p>
+  <p><span class="field">V.A:</span> Die Vegetative Anamnese war unauffällig bis auf Inappetenz.</p>
+  <p><span class="field">V.E:</span> Bekannte und relevante Vorerkrankungen sind arterielle Hypertonie seit 10 Jahren behandelt mit Bisoprolol 2,5 mg.</p>
+  <p><span class="field">O.P:</span> An Voroperationen sei er nie operiert worden.</p>
+  <p><span class="field">Medik:</span> In Bezug auf die Medikation nehme er Bisoprolol 2,5 mg einmal pro Tag ein.</p>
+  <p><span class="field">Allergien/Unverträglichkeiten:</span> Bezüglich Allergien und Unverträglichkeiten berichtete Herr Schulz über eine Birkenpollenallergie, die bei Bedarf mit Augentropfen behandelt werde.</p>
+  <p><span class="field">Impfung:</span> Er sei gegen alle Kinderkrankheiten geimpft. Die Frage nach einer Reise in den letzten Monaten wurde verneint.</p>
+  <p><span class="field">G.M:</span> Er sei aktiver Raucher mit 40 Packungsjahren.</p>
+  <p><span class="field">Alkohol:</span> Der Patient berichtete, dass er wöchentlich zwei Flaschen Bier trinke.</p>
+  <p><span class="field">Drogen:</span> Die Frage nach dem Drogenkonsum wurde verneint.</p>
+  <p><span class="field">S.A:</span> Herr Schulz sei Klempner, er lebe mit seiner Frau und habe 2 Kinder.</p>
+  <p><span class="field">F.A:</span> Die Familienanamnese ergab keine Auffälligkeiten.</p>
+  <p><span class="field">Verdacht &amp; Weiteres Vorgehen:</span> Aufgrund der Symptomatik habe ich den Verdacht auf eine akute Appendizitis. Differentialdiagnostisch kommen Gastroenteritis, Cholezystitis, Pankreatitis, Morbus Crohn, Urolithiasis und eine Hodentorsion in Betracht.</p>
+  <p>Beim Verdacht auf eine akute Appendizitis führe ich zunächst eine orientierende körperliche Untersuchung durch. Dabei achte ich insbesondere auf typische klinische Zeichen wie Abwehrspannung, Loslassschmerz oder Druckschmerz an den Punkten nach McBurney und Lanz. Bei der Palpation beurteile ich das Abdomen auf Resistenzen und das Douglas-Zeichen bei der DRU, bei der Inspektion achte ich auf die Leiste und das Skrotum, und bei der Auskultation höre ich gezielt auf Bauchgeräusche.</p>
+  <p>Anschließend erfolgt die Labordiagnostik: kleines Blutbild, CRP, BSG sowie die Elektrolyte. Je nach Fragestellung fordere ich zusätzlich einen Urinstatus an. Bildgebend beginne ich mit einer Sonographie, um den Appendixdurchmesser und das Kokarden-Phänomen zu beurteilen. Zur weiteren Abklärung ziehe ich ergänzend ein CT-Abdomen mit Kontrastmittel hinzu.</p>
+  <p><span class="field">Therapie:</span> Die Therapie richtet sich nach der Ursache und dem klinischen Zustand des Patienten. Symptomatisch beginne ich mit Flüssigkeitssubstitution und Schmerztherapie. Kausal therapiere ich durch eine perioperative Antibiotikagabe. Falls notwendig, plane ich chirurgische Maßnahmen wie eine Appendektomie. Zusätzlich erfolgt eine gezielte Therapie der Grunderkrankung, z. B. Nikotinkarenz.</p>
+</article>
+
+<h2 class="section-title" id="aufkl-5">5 – Gallenblasenentfernung (Cholezystektomie)</h2>
+<section class="aufklaerung">
+  <h4>Einleitung</h4>
+  <p>Herr/Frau [Name], Ihre Beschwerden sprechen stark für eine Gallenblasenentzündung, also eine Cholezystitis. Das bedeutet, dass eine Operation erforderlich ist bzw. empfohlen wird.</p>
+  <p>Ich werde Ihnen alle wichtigen Informationen dazu geben, damit Sie eine informierte Entscheidung treffen können. Wenn Sie etwas nicht verstehen oder Fragen haben, unterbrechen Sie mich bitte jederzeit – ich erkläre es Ihnen gern noch einmal. <strong>Sind Sie damit einverstanden? Vielen Dank.</strong></p>
+
+  <h4>Warum wird operiert?</h4>
+  <p>Es besteht hier die Möglichkeit, diese Krankheit konservativ zu behandeln. Das heißt nur mit Medikamenten und ohne Operation. Aber leider ist die konservative Behandlung eine vorübergehende Lösung. Ohne Operation kehren die Beschwerden immer wieder zurück, außerdem können Komplikationen auftreten. Beispielsweise kann die Entzündung in die Bauchhöhle durchbrechen und eine lebensgefährliche Bauchfellentzündung verursachen, oder Gallensteine könnten den Hauptgang verschließen und zu einer schweren Bauchspeicheldrüsenentzündung führen. Deshalb ist die <strong>Gallenblasenentfernung</strong> die beste bzw. sicherste Behandlungsoption.</p>
+  <p><strong>Nun möchte ich über den Ablauf der Operation sprechen, und dann werden wir die möglichen Risiken besprechen. Anschließend werde ich Sie auch darüber aufklären, was Sie vor und nach der Operation beachten müssen.</strong></p>
+
+  <h4>Wie wird operiert?</h4>
+  <p>Es gibt zwei Möglichkeiten:</p>
+  <ol class="compact">
+    <li><strong>Die offene Methode:</strong> Hierbei erfolgt ein längerer Bauchschnitt unter dem rechten Rippenbogen.</li>
+    <li><strong>Die laparoskopische Operation:</strong> Das ist die Methode, die wir hier anwenden und Ihnen empfehlen.</li>
+  </ol>
+  <p><strong>Die Operation dauert in der Regel etwa weniger als eine Stunde, und</strong> erfolgt unter <strong>Vollnarkose</strong>. Das bedeutet, dass Sie künstlich in einen Tiefschlaf versetzt werden, sodass Sie während der gesamten Operation keine Schmerzen spüren.</p>
+  <ol class="compact" start="2">
+    <li>Zunächst wird die <strong>Operationsstelle gründlich desinfiziert</strong>.</li>
+    <li>Dann werden <strong>drei kleine Hautschnitte</strong> von jeweils etwa 1–2 cm Länge gesetzt: einer unterhalb des Bauchnabels und zwei im Leistenbereich.</li>
+    <li>Über diese Zugänge werden die Operationsinstrumente sowie ein schlauchartiges Gerät mit einer Kamera an der Spitze eingeführt.</li>
+    <li>Mit Hilfe dieser Instrumente wird die Gallenblase sorgfältig vom umgebenden Gewebe gelöst und vollständig entfernt.</li>
+    <li>Am Ende können kleine Drainageschläuche eingelegt werden, um Blut oder Wundflüssigkeit abfließen zu lassen. Wenn der Verlauf unauffällig ist, werden diese in der Regel bereits am Folgetag entfernt und die Hautschnitte sorgfältig vernäht.</li>
+  </ol>
+  <p>Zum Schluss wird ein steriler Verband angelegt, um die Wundheilung zu unterstützen und Infektionen zu vermeiden. Sie bleiben danach etwa 3 bis 5 Tage bei uns zur Überwachung.</p>
+
+  <h4>Das Thema Komplikationen</h4>
+  <p><strong>Jetzt reden wir über die möglichen Risiken: Zu den allgemeinen Risiken gehören Blutungen, Schmerzen, allergische Reaktionen oder Infektionen. Bei dieser Operation können zusätzlich folgende spezielle Risiken auftreten:</strong></p>
+  <ul class="compact">
+    <li>Haut-, Gewebe- oder Nervenschäden sowie Thrombosen/Embolien.</li>
+    <li>Verletzungen benachbarter Organe wie der Leber oder Blutgefäße.</li>
+    <li><strong>Gallengangsleck</strong> oder Rest-Steine im Gallengang, die eine Nachoperation nötig machen könnten.</li>
+    <li>Gelbsucht durch Einengungen des Gallenganges (kann zur Leberzirrhose führen).</li>
+    <li>Wundkomplikationen wie Wundinfektionen, ein <strong>Platzbauch</strong> oder Narbenbrüche.</li>
+    <li>Spätfolgen wie Verwachsungen, die zu einem Darmverschluss führen können.</li>
+    <li>Laparoskopische Risiken: Druckgefühl, Schulterschmerzen, Hautknistern oder selten eine Gasembolie bzw. Pneumothorax durch das Kohlendioxid.</li>
+  </ul>
+  <p><strong>Frau/Herr [Name], ich weiß, dass diese Risiken etwas beängstigend klingen können. Das bedeutet nicht, dass wir diese Komplikationen erwarten, sie können jedoch nicht vollständig ausgeschlossen werden. Zudem ist unser Team gut vorbereitet, um im Bedarfsfall schnell reagieren zu können.</strong></p>
+
+  <h4>Bezüglich der Vorbereitung</h4>
+  <p><strong>Vor der Operation müssen Sie</strong> nüchtern sein (8 Std. vorher nichts essen/rauchen, 2 Std. vorher nichts trinken). Bitte informieren Sie uns über Medikamente wie <strong>Blutverdünner</strong> oder <strong>Metformin</strong>.</p>
+  <p><strong>Nach der Operation</strong> dürfen Sie ca. 4 Stunden nichts essen/trinken. Danach beginnen wir langsam mit dem Kostaufbau. Achten Sie künftig auf fettarme Ernährung. Sie dürfen <strong>kein Auto fahren</strong>, keinen Alkohol trinken und keine wichtigen Entscheidungen treffen. Stellen Sie für die ersten zwei Tage eine häusliche Betreuung sicher. Informieren Sie uns sofort bei Fieber über 38°C, starken Schmerzen oder Blutungen.</p>
+
+  <h4>Abschluss</h4>
+  <p>Das war von meiner Seite alles. Haben Sie alles verstanden? Haben Sie noch Fragen? Wenn Sie einverstanden sind, bitte ich Sie, hier zu unterschreiben. Vielen Dank und auf Wiedersehen.</p>
+</section>
+
+<h2 class="section-title" id="fall-5">Fallpräsentation: Cholezystitis</h2>
+<article class="case">
+  <h4>Herr Jens Berger</h4>
+  <p>Schönen guten Tag, Herr Chefarzt. Ich möchte Ihnen gerne einen neuen Patienten, Herrn Jens Berger, vorstellen. Darf ich? Vielen Dank.</p>
+  <p>Es handelt sich um einen 64-jährigen Patienten, geboren am 18.07.1957, 73 Kilogramm schwer und 1,78 Meter groß, der sich mit einer hausärztlichen Einweisung wegen seit einem Jahr bestehender, krampfartiger, progredienter und rezidivierender rechtsseitiger Oberbauchschmerzen mit Ausstrahlung in den Rücken und in die rechte Schulter in der Rettungsstelle vorstellte. Der Patient befand sich in einem reduzierten Allgemeinzustand und war vollständig orientiert.</p>
+  <p><span class="field">Zur aktuellen Anamnese:</span> Die Schmerzintensität wurde mit 5 von 10 nach fettigem Essen auf der Skala bewertet. Er teilte mit, dass die Schmerzen nach Nahrungsaufnahme aufgetreten und mit der Zeit schlimmer geworden seien. Begleitend klagte er über dunklen Urin, acholischen Stuhl und Sklerenikterus. Die Fragen nach Nausea, Emesis, Meteorismus, Sodbrennen, Obstipation, Diarrhö und Juckreiz wurden verneint.</p>
+  <p><span class="field">V.A:</span> Die Vegetative Anamnese war unauffällig bis auf Inappetenz.</p>
+  <p><span class="field">V.E:</span> In der Krankengeschichte findet sich eine arterielle Hypertonie seit 10 Jahren, die mit Bisoprolol 2,5 mg behandelt wird. Ansonsten bestehen keine weiteren Vorerkrankungen.</p>
+  <p><span class="field">O.P:</span> An Voroperationen sei er nie operiert worden.</p>
+  <p><span class="field">Medik:</span> In Bezug auf die Medikation nehme er außer Bisoprolol 2,5 mg keine weiteren Medikamente ein.</p>
+  <p><span class="field">Allergien/Unverträglichkeiten:</span> Bezüglich Allergien und Unverträglichkeiten berichtete Herr Berger über eine Haselnusspollenallergie, die mit Nasentropfen behandelt werde.</p>
+  <p><span class="field">Impfung:</span> Er sei gegen alle Kinderkrankheiten geimpft. Die Frage nach einer Reise in den letzten Monaten wurde verneint.</p>
+  <p><span class="field">G.M:</span> Er sei aktiver Raucher mit 20 Packungsjahren.</p>
+  <p><span class="field">Alkohol:</span> trinke zwei Flaschen Bier wöchentlich.</p>
+  <p><span class="field">Drogen:</span> Die Frage nach dem Drogenkonsum wurde verneint.</p>
+  <p><span class="field">S.A:</span> Herr Berger sei Lehrer, er lebte mit seiner Frau und habe eine Tochter.</p>
+  <p><span class="field">F.A:</span> Die Familienanamnese ergab, dass sein Vater an einer Leistenhernie gelitten habe.</p>
+  <p><span class="field">Verdacht &amp; Weiteres Vorgehen:</span> Aufgrund der Symptomatik habe ich den Verdacht auf eine akute Cholezystitis bei Cholezystolithiasis. Differentialdiagnostisch kommen Appendizitis, Pankreatitis, Gastritis, Hepatitis, Nephrolithiasis und ein Myokardinfarkt in Betracht.</p>
+  <p>Beim Verdacht auf eine Cholezystitis führe ich zunächst eine orientierende körperliche Untersuchung durch. Dabei achte ich insbesondere auf typische klinische Zeichen wie Abwehrspannung, das Murphy-Zeichen oder das Courvoisier-Zeichen. Bei der Palpation beurteile ich den rechten Oberbauch auf Druckschmerz sowie eine mögliche Hepatomegalie, bei der Inspektion achte ich auf den Ikterus, und bei der Auskultation höre ich gezielt auf Bauchgeräusche.</p>
+  <p>Anschließend erfolgt die Labordiagnostik: kleines Blutbild, CRP, BSG sowie die Elektrolyte, zusätzlich Cholestaseparameter (AP, GGT, Bilirubin), Leberenzyme, Lipase und Amylase. Bildgebend beginne ich mit einer Sonographie. Zur weiteren Abklärung ziehe ich ergänzend eine ERCP hinzu. Zudem lasse ich ein EKG schreiben, um einen Hinterwandinfarkt auszuschließen.</p>
+  <p><span class="field">Therapie:</span> Symptomatisch beginne ich mit Flüssigkeitssubstitution, Nahrungskarenz und Schmerztherapie mittels Analgetika. Kausal therapiere ich durch Spasmolytika. Falls notwendig, plane ich chirurgische Maßnahmen wie eine Cholezystektomie. Zusätzlich erfolgt eine gezielte Therapie der Grunderkrankung, z. B. Nikotinkarenz.</p>
+</article>
+
+<h2 class="section-title" id="aufkl-6">6 – Leistenbruch-Operation (Leistenhernie)</h2>
+<section class="aufklaerung">
+  <h4>Einleitung</h4>
+  <p>Herr / Frau [Name], wie Sie wissen, wurde bei Ihnen ein <strong>Leistenbruch</strong> festgestellt. Das bedeutet, dass eine Operation erforderlich ist bzw. empfohlen wird.</p>
+  <p>Ich werde Ihnen alle wichtigen Informationen dazu geben, damit Sie eine informierte Entscheidung treffen können. Wenn Sie etwas nicht verstehen oder Fragen haben, unterbrechen Sie mich bitte jederzeit – ich erkläre es Ihnen gern noch einmal. <strong>Sind Sie damit einverstanden? Vielen Dank.</strong></p>
+
+  <h4>Warum wird operiert?</h4>
+  <p>Herr xxx, Ein Leistenbruch bedeutet, dass ein Teil des Darms durch eine Lücke in der Bauchwand austritt. Leider ist die konservative Behandlung in diesem Fall nicht möglich. Ohne Operation können schwere Komplikationen auftreten. Beispielsweise kann es zu einer <strong>Einklemmung von Darmanteilen</strong> kommen, was innerhalb weniger Stunden zur Durchblutungsstörung der Darmwand, zum <strong>Absterben des Darms</strong>, einem <strong>Darmverschluss</strong> oder einer <strong>Bauchfellentzündung</strong> führen kann. Bei Männern kann zudem der <strong>Samenstrang geschädigt</strong> werden. Deshalb ist die Operation die beste bzw. die sicherste Behandlungsoption, um die Stabilität der Bauchwand wiederherzustellen und einen Rückfall zu verhindern.</p>
+  <p><strong>Nun möchte ich über den Ablauf der Operation sprechen, und dann werden wir die möglichen Risiken besprechen. Anschließend werde ich Sie auch darüber aufklären, was Sie vor und nach der Operation beachten müssen.</strong></p>
+
+  <h4>Wie wird operiert?</h4>
+  <p>Es gibt die offene Methode durch einen Schnitt in der Leistenbeuge, aber wir empfehlen Ihnen die <strong>laparoskopische Methode</strong> durch kleine spezialisierte optische Geräte:</p>
+  <p>Die Operation dauert in der Regel etwa eine Stunde und erfolgt unter Vollnarkose, damit sie während der gesamten Operation keine Schmerzen spüren.</p>
+  <p><strong>Zuerst wird</strong> ein Blasenkatheter gelegt, um die Harnblase zu entleeren. Dann machen wir drei kleine Hautschnitte am Bauchnabelrand und den Bauchseiten, um Zugang zum Operationsgebiet zu erhalten, über diese Zugänge werden die Operationsinstrumente sowie ein schlauchartiges Gerät mit einer Kamera an der Spitze eingeführt und der Bauch mit Kohlendioxid gefüllt, um eine bessere Sicht zu erhalten.</p>
+  <p><strong>Mit Hilfe dieser Instrumente</strong> werden wir den Bruchinhalt in den Bauchraum zurückschieben und die Bruchlücke mit einem speziellen Kunststoffnetz abdecken. Dieses Netz wird anschließend stabil mit dem körpereigenen Bauchfell bedeckt und vernäht.</p>
+  <p>Bitte beachten Sie, dass wir bei unvorhersehbaren Schwierigkeiten oder starken Blutungen jederzeit auf die offene Methode wechseln müssen.</p>
+  <p><strong>Am Ende wird</strong> das Gas wieder aus dem Bauchraum abgelassen, die Instrumente werden entfernt und die kleinen Hautschnitte vernäht. Gegebenenfalls legen wir für kurze Zeit einen Drainageschlauch ein, um Blut und Wundflüssigkeit abfließen zu lassen.</p>
+  <p>Zum Schluss wird ein steriler Verband angelegt, um die Wundheilung zu unterstützen und Infektionen zu vermeiden, und Sie bleiben danach 3 bis 5 Tage zur Überwachung bei uns.</p>
+
+  <h4>Das Thema Komplikationen</h4>
+  <p><strong>Jetzt reden wir über die möglichen Risiken: Zu den allgemeinen Risiken gehören Blutungen, Schmerzen, allergische Reaktionen oder Infektionen. Bei dieser Operation können zusätzlich folgende spezielle Risiken auftreten:</strong></p>
+  <ul class="compact">
+    <li>Verletzungen von Darm, Blase, Samenleitern oder Blutgefäßen.</li>
+    <li><strong>Nervenschäden:</strong> Taubheitsgefühl oder chronische Schmerzen in der Leiste (Ilioinguinalis-Syndrom).</li>
+    <li><strong>Hodenschrumpfung:</strong> Durch Verletzung der Gefäße kann der Hoden schrumpfen oder absterben.</li>
+    <li><strong>Wundkomplikationen:</strong> Infektionen, Serome (Flüssigkeitsansammlungen) oder ein Platzbauch.</li>
+    <li><strong>Rückfall (Rezidiv):</strong> Der Bruch kann erneut auftreten, besonders bei zu früher Belastung.</li>
+    <li><strong>Laparoskopische Risiken:</strong> Schulterschmerzen, Hautknistern oder seltener eine Gasembolie durch Kohlendioxid.</li>
+    <li><strong>Kompartment-Syndrom:</strong> Erhöhter Bauchinnendruck bei der Rücklagerung sehr großer Brüche.</li>
+  </ul>
+  <p><strong>Frau/Herr [Name], ich weiß, dass diese Risiken etwas beängstigend klingen können. Das bedeutet nicht, dass wir diese Komplikationen erwarten, sie können jedoch nicht vollständig ausgeschlossen werden. Zudem ist unser Team gut vorbereitet, um im Bedarfsfall schnell reagieren zu können.</strong></p>
+
+  <h4>Bezüglich der Vorbereitung</h4>
+  <p><strong>Vor der Operation müssen Sie</strong> nüchtern sein (8 Std. vorher nicht essen/rauchen, 2 Std. vorher nicht trinken).</p>
+  <p><strong>Sie müssen auch</strong> uns sagen, welche Medikamente Sie nehmen, besonders Blutverdünner oder Metformin gegen Diabetes. Diese dürfen nur nach Rücksprache abgesetzt werden.</p>
+  <p><strong>Nach der Operation</strong> dürfen Sie ca. 4 Stunden nichts essen/trinken. Zur Vermeidung eines erneuten Bruchs dürfen Sie für <strong>3 bis 4 Wochen nichts Schweres über 5 kg heben</strong>. Sie dürfen kein Auto fahren und keine wichtigen Entscheidungen treffen. Informieren Sie uns sofort bei Fieber über 38°C, starken Schmerzen oder Blutungen.</p>
+
+  <h4>Abschluss</h4>
+  <p>Das war von meiner Seite alles. Haben Sie alles verstanden? Haben Sie noch Fragen? Wenn Sie einverstanden sind, bitte ich Sie, hier zu unterschreiben. Vielen Dank und auf Wiedersehen.</p>
+</section>
+
+<h2 class="section-title" id="fall-6">Fallpräsentation: Inguinalhernie</h2>
+<article class="case">
+  <h4>Herr Frank Thomann</h4>
+  <p>Schönen guten Tag, Herr Chefarzt. Ich möchte Ihnen gerne einen neuen Patienten, Herrn Frank Thomann, vorstellen. Darf ich? Vielen Dank.</p>
+  <p>Es handelt sich um einen 48-jährigen Patienten, geboren am 14.08.1977, 80 Kilogramm schwer und 1,80 Meter groß, der sich mit einer hausärztlichen Einweisung wegen seit 4 Tagen nach dem Heben eines elektronischen Motorrads bestehender, plötzlich aufgetretener, dolenter rechtsseitiger Schwellung im Leistenbereich in der Rettungsstelle vorstellte. Der Patient befand sich in einem leicht reduzierten Allgemeinzustand und war vollständig orientiert.</p>
+  <p><span class="field">Zur aktuellen Anamnese:</span> Er berichtet, dass die Schwellung sich nach einem Tag von selbst zurückgezogen hätte, jedoch seit gestern persistierend sei. Die Schmerzintensität im Leistenbereich wurde mit 5 von 10 bewertet. Die Schmerzen seien stechend und ohne Ausstrahlung. Er teilte mit, dass die Schmerzen bei Bewegung, Druck und Husten schlimmer geworden seien und beim Ausruhen oder Hinlegen nachlassen würden. Begleitend klagte er über Nausea, zweimalige unblutige Emesis. Die Fragen nach Fieber, Diarrhö oder Obstipation wurden verneint.</p>
+  <p><span class="field">V.A:</span> Die Vegetative Anamnese war unauffällig bis auf Inappetenz seit gestern.</p>
+  <p><span class="field">V.E:</span> Bekannte und relevante Vorerkrankungen sind arterielle Hypertonie seit 10 Jahren behandelt mit Bisoprolol 2,5 mg.</p>
+  <p><span class="field">O.P:</span> Im Alter von 14 Jahren erfolgte eine komplikationslose Appendektomie.</p>
+  <p><span class="field">Medik:</span> In Bezug auf die Medikation nehme er Bisoprolol 2,5 mg einmal pro Tag ein.</p>
+  <p><span class="field">Allergien/Unverträglichkeiten:</span> Bezüglich Allergien und Unverträglichkeiten berichtete Herr Thomann über eine Birkenpollenallergie, die bei Bedarf mit Augentropfen behandelt werde.</p>
+  <p><span class="field">Impfung:</span> Er sei gegen alle Kinderkrankheiten geimpft. Die Frage nach einer Reise in den letzten Monaten wurde verneint.</p>
+  <p><span class="field">G.M:</span> Er sei aktiver Raucher mit 40 Packungsjahren.</p>
+  <p><span class="field">Alkohol:</span> trinke wöchentlich zwei Flaschen Bier.</p>
+  <p><span class="field">Drogen:</span> Die Frage nach dem Drogenkonsum wurde verneint.</p>
+  <p><span class="field">S.A:</span> Herr Thomann sei Ingenieur, er lebt mit seiner Frau und hat 2 Kinder.</p>
+  <p><span class="field">F.A:</span> Die Familienanamnese ergab, dass sein Vater an einer Leistenhernie gelitten habe.</p>
+  <p><span class="field">Verdacht &amp; Weiteres Vorgehen:</span> Aufgrund der Symptomatik habe ich den Verdacht auf eine Inguinalhernie rechts. Differentialdiagnostisch kommen eine Schenkelhernie, eine Lymphknotenschwellung, ein Leistenabszess sowie urologische Ursachen wie eine Hydrozele oder Hodentumoren in Betracht.</p>
+  <p>Beim Verdacht auf eine Leistenhernie führe ich zunächst eine orientierende körperliche Untersuchung durch. Bei der Palpation beurteile ich die Reponierbarkeit sowie den Hustenanprall im Leistenkanal, bei der Inspektion achte ich auf Rötungen oder Asymmetrien im Stehen und Liegen, und bei der Auskultation höre ich gezielt auf Darmgeräusche innerhalb der Schwellung.</p>
+  <p>Anschließend erfolgt die Labordiagnostik: kleines Blutbild, CRP, BSG sowie die Elektrolyte, um Entzündungszeichen bei einer möglichen Inkarzeration auszuschließen. Bildgebend beginne ich mit einer dynamischen Sonographie. Zur weiteren Abklärung ziehe ich ergänzend ein CT oder MRT hinzu.</p>
+  <p><span class="field">Therapie:</span> Symptomatisch beginne ich mit einer Schmerztherapie und ggf. einem vorsichtigen Repositionsversuch, sofern keine Zeichen einer Inkarzeration vorliegen. Kausal therapiere ich durch operative Maßnahmen, z. B. ein netzbasiertes Verfahren nach Lichtenstein oder ein minimalinvasives Verfahren (TAPP/TEP). Bei inkarzerierten Verläufen erwäge ich eine sofortige stationäre Aufnahme und notfallmäßige operative Versorgung.</p>
+</article>
+
+<h2 class="section-title" id="aufkl-7">7 – Tonsillitis: Aufklärung</h2>
+<section class="aufklaerung">
+  <p>Herr / Frau [Name], Ihre Beschwerden sprechen stark für eine <strong>chronische Mandelentzündung</strong>. Das bedeutet, dass eine Operation erforderlich ist bzw. empfohlen wird.</p>
+  <p>Ich werde Ihnen alle wichtigen Informationen dazu geben, damit Sie eine informierte Entscheidung treffen können. Wenn Sie etwas nicht verstehen oder Fragen haben, unterbrechen Sie mich bitte. Ich erkläre es Ihnen gern noch einmal. Sind Sie damit einverstanden? Vielen Dank.</p>
+  <p>Herr xx, die Gaumenmandeln sind ein Teil des körpereigenen Abwehrsystems, aber wenn sie ständig entzündet sind, schwächt das Immunsystem. Es besteht hier die Möglichkeit, diese Krankheit konservativ zu behandeln. Das heißt nur mit Medikamenten und ohne Operation. Aber leider ist die konservative Behandlung eine vorübergehende Lösung. Ohne Operation kehren die Beschwerden immer wieder zurück, außerdem können Komplikationen auftreten wie zum Beispiel entzündliche Erkrankungen des Herzens, der Gefäße oder Nieren sowie rheumatische Erkrankungen. Deshalb ist die Operation die beste bzw. sicherste Behandlungsoption, um diese Folgeerkrankungen zu verhindern.</p>
+  <p><strong>Nun möchte ich über den Ablauf der Operation sprechen und dann werden wir die möglichen Risiken besprechen. Anschließend werde ich Sie auch darüber aufklären, was Sie vor und nach der Operation beachten müssen.</strong></p>
+  <p>Ich erkläre Ihnen nun Schritt für Schritt, wie der Eingriff abläuft. Die Operation dauert in der Regel weniger als 20 Minuten und erfolgt unter <strong>Vollnarkose</strong>. Das bedeutet, dass Sie in einen künstlichen Tiefschlaf versetzt werden, sodass Sie während der gesamten Operation keine Schmerzen spüren.</p>
+  <p><strong>Zunächst</strong> wird Ihr Kopf rückwärts gebeugt und die Zunge mithilfe eines Zungenspatels nach unten gedrückt.</p>
+  <p><strong>Dann</strong> werden die vergrößerten Mandeln vorsichtig ausgelöst und entfernt. <strong>Anschließend</strong> werden die Mandeln zur histologischen sowie bakteriologischen Untersuchung eingeschickt.</p>
+  <p><strong>Zum Schluss</strong> wird die Blutung gestillt. Nach der Operation sollten Sie damit rechnen, dass Sie 3 bis 5 Tage bei uns zur Überwachung bleiben, damit wir sicherstellen, dass alles in Ordnung ist.</p>
+  <p><strong>Jetzt reden wir über die möglichen Risiken: Zu den allgemeinen Risiken gehören Blutungen, Schmerzen, allergische Reaktionen oder Infektionen. Bei dieser Operation können zusätzlich folgende spezielle Risiken auftreten:</strong></p>
+  <p>Es ist möglich, dass Sie nach der OP starke <strong>Hals- oder Ohrschmerzen</strong> sowie Schluckbeschwerden haben. Das ist normal und wir geben Ihnen Schmerzmittel dagegen. Ein spezielles Risiko sind <strong>Zungennervenschäden</strong>, die vorübergehend zu Geschmacksstörungen, Taubheitsgefühl oder Bewegungseinschränkungen führen können.</p>
+  <p class="note">Anmerkung: Falls Sie Angst um Ihre Stimme haben, kann ich das sehr gut verstehen. Aber dieses Risiko ist extrem selten und noch nie bei uns passiert.</p>
+  <p>Zudem kann es zu Verletzungen der <strong>Zähne</strong>, des weichen <strong>Gaumens (Palatum)</strong> oder des <strong>Gaumenzäpfchens (Uvula)</strong> kommen.</p>
+  <p>Sehr selten kann die Sprache vorübergehend einen nasalen Klang annehmen.</p>
+  <p>Das größte Risiko sind <strong>Nachblutungen</strong> aus dem Rachen in den ersten Tagen, die in massiven Fällen lebensbedrohlich sein können und eine operative Blutstillung erfordern könnten.</p>
+  <p><strong>Herr [Name], ich weiß, dass die genannten Risiken etwas beängstigend klingen können, aber bitte machen Sie sich keine Sorgen. Das bedeutet nicht, dass wir diese Komplikationen erwarten. Sie können jedoch nicht vollständig ausgeschlossen werden. Zudem ist unser Team gut vorbereitet, um im Bedarfsfall schnell reagieren zu können.</strong></p>
+  <p>Außerdem müssen Sie vor und nach der OP einige Dinge beachten.</p>
+  <p><strong>Vor der Operation</strong> müssen Sie nüchtern sein: Das heißt, 8 Stunden vorher nichts essen und nicht rauchen sowie bis zu 2 Stunden vorher nichts mehr trinken.</p>
+  <p><strong>Vor der Untersuchung müssen Sie auch</strong> uns sagen, welche Medikamente Sie nehmen, besonders Blutverdünner oder Metformin gegen Diabetes. Diese dürfen nur nach Rücksprache abgesetzt werden.</p>
+  <p><strong>Nach der Operation</strong> müssen Sie für etwa 4 Stunden nüchtern bleiben. Danach nehmen Sie in den ersten Tagen nur weiche und flüssige Speisen zu sich. Verzichten Sie für etwa 2 Wochen auf Bohnenkaffee, scharfe oder säurehaltige Speisen, Alkohol und Tabak. Vermeiden Sie zudem jede Art von Kontakt mit Wärmequellen (z. B. heißes Duschen oder Sonne). Bitte informieren Sie uns sofort bei Fieber über 38°C, Blutung aus dem Mund, Bluthusten oder Teerstuhl.</p>
+  <p><strong>Von meiner Seite war das alles. Haben Sie alles verstanden? Haben Sie noch Fragen? Wenn Sie keine Fragen haben und mit der Durchführung der Operation einverstanden sind, bitte ich Sie hier zu unterschreiben. Vielen Dank und auf Wiedersehen.</strong></p>
+</section>
+
+<h2 class="section-title" id="fall-7">Fallpräsentation: Tonsillitis</h2>
+<article class="case">
+  <h4>Frau Thea Eichschädt</h4>
+  <p>Schönen guten Tag, Herr Chefarzt. Ich möchte Ihnen gerne eine neue Patientin, Frau Thea Eichschädt, vorstellen. Darf ich? Vielen Dank.</p>
+  <p>Es handelt sich um eine 51-jährige Patientin, geboren am 21.03.1972, 66 Kilogramm schwer und 1,66 Meter groß, die sich mit einer hausärztlichen Einweisung wegen seit 2 Jahren rezidivierender, bilateraler, antibiotika- sowie analgetikapflichtiger Tonsillitis in der Rettungsstelle vorstellte. Die Patientin befand sich in einem guten Allgemeinzustand und war vollständig orientiert.</p>
+  <p><span class="field">Zur aktuellen Anamnese:</span> Sie berichtete, dass die Beschwerden in den letzten 2 Jahren ca. 6 Mal aufgetreten seien und dass sie die letzte Episode vor 3 Monaten gehabt habe, die 8 Tage gedauert habe. Momentan sei die Patientin beschwerdefrei. Begleitend klagte sie während der Episoden über Foetor ex ore, Fieber von 39 °C sowie gelegentliche Diarrhö wegen der Antibiotikaeinnahme. Zudem berichtete sie über zervikale Lymphadenopathie beidseits sowie Cephalgie. Die Fragen nach Dyspnoe, Dysphonie, Odynophagie sowie Gewichtsveränderungen wurden verneint.</p>
+  <p><span class="field">V.A:</span> Die Vegetative Anamnese war unauffällig bis auf Inappetenz und Fieber während der Episoden.</p>
+  <p><span class="field">V.E:</span> Bekannte und relevante Vorerkrankungen sind eine Hypothyreose, sowie eine arterielle Hypertonie seit 3 Jahren.</p>
+  <p><span class="field">O.P:</span> Vor 3 Jahren erfolgte eine komplikationslose Appendektomie.</p>
+  <p><span class="field">Medik:</span> In Bezug auf die Medikation nehme sie L-Thyroxin 75 mcg und Ramipril 2,5 mg einmal pro Tag ein.</p>
+  <p><span class="field">Allergien/Unverträglichkeiten:</span> Bezüglich Allergien und Unverträglichkeiten berichtete Frau Eichschädt über eine Gräserallergie, die sich mit Rhinitis und Exanthem äußert.</p>
+  <p><span class="field">Impfung:</span> Sie sei vollständig geimpft. Die Reiseanamnese ergab keinen Auslandsaufenthalt.</p>
+  <p><span class="field">G.M:</span> Sie sei aktive Raucherin mit 7,5 Packungsjahren.</p>
+  <p><span class="field">Alkohol:</span> trinke täglich zwei Gläser Bier.</p>
+  <p><span class="field">Drogen:</span> Die Frage nach dem Drogenkonsum wurde verneint.</p>
+  <p><span class="field">S.A:</span> Frau Eichschädt sei Callcenter-Agentin, verheiratet und habe 4 Kinder.</p>
+  <p><span class="field">F.A:</span> Die Familienanamnese ergab, dass ihre Mutter an einem Apoplex und der Vater an Lymphdrüsenkrebs verstorben seien.</p>
+  <p><span class="field">Verdacht &amp; Weiteres Vorgehen:</span> Aufgrund der Symptomatik habe ich den Verdacht auf eine chronische Tonsillitis. Differentialdiagnostisch kommen Scharlach, Mononucleosis infectiosa, Diphtherie sowie ein Tonsillenkarzinom in Betracht.</p>
+  <p>Beim Verdacht auf eine chronische Tonsillitis führe ich zunächst eine orientierende körperliche Untersuchung durch. Dabei achte ich insbesondere auf typische klinische Zeichen wie eine starke Rötung und Schwellung der Tonsillen sowie Fibrinbeläge. Bei der Palpation beurteile ich die zervikalen Lymphknoten, bei der Inspektion achte ich auf den Lokalbefund der Tonsillen und den Waldeyer-Rachenring, und bei der Auskultation höre ich gezielt die Lunge ab.</p>
+  <p>Anschließend erfolgt die Labordiagnostik: kleines Blutbild, CRP, BSG sowie die Elektrolyte, zusätzlich Antistreptolysintiter und Rachenabstrich mit Bakterienkultur oder Streptokokken-Schnelltest. Bildgebend beginne ich mit einer Sonographie des Halses.</p>
+  <p><span class="field">Therapie:</span> Symptomatisch beginne ich mit Analgetika und ausreichender Flüssigkeitssubstitution. Kausal therapiere ich im akuten Schub durch eine Antibiotikatherapie. Falls notwendig, plane ich aufgrund der Rezidive chirurgische Maßnahmen wie eine Tonsillektomie. Zusätzlich erfolgt eine gezielte Therapie der Grunderkrankung, z. B. Nikotinkarenz und Reduktion des Alkoholkonsums.</p>
+</article>
+
+<h2 class="section-title" id="aufkl-8">8 – Vergrößerung eines Lymphknotens</h2>
+<section class="aufklaerung">
+  <p>Herr / Frau [Name], Ihre Beschwerden sprechen stark für eine <strong>Vergrößerung eines Lymphknotens</strong> (Lymphadenopathie). Das bedeutet, dass eine Operation erforderlich ist bzw. empfohlen wird.</p>
+  <p>Ich werde Ihnen alle wichtigen Informationen dazu geben, damit Sie eine informierte Entscheidung treffen können. Wenn Sie etwas nicht verstehen oder Fragen haben, unterbrechen Sie mich bitte. Ich erkläre es Ihnen gern noch einmal. Sind Sie damit einverstanden? Vielen Dank.</p>
+  <p>Herr xxx, die Lymphknoten gehören zum Abwehrsystem und filtern die <strong>Gewebeflüssigkeit</strong>. Sie vergrößern sich oft als <strong>erste</strong> Station bei Viren, Bakterien oder <strong>Tumorzellen</strong>. <strong>Schwellungen</strong> im Halsbereich sind häufig <strong>Lymphknotenvergrößerungen</strong>. Sie können entweder <strong>gutartige</strong> Geschwülste oder bösartige Veränderungen sein. Um <strong>dies</strong> sicherstellen zu können, müssen wir eine operative <strong>Lymphknotenentfernung</strong> durchführen. Es ist nicht nur eine Behandlungsoption, sondern auch eine Untersuchungsmethode, <strong>um</strong> bösartige Veränderungen schnell zu erkennen oder sicher auszuschließen.</p>
+  <p><strong>Nun möchte ich über den Ablauf der Operation sprechen und dann werden wir die möglichen Risiken besprechen. Anschließend werde ich Sie auch darüber aufklären, was Sie vor und nach der Operation beachten müssen.</strong></p>
+  <p>Die Operation dauert in der Regel weniger als eine halbe Stunde und erfolgt entweder in örtlicher Betäubung oder unter <strong>Allgemeinnarkose, damit sie während der gesamten Operation keine Schmerzen spüren.</strong></p>
+  <p><strong>Zunächst</strong> wird die Schwellung durch einen Hautschnitt unter Schonung von Nerven und Blutgefäßen freigelegt.</p>
+  <p><strong>Dann</strong> wird der Knoten entweder vollständig entfernt (<strong>Exstirpation</strong>) oder es wird nur eine Probe entnommen. Falls ein Abszess vorliegt, wird dieser eröffnet (<strong>Inzision</strong>) und Eiter abgeleitet. <strong>Anschließend</strong> wird der Lymphknoten zur mikroskopischen Untersuchung ins Labor geschickt. Das Ergebnis liegt meist nach 3 bis 7 Arbeitstagen vor.</p>
+  <p><strong>Zum Schluss</strong> wird die Wunde mit einer kosmetischen Hautnaht vernäht. Gegebenenfalls werden <strong>Drainageschläuche eingelegt</strong>, um Blut oder Wundsekret abfließen zu lassen. Sie sollten damit rechnen, nach der Operation noch einen Tag zur Überwachung bei uns zu bleiben.</p>
+  <p><strong>Jetzt reden wir über die möglichen Risiken: Zu den allgemeinen Risiken gehören Blutungen, Schmerzen, allergische Reaktionen oder Infektionen. Bei dieser Operation können zusätzlich folgende spezielle Risiken auftreten:</strong></p>
+  <p><strong>Nervenstörungen</strong>. Dies kann den Schulterheber-Nerv (hängende Schulter), Armnerven (Teillähmung), den Stimmbandnerv (Heiserkeit) oder den Gesichtsnerv (hängender Mundwinkel) betreffen. Auch das <strong>Horner-Syndrom</strong> (enge Pupille/Lidspalt) ist möglich.</p>
+  <p>Sehr selten sind Verletzungen großer Blutgefäße, die im schlimmsten Fall zu einem Schlaganfall führen können.</p>
+  <p>Es kann zur Bildung einer <strong>Lymphfistel</strong> kommen, aus der Lymphflüssigkeit austritt, oder zu einem <strong>Pneumothorax</strong> (Lufteintritt in die Brusthöhle) bei Verletzung des Rippenfells.</p>
+  <p><strong>Herr [Name], ich weiß, dass die genannten Risiken etwas beängstigend klingen können, aber bitte machen Sie sich keine Sorgen. Das bedeutet nicht, dass wir diese Komplikationen erwarten. Sie können jedoch nicht vollständig ausgeschlossen werden. Zudem ist unser Team gut vorbereitet, um im Bedarfsfall schnell reagieren zu können.</strong></p>
+  <p>Außerdem müssen Sie vor und nach der OP einige Dinge beachten.</p>
+  <p><strong>Vor der Operation</strong> müssen Sie (bei Vollnarkose) nüchtern sein: 8 Stunden vorher nichts essen/rauchen, 2 Stunden vorher nichts trinken.</p>
+  <p><strong>Sie müssen auch</strong> uns sagen, welche Medikamente Sie nehmen, besonders Blutverdünner oder Metformin gegen Diabetes. Diese dürfen nur nach Rücksprache abgesetzt werden.</p>
+  <p><strong>Nach der Operation</strong> sollten Sie für 2 Wochen kein Wasser an die Wunde bringen und ruckartige Kopfbewegungen vermeiden. Falls Sie eine Vollnarkose erhalten, müssen Sie sich abholen lassen und dürfen 24 Stunden nicht aktiv am Straßenverkehr teilnehmen oder wichtige Entscheidungen treffen. Bitte informieren Sie uns sofort bei Atemnot, Nachblutungen, Bewegungseinschränkungen der Schulter oder Fieber.</p>
+  <p><strong>Von meiner Seite war das alles. Haben Sie alles verstanden? Haben Sie noch Fragen? Wenn Sie keine Fragen haben und mit der Durchführung der Operation einverstanden sind, bitte ich Sie hier zu unterschreiben. Vielen Dank und auf Wiedersehen.</strong></p>
+</section>
+
+<h2 class="section-title" id="fall-8">Fallpräsentation: Lymphadenopathie</h2>
+<article class="case">
+  <h4>Herr Martin Winter</h4>
+  <p>Schönen guten Tag, Herr Chefarzt. Ich möchte Ihnen gerne einen neuen Patienten, Herrn Martin Winter, vorstellen. Darf ich? Vielen Dank.</p>
+  <p>Es handelt sich um einen 64-jährigen Patienten, geboren am 18.07.1958, 73 Kilogramm schwer und 1,78 Meter groß, der sich mit einer hausärztlichen Einweisung wegen seit 4 Monaten bestehender, progredienter, rechtsseitiger, zervikaler Schwellung in der Rettungsstelle vorstellte. Der Patient befand sich in einem guten Allgemeinzustand und war vollständig orientiert.</p>
+  <p><span class="field">Zur aktuellen Anamnese:</span> Er berichtet, dass die Schwellung indolent, fest und unverschieblich sei. Er teilte mit, dass er eine ähnliche Schwellung in der Leiste bemerkt habe. Begleitend klagte er über Abgeschlagenheit. Die Fragen nach B-Symptomatik, Husten, Dyspnoe, Halsschmerzen, Dysphonie sowie vorherigen Infektionen und Haustieren wurden verneint.</p>
+  <p><span class="field">V.A:</span> Die vegetative Anamnese war unauffällig bis auf Abgeschlagenheit.</p>
+  <p><span class="field">V.E:</span> Bekannte und relevante Vorerkrankungen sind arterielle Hypertonie seit 15 Jahren, die mit Bisoprolol 2,5 mg eingestellt ist.</p>
+  <p><span class="field">O.P:</span> Dem Patienten zufolge sei er nie operiert worden.</p>
+  <p><span class="field">Medik:</span> In Bezug auf die Medikation nehme er Bisoprolol 2,5 mg einmal pro Tag ein.</p>
+  <p><span class="field">Allergien/Unverträglichkeiten:</span> Bezüglich Allergien und Unverträglichkeiten berichtete Herr Winter über eine Birkenpollenallergie.</p>
+  <p><span class="field">Impfung:</span> Er sei vollständig geimpft. Die Reiseanamnese ergab keinen Auslandsaufenthalt.</p>
+  <p><span class="field">G.M:</span> Er sei aktiver Raucher mit 50 Packungsjahren.</p>
+  <p><span class="field">Alkohol:</span> Der Patient berichtete, dass er täglich ein bis zwei Gläser Kirschlikör trinke.</p>
+  <p><span class="field">Drogen:</span> Die Frage nach dem Drogenkonsum wurde verneint.</p>
+  <p><span class="field">S.A:</span> Herr Winter sei Kassierer im Baumarkt, verheiratet und habe einen Sohn.</p>
+  <p><span class="field">F.A:</span> Die Familienanamnese ergab, dass sein Vater an einer Leistenhernie gelitten habe.</p>
+  <p><span class="field">Verdacht &amp; Weiteres Vorgehen:</span> Aufgrund der Symptomatik habe ich den Verdacht auf eine Lymphadenopathie unklarer Genese. Differentialdiagnostisch kommen maligne Erkrankungen wie Morbus Hodgkin, Non-Hodgkin-Lymphome oder Metastasen eines Bronchialkarzinoms sowie benigne Ursachen wie eine Lymphadenitis bei Tuberkulose oder Sarkoidose in Betracht.</p>
+  <p>Beim Verdacht auf eine Lymphadenopathie unklarer Genese führe ich zunächst eine orientierende körperliche Untersuchung durch. Bei der Palpation beurteile ich alle Lymphknotenstationen sowie das Abdomen hinsichtlich einer Hepatosplenomegalie, bei der Inspektion achte ich auf den Waldeyer-Rachenring und den Zahnstatus, und bei der Auskultation höre ich gezielt auf Rasselgeräusche der Lunge.</p>
+  <p>Anschließend erfolgt die Labordiagnostik: kleines Blutbild, CRP, BSG sowie LDH und die Elektrolyte. Je nach Fragestellung fordere ich zusätzlich Leberenzyme, Schilddrüsenhormone sowie eine Serologie auf HIV, EBV und Toxoplasmose an. Bildgebend beginne ich mit einer Sonographie von Hals und Abdomen. Zur weiteren Abklärung ziehe ich ergänzend ein CT-Thorax/Abdomen oder eine Panendoskopie mit Biopsieentnahme hinzu.</p>
+  <p><span class="field">Therapie:</span> Symptomatisch beginne ich bei Bedarf mit einer supportiven Behandlung. Falls sich der Verdacht auf ein Lymphom bestätigt, plane ich onkologische Maßnahmen wie eine Chemotherapie oder Radiotherapie nach der Ann-Arbor-Klassifikation. Zusätzlich erfolgt eine gezielte Therapie der Grunderkrankung, z. B. Nikotinkarenz und Optimierung der Blutdruckeinstellung.</p>
+</article>
+
+</main>
+
+<footer class="page-footer">
+  FSP-Rostock-Vorbereitung — Teil 1: Patientenvorstellung &amp; Aufklärung | <a href="index.html">Zurück zum Hauptmenü</a>
+</footer>
+<a href="#toc" class="toc-float-btn" id="tocBtn">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+  Inhaltsverzeichnis
+</a>
+
+<script>
+  const tocBtn = document.getElementById('tocBtn');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) {
+      tocBtn.classList.add('visible');
+    } else {
+      tocBtn.classList.remove('visible');
+    }
+  });
+</script>
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>

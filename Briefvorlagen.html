@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSP Rostock – Arztbrief-Vorlagen</title>
+<style>
+  :root {
+    --primary: #1b4965;
+    --accent: #5fa8d3;
+    --bg: #f7f9fb;
+    --card: #ffffff;
+    --border: #d9e2ec;
+    --text: #1f2937;
+    --muted: #5b6b7c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    line-height: 1.6;
+  }
+  header.page-header {
+    background: var(--primary);
+    color: white;
+    padding: 24px 20px;
+  }
+  header.page-header h1 {
+    margin: 0 0 6px 0;
+    font-size: 1.6rem;
+  }
+  header.page-header p {
+    margin: 0;
+    opacity: 0.85;
+    font-size: 0.95rem;
+  }
+  .back-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #cfe8ff;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .back-link:hover { text-decoration: underline; }
+
+  main {
+    max-width: 950px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+
+  nav.toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 30px;
+  }
+  nav.toc h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: var(--primary);
+  }
+  nav.toc ul {
+    columns: 2;
+    -webkit-columns: 2;
+    padding-left: 20px;
+    margin: 0;
+  }
+  nav.toc li { margin-bottom: 6px; }
+  nav.toc a { color: var(--primary); text-decoration: none; font-size: 0.92rem; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  h2.section-title {
+    color: var(--primary);
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 6px;
+    margin-top: 46px;
+  }
+  h3.sub-title {
+    color: var(--primary);
+    margin-top: 30px;
+    font-size: 1.15rem;
+  }
+
+  article.letter, section.template {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+    margin-bottom: 22px;
+  }
+  article.letter h4 {
+    margin-top: 0;
+    color: var(--primary);
+    font-size: 1.05rem;
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 8px;
+  }
+  .letter-meta {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  strong.field { color: var(--primary); }
+  .placeholder {
+    background: #fff3cd;
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+  ul.compact { padding-left: 20px; }
+  ul.compact li { margin-bottom: 4px; }
+
+  .baustein {
+    background: #eef6fb;
+    border-left: 4px solid var(--accent);
+    padding: 10px 16px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+  }
+
+  .method-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .method-card h4 { margin: 0 0 6px 0; color: var(--primary); }
+
+  .closing {
+    margin-top: 14px;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  .note {
+    font-style: italic;
+    color: var(--muted);
+    background: #f7f9fb;
+    border-left: 3px solid var(--border);
+    padding: 8px 14px;
+    margin: 10px 0;
+    font-size: 0.92rem;
+  }
+
+  footer.page-footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  .toc-float-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(27,73,101,0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 999;
+    transition: background 0.15s, transform 0.15s;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .toc-float-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .toc-float-btn:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+  }
+  .toc-float-btn svg { width: 16px; height: 16px; }
+
+  @media (max-width: 600px) {
+    .toc-float-btn { bottom: 16px; right: 16px; padding: 10px 16px; font-size: 0.82rem; }
+  }
+
+  @media (max-width: 600px) {
+    nav.toc ul { columns: 1; }
+  }
+</style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b4965">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FSP Rostock">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  .home-btn {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    background: #1b4965;
+    color: #ffffff;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 1000;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .home-btn:hover { background: #5fa8d3; transform: scale(1.08); }
+  .home-btn svg { width: 20px; height: 20px; }
+  @media (max-width: 600px) {
+    .home-btn { top: 10px; left: 10px; width: 38px; height: 38px; }
+    .home-btn svg { width: 18px; height: 18px; }
+  }
+</style>
+</head>
+<body>
+<a href="index.html" class="home-btn" title="Zum Hauptmenü" aria-label="Zum Hauptmenü">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+</a>
+
+
+<header class="page-header">
+  <h1>FSP Rostock – Arztbrief-Vorlagen &amp; korrigierte Musterbriefe</h1>
+  <p>Teil 1: Patientenvorstellung – Dokumentation (Arztbriefe)</p>
+  <a class="back-link" href="index.html">← Zurück zum Hauptmenü</a>
+</header>
+
+<main>
+
+<nav class="toc" id="toc">
+  <h2>Inhaltsverzeichnis</h2>
+  <ul>
+    <li><a href="#vorlage-a">Vorlage A – Untersuchung/Endoskopie</a></li>
+    <li><a href="#vorlage-b">Vorlage B – Operation</a></li>
+    <li><a href="#bausteine">Feste Bausteine (auswendig lernen)</a></li>
+    <li><a href="#lernmethoden">Lernmethoden für das Examen</a></li>
+    <li><a href="#brief-1">6.1 Urethrozystoskopie</a></li>
+    <li><a href="#brief-2">6.2 Leistenhernie</a></li>
+    <li><a href="#brief-3">6.3 RDS / Koloskopie</a></li>
+    <li><a href="#brief-4">6.4 ÖGD (Ulkuskrankheit)</a></li>
+    <li><a href="#brief-5">6.5 Tonsillektomie</a></li>
+    <li><a href="#brief-6">6.6 Zervikale Lymphadenopathie</a></li>
+    <li><a href="#brief-7">6.7 Cholezystitis</a></li>
+    <li><a href="#brief-8">6.8 Appendizitis</a></li>
+  </ul>
+</nav>
+
+<h2 class="section-title" id="vorlage-a">Vorlage A: Untersuchung / Endoskopie</h2>
+<section class="template">
+  <p>(ÖGD, Koloskopie, Zystoskopie)</p>
+  <p><span class="placeholder">[Ort]</span>, den <span class="placeholder">[Datum]</span></p>
+  <p>Sehr geehrte/r Herr/Frau Dr. <span class="placeholder">[Name]</span>,</p>
+  <p>nachfolgend berichten wir über Ihre/n Patientin/Patienten, Frau/Herrn <span class="placeholder">[Name]</span>, geb. am <span class="placeholder">[Datum]</span>, die/der sich vom <span class="placeholder">[Datum]</span> bis zum <span class="placeholder">[Datum]</span> in unserer stationären Behandlung befand.</p>
+
+  <p><strong class="field">Diagnose:</strong></p>
+  <ul class="compact"><li><span class="placeholder">[Leitsymptom/Verdachtsdiagnose]</span> (ggf. ICD-10)</li></ul>
+
+  <p><strong class="field">Nebendiagnosen:</strong></p>
+  <ul class="compact">
+    <li><span class="placeholder">[chron. Erkrankung 1]</span></li>
+    <li><span class="placeholder">[chron. Erkrankung 2]</span></li>
+    <li>Nikotinabusus (<span class="placeholder">[X]</span> pack years) / Allergie</li>
+  </ul>
+
+  <p><strong class="field">Therapie:</strong></p>
+  <ul class="compact"><li><span class="placeholder">[Diagnostische Untersuchung]</span> am <span class="placeholder">[Datum]</span></li></ul>
+
+  <p><strong class="field">Histologie:</strong></p>
+  <ul class="compact"><li>Ergebnis steht noch aus / wird nachgereicht.</li></ul>
+
+  <p><strong class="field">Anamnese:</strong></p>
+  <p>Die/Der Patient/in stellte sich <span class="placeholder">[mit hausärztlicher Einweisung / in unserer Notaufnahme]</span> wegen seit <span class="placeholder">[Zeitangabe]</span> bestehender, <span class="placeholder">[Charakter]</span>-Beschwerden im Bereich <span class="placeholder">[Lokalisation]</span> vor. Die Schmerzen seien <span class="placeholder">[Charakter]</span>, mit/ohne Ausstrahlung in <span class="placeholder">[Region]</span>, Intensität <span class="placeholder">[X]</span>/10. Des Weiteren berichtete sie/er, dass <span class="placeholder">[Begleitsymptom 1]</span>. Darüber hinaus klagte sie/er über <span class="placeholder">[Begleitsymptom 2]</span>. Die Beschwerden hätten sich bei <span class="placeholder">[Auslöser]</span> verschlimmert und bei <span class="placeholder">[Linderung]</span> gebessert. Die Fragen nach <span class="placeholder">[relevante Negativa: Fieber, B-Symptomatik, Meläna…]</span> wurden verneint. Bis auf <span class="placeholder">[Ausnahme]</span> sei die vegetative Anamnese unauffällig. Die Familien- sowie Sozialanamnese dürfen wir freundlicherweise als Ihnen bekannt voraussetzen.</p>
+
+  <p><strong class="field">Aufnahmebefund:</strong></p>
+  <p>Die/Der <span class="placeholder">[X]</span>-jährige Patient/in befand sich in <span class="placeholder">[leicht reduziertem/gutem]</span> AZ und <span class="placeholder">[normosomem/adipösem]</span> EZ. <span class="placeholder">[Kurzer relevanter Lokalbefund, z. B. Abdomen weich, kein Druckschmerz, Nierenlager frei.]</span></p>
+
+  <p><strong class="field">Diagnostik</strong> (falls Labor/Sono vorliegt):</p>
+  <p>Laborchemisch zeigten sich <span class="placeholder">[CRP/Hb/Entzündungswerte]</span>. Sonographisch <span class="placeholder">[unauffällig / Befund]</span>.</p>
+
+  <p><strong class="field">Therapie und Verlauf:</strong></p>
+  <p>Die stationäre Aufnahme erfolgte wegen des Verdachts auf <span class="placeholder">[Diagnose]</span>. Zur weiteren Abklärung wurde nach entsprechender Vorbereitung sowie ausführlicher Aufklärung am <span class="placeholder">[Datum]</span> eine/ein <span class="placeholder">[Untersuchung]</span> unter Sedierung/Lokalanästhesie durchgeführt. <span class="placeholder">[Endoskopisch/Zystoskopisch]</span> zeigte sich <span class="placeholder">[Befund]</span>. Es wurde/n <span class="placeholder">[Material]</span> entnommen/entfernt und zur histologischen Untersuchung eingeschickt. Die Untersuchung sowie der post-interventionelle Verlauf gestalteten sich komplikationslos. Der Kostaufbau und die Mobilisation wurden von der/dem Patientin/Patienten gut toleriert. Somit konnten wir Frau/Herrn <span class="placeholder">[Name]</span> am <span class="placeholder">[Datum]</span> in gutem Allgemeinzustand in Ihre weitere Betreuung entlassen.</p>
+
+  <p><strong class="field">Empfehlungen:</strong></p>
+  <ul class="compact">
+    <li>Körperliche Schonung für <span class="placeholder">[X]</span> Tage.</li>
+    <li>Nikotin- und Alkoholkarenz.</li>
+    <li>Reichliche Flüssigkeitszufuhr (mind. 2 l/Tag).</li>
+    <li>Wiedervorstellung nach Erhalt der Histologie / bei anhaltenden Beschwerden.</li>
+  </ul>
+
+  <p><strong class="field">Medikation bei Entlassung:</strong></p>
+  <ul class="compact">
+    <li><span class="placeholder">[Neues Medikament, Dosis, Schema]</span></li>
+    <li>Fortsetzung der Hausarztmedikation.</li>
+  </ul>
+
+  <p class="closing">Wir bedanken uns für die gute Zusammenarbeit und stehen Ihnen für Rückfragen gerne zur Verfügung.<br>Mit freundlichen kollegialen Grüßen<br>Assistenzarzt/-ärztin</p>
+</section>
+
+<h2 class="section-title" id="vorlage-b">Vorlage B: Operation</h2>
+<section class="template">
+  <p>(Appendektomie, Cholezystektomie, Hernie, Tonsillektomie, Lymphknoten-Exstirpation)</p>
+  <p><span class="placeholder">[Ort]</span>, den <span class="placeholder">[Datum]</span></p>
+  <p>Sehr geehrte/r Herr/Frau Dr. <span class="placeholder">[Name]</span>,</p>
+  <p>nachfolgend berichten wir über Ihre/n Patientin/Patienten, Frau/Herrn <span class="placeholder">[Name]</span>, geb. am <span class="placeholder">[Datum]</span>, die/der sich vom <span class="placeholder">[Datum]</span> bis zum <span class="placeholder">[Datum]</span> in unserer stationären Behandlung befand.</p>
+
+  <p><strong class="field">Diagnose:</strong></p>
+  <ul class="compact"><li><span class="placeholder">[Hauptdiagnose]</span> (ggf. ICD-10)</li></ul>
+
+  <p><strong class="field">Nebendiagnosen:</strong></p>
+  <ul class="compact">
+    <li><span class="placeholder">[chron. Erkrankung 1]</span></li>
+    <li><span class="placeholder">[chron. Erkrankung 2]</span></li>
+    <li>Nikotinabusus (<span class="placeholder">[X]</span> pack years)</li>
+  </ul>
+
+  <p><strong class="field">Therapie:</strong></p>
+  <ul class="compact"><li><span class="placeholder">[OP-Name]</span> am <span class="placeholder">[Datum]</span></li></ul>
+
+  <p><strong class="field">Histologie:</strong></p>
+  <ul class="compact"><li>Ergebnis steht noch aus.</li></ul>
+
+  <p><strong class="field">Anamnese:</strong></p>
+  <p>Die/Der Patient/in stellte sich wegen seit <span class="placeholder">[Zeitangabe]</span> bestehender, <span class="placeholder">[plötzlich aufgetretener/progredienter]</span>, <span class="placeholder">[Charakter]</span>-Beschwerden im Bereich <span class="placeholder">[Lokalisation]</span> vor. Die Schmerzen seien <span class="placeholder">[Charakter]</span>, mit/ohne Ausstrahlung in <span class="placeholder">[Region]</span>, Intensität <span class="placeholder">[X]</span>/10. Des Weiteren berichtete sie/er, dass <span class="placeholder">[Begleitsymptom]</span>. Die Beschwerden hätten sich bei <span class="placeholder">[Auslöser]</span> verschlimmert und bei <span class="placeholder">[Linderung]</span> gebessert. Die Fragen nach <span class="placeholder">[relevante Negativa]</span> wurden verneint. Bis auf <span class="placeholder">[Ausnahme]</span> sei die vegetative Anamnese unauffällig. Die Vorgeschichte sowie Familien- und Sozialanamnese dürfen wir freundlicherweise als Ihnen bekannt voraussetzen.</p>
+
+  <p><strong class="field">Aufnahmebefund:</strong></p>
+  <p>Die/Der <span class="placeholder">[X]</span>-jährige Patient/in befand sich in <span class="placeholder">[leicht reduziertem/gutem]</span> AZ und <span class="placeholder">[normosomem/adipösem]</span> EZ. <span class="placeholder">[Relevanter Lokalbefund/Untersuchungsbefund, z. B. Loslassschmerz McBurney positiv.]</span></p>
+
+  <p><strong class="field">Diagnostik:</strong></p>
+  <p>Laborchemisch zeigten sich <span class="placeholder">[Leukozytose/CRP-Erhöhung]</span>. Sonographisch <span class="placeholder">[Befund]</span>.</p>
+
+  <p><strong class="field">Therapie und Verlauf:</strong></p>
+  <p>Die stationäre Aufnahme erfolgte wegen des Verdachts auf <span class="placeholder">[Diagnose]</span>. In Zusammenschau des klinischen Bildes sowie der laborchemischen und bildgebenden Befunde wurde die Diagnose bestätigt. Nach entsprechender Vorbereitung sowie ausführlicher Aufklärung wurde am <span class="placeholder">[Datum]</span> eine/ein <span class="placeholder">[OP-Name]</span> unter Allgemeinanästhesie/Vollnarkose durchgeführt. Intraoperativ fand sich <span class="placeholder">[Befund]</span>. <span class="placeholder">[Organ/Gewebe]</span> wurde entfernt/exstirpiert/reseziert und zur histologischen Untersuchung eingeschickt. Die Operation sowie der postoperative Verlauf gestalteten sich komplikationslos.</p>
+
+  <p><em>Falls Komplikation – eine Variante wählen:</em></p>
+  <ul class="compact">
+    <li>Am <span class="placeholder">[X.]</span> postoperativen Tag trat eine Nachblutung auf, weshalb eine operative Revision durchgeführt wurde.</li>
+    <li>ODER: Zwei Stunden postoperativ trat eine Nachblutung auf, die durch <span class="placeholder">[Eiskrawatte/Kompression/operative Blutstillung]</span> beherrscht werden konnte.</li>
+  </ul>
+
+  <p>Die Drainage wurde zeitgerecht entfernt. Die Wunde(n) heilte(n) reizlos. Die Laborwerte lagen bei Entlassung im Normbereich. Die Mobilisation und der Kostaufbau wurden von der/dem Patientin/Patienten gut toleriert. Somit konnten wir Frau/Herrn <span class="placeholder">[Name]</span> am <span class="placeholder">[Datum]</span> in gutem Allgemeinzustand in Ihre weitere Betreuung entlassen.</p>
+
+  <p><strong class="field">Empfehlungen:</strong></p>
+  <ul class="compact">
+    <li>Körperliche Schonung für <span class="placeholder">[X]</span> Tage/Wochen, Vermeidung von Heben &gt; 5 kg.</li>
+    <li>Regelmäßige Wund- und Befundkontrollen beim Hausarzt.</li>
+    <li>Nahtmaterialentfernung am <span class="placeholder">[X.]</span> postoperativen Tag.</li>
+    <li>Nikotin- und Alkoholkarenz.</li>
+    <li>Sofortige Wiedervorstellung bei Fieber, Blutung oder erneuten Beschwerden.</li>
+  </ul>
+
+  <p><strong class="field">Medikation bei Entlassung:</strong></p>
+  <ul class="compact">
+    <li><span class="placeholder">[Analgetikum, Dosis, Schema]</span></li>
+    <li>Fortsetzung der Hausarztmedikation.</li>
+  </ul>
+
+  <p class="closing">Wir bedanken uns für die gute Zusammenarbeit und stehen Ihnen für Rückfragen gerne zur Verfügung.<br>Mit freundlichen kollegialen Grüßen<br>Assistenzarzt/-ärztin</p>
+</section>
+
+<h2 class="section-title" id="bausteine">Die festen Bausteine (wortgleich auswendig lernen)</h2>
+<div class="baustein"><strong>Einleitung:</strong> „…berichten wir über Ihre/n Patientin/Patienten, Frau/Herrn …, geb. am …, die/der sich vom … bis zum … in unserer stationären Behandlung befand.“</div>
+<div class="baustein"><strong>Aufnahmegrund:</strong> „Die stationäre Aufnahme erfolgte wegen des Verdachts auf …“</div>
+<div class="baustein"><strong>Vor der Maßnahme:</strong> „Nach entsprechender Vorbereitung sowie ausführlicher Aufklärung wurde am … … durchgeführt.“</div>
+<div class="baustein"><strong>Intraoperativ/intraendoskopisch:</strong> „Intraoperativ/Endoskopisch fand sich/zeigte sich …“</div>
+<div class="baustein"><strong>Verlauf:</strong> „Die Operation/Untersuchung sowie der postoperative/post-interventionelle Verlauf gestalteten sich komplikationslos.“</div>
+<div class="baustein"><strong>Entlassung:</strong> „Somit konnten wir Frau/Herrn … am … in gutem Allgemeinzustand in Ihre weitere Betreuung entlassen.“</div>
+<div class="baustein"><strong>Schluss:</strong> „Wir bedanken uns für die gute Zusammenarbeit und stehen Ihnen für Rückfragen gerne zur Verfügung.“</div>
+
+<h2 class="section-title" id="lernmethoden">Lernmethoden, um im Examen schnell zu schreiben</h2>
+
+<div class="method-card">
+  <h4>a) Block-Memorisierung statt Lesen</h4>
+  <p>Lerne zuerst nur die sieben Bausteine oben isoliert, wie Vokabeln. Schreibe sie 5× am Stück ab, ohne Vorlage. Erst danach den Volltext üben.</p>
+</div>
+<div class="method-card">
+  <h4>b) Geschwindigkeits-Drill mit Timer</h4>
+  <p>Nimm einen Fall, stell 15 Minuten Zeit, schreibe den kompletten Brief aus dem Kopf, nur mit den Patientendaten aus der Angabe. Danach mit Vorlage vergleichen, Lücken markieren. Denselben Fall am nächsten Tag wiederholen – die Zeit muss sinken.</p>
+</div>
+<div class="method-card">
+  <h4>c) Skeleton-Methode</h4>
+  <p>Schreibe dir während des Zuhörens/Lesens der Fallangabe sofort das Gerüst (Überschriften + Fixsätze) auf den Schmierzettel. Im Fließtext füllst du dann nur die Lücken.</p>
+</div>
+<div class="method-card">
+  <h4>d) Pro Diagnose feste Anamnese-Trias</h4>
+  <p>Für jede typische Diagnose (Appendizitis, Cholezystitis, Ulkus, Hernie, RDS, Tonsillitis, Lymphadenopathie, Makrohämaturie) lege 3–4 feste Sätze zurecht, die du nur mit Zahlen aus dem Fall fütterst – genau die […]-Slots aus Vorlage A/B.</p>
+</div>
+<div class="method-card">
+  <h4>e) Diktier-Training</h4>
+  <p>Sprich den Brief laut, wie ein Diktat an ein Schreibbüro. Trainiert den Satzbau-Automatismus und bereitet gleichzeitig auf die mündliche Fallpräsentation der KP vor.</p>
+</div>
+<div class="method-card">
+  <h4>f) Fehlerliste pflegen</h4>
+  <p>Ergänze deine persönliche Fehlerliste nach jedem Übungsbrief um neue eigene Fehler. Vor der Prüfung nur diese Liste lesen statt aller Briefe.</p>
+</div>
+
+<h2 class="section-title">Alle korrigierten Originalbriefe (bereinigt)</h2>
+
+<article class="letter" id="brief-1">
+  <h4>6.1 Urethrozystoskopie</h4>
+  <div class="letter-meta">Rostock, den 16.03.2022</div>
+  <p>Sehr geehrter Herr Dr. Moll,</p>
+  <p>nachfolgend berichten wir über Ihren Patienten, Herrn Erich Karenz, geb. am 18.07.1960, der sich vom 14.03.2022 bis zum 16.03.2022 in unserer stationären Behandlung befand.</p>
+  <p><strong class="field">Diagnose:</strong></p>
+  <ul class="compact"><li>Makrohämaturie unklarer Genese mit V. a. Urothelkarzinom</li></ul>
+  <p><strong class="field">Nebendiagnosen:</strong></p>
+  <ul class="compact">
+    <li>Arterielle Hypertonie, seit 10 Jahren</li>
+    <li>Z. n. chirurgischer Versorgung einer Klavikulafraktur im Alter von 6 Jahren</li>
+    <li>Nussallergie</li>
+    <li>Nikotinabusus (80 pack years)</li>
+  </ul>
+  <p><strong class="field">Therapie:</strong></p>
+  <ul class="compact"><li>Diagnostische Zystoskopie am 15.03.2022</li></ul>
+  <p><strong class="field">Histologie:</strong></p>
+  <ul class="compact"><li>Ergebnis folgt.</li></ul>
+  <p><strong class="field">Anamnese:</strong> Herr Karenz stellte sich bei uns mit einer hausärztlichen Einweisung wegen seit anderthalb Jahren bestehender, rezidivierender, indolenter Makrohämaturie vor. Des Weiteren berichtete er, dass die Beschwerden von Pollakisurie und Nykturie begleitet seien. Dem Patienten zufolge habe er manchmal ein brennendes Gefühl beim Wasserlassen. Ferner klagte er über Flankenschmerzen, die in den Hoden ausstrahlen und sich nach der Miktion bessern würden. Die Fragen nach anderen Miktionsstörungen, B-Symptomatik und Schwellungen in den Lymphknotenstationen wurden von ihm verneint. Er habe keine Medikamente eingenommen. Die vegetative Anamnese sei unauffällig. Die Familien- sowie Sozialanamnese dürfen wir freundlicherweise als Ihnen bekannt voraussetzen.</p>
+  <p><strong class="field">Aufnahmebefund:</strong> Der 63-jährige Patient befand sich in leicht reduziertem Allgemeinzustand und normosomem Ernährungszustand.</p>
+  <p>Weitere Diagnostik: siehe Anhang.</p>
+  <p><strong class="field">Therapie und Verlauf:</strong> Die stationäre Aufnahme des o. g. Patienten erfolgte wegen einer indolenten Makrohämaturie unklarer Genese. Zur weiteren Abklärung der Beschwerden wurde nach entsprechender Vorbereitung und Untersuchung sowie ausführlicher Aufklärung am 15.03.2022 eine diagnostische Zystoskopie unter lokaler Anästhesie durchgeführt. Zystoskopisch fand sich ein gestielter, zottiger Polyp, der mit einer Elektroschlinge entfernt und zur histologischen Untersuchung eingeschickt wurde. Die Zystoskopie sowie der post-endoskopische Verlauf gestalteten sich komplikationslos. Somit konnten wir Herrn Karenz am 16.03.2022 in Ihre weitere Betreuung entlassen.</p>
+  <p><strong class="field">Empfehlungen:</strong></p>
+  <ul class="compact">
+    <li>Wiedervorstellung nach Erhalt der histologischen Ergebnisse sowie bei anhaltenden Symptomen.</li>
+    <li>Körperliche Schonung für 7 Tage.</li>
+    <li>Nikotin- und Alkoholkarenz.</li>
+    <li>Reichliche Flüssigkeitszufuhr (mind. 2 l/Tag).</li>
+  </ul>
+  <p><strong class="field">Medikation bei Entlassung:</strong></p>
+  <ul class="compact"><li>Fortsetzung der Hausarztmedikation.</li></ul>
+  <p class="closing">Wir bedanken uns für die gute Zusammenarbeit und stehen Ihnen gerne für Rückfragen zur Verfügung.<br>Mit freundlichen kollegialen Grüßen<br>OA – AA</p>
+</article>
+
+<article class="letter" id="brief-2">
+  <h4>6.2 Leistenhernie</h4>
+  <div class="letter-meta">Rostock, den 28.07.2022</div>
+  <p>Sehr geehrter Herr Kollege,</p>
+  <p>nachfolgend berichten wir über unseren gemeinsamen Patienten, Herrn Thomann, geb. am 14.08.1977, der sich vom 23.07.2022 bis zum 28.07.2022 in unserer stationären Behandlung befand.</p>
+  <p><strong class="field">Diagnose:</strong></p>
+  <ul class="compact"><li>Rechtsseitige inguinale Hernie</li></ul>
+  <p><strong class="field">Nebendiagnosen:</strong></p>
+  <ul class="compact">
+    <li>Arterielle Hypertonie, ED 2005</li>
+    <li>Hypothyreose, ED 2012</li>
+    <li>Z. n. Appendektomie 2015</li>
+    <li>Birkenpollenallergie</li>
+    <li>Nikotinabusus</li>
+    <li>Alkoholkonsum</li>
+  </ul>
+  <p><strong class="field">Therapie:</strong></p>
+  <ul class="compact"><li>Netzbasierte Operation nach Lichtenstein</li></ul>
+  <p><strong class="field">Anamnese:</strong> Der Patient stellte sich bei uns wegen seit 4 Tagen nach dem Heben eines elektrischen Motorrads bestehender, plötzlich aufgetretener, dolenter, rechtsseitiger Schwellung im Leistenbereich vor. Des Weiteren berichtete er, dass die Schwellung beim Husten und bei Bauchpresse aufgetreten und im Liegen zurückgegangen sei. Darüber hinaus klagte er über Schmerzen im Leistenbereich. Die Schmerzen seien stechend, ohne Ausstrahlung, mit einer Intensität von 5/10 auf der Schmerzskala. Er fügte hinzu, dass sich die Schmerzen bei Bewegung, Druck und Husten verschlimmern und bei Ausruhen und Hinlegen bessern würden. In der vegetativen Anamnese berichtete Herr Thomann, dass er 10 kg binnen 4 Wochen zugenommen habe. Zudem leide er unter chronischem Husten. Die weitere vegetative Anamnese sei unauffällig. Die Vorgeschichte sowie Familien- und Sozialanamnese dürfen wir freundlicherweise als Ihnen bekannt voraussetzen.</p>
+  <p><strong class="field">Aufnahmebefund:</strong> Der 64-jährige Patient befand sich in gutem Allgemeinzustand und adipösem Ernährungszustand.</p>
+  <p>Weitere Diagnostik: siehe Anhang.</p>
+  <p><strong class="field">Therapie und Verlauf:</strong> Die stationäre Aufnahme von Herrn Thomann erfolgte am 23.07.2022 wegen einer rechtsseitigen Inguinalhernie. Nach entsprechender Aufklärung und Vorbereitung wurde die Operation nach Lichtenstein mit Netzimplantation unter Allgemeinanästhesie durchgeführt. Intraoperativ fand sich eine rechtsseitige inguinale Hernie mit Bruchpforte, die mit einer fortlaufenden Prolene-Naht verschlossen wurde. Außerdem wurde ein Netz (Mesh) eingebracht und mittels Gewebekleber (Glubran 2) fixiert.</p>
+  <p>Die Operation sowie der postoperative Verlauf gestalteten sich regelrecht und komplikationslos. Die Wunde heilte reizlos. Die Mobilisation und der Kostaufbau wurden von dem Patienten gut toleriert. Somit konnten wir Herrn Thomann am 28.07.2022 in gutem Allgemeinzustand in Ihre Weiterbehandlung entlassen.</p>
+  <p><strong class="field">Empfehlungen:</strong></p>
+  <ul class="compact">
+    <li>Körperliche Schonung für 14 Tage.</li>
+    <li>Vermeidung des Hebens schwerer Gegenstände.</li>
+    <li>Alkohol- und Nikotinkarenz.</li>
+    <li>Wiedervorstellung bei anhaltenden Symptomen.</li>
+    <li>Nahtmaterialentfernung am 10. postoperativen Tag.</li>
+  </ul>
+  <p><strong class="field">Medikation bei Entlassung:</strong></p>
+  <ul class="compact">
+    <li>Paracetamol 1 g, 1-1-1</li>
+    <li>Fortsetzung der hausärztlichen Medikation</li>
+  </ul>
+  <p class="closing">Wir danken Ihnen für die gute Zusammenarbeit und stehen für Rückfragen jederzeit gerne zur Verfügung.<br>Mit freundlichen kollegialen Grüßen<br>OA – Assistenzarzt</p>
+</article>
+
+<article class="letter" id="brief-3">
+  <h4>6.3 RDS / Koloskopie</h4>
+  <div class="letter-meta">Rostock, den 29.10.2022</div>
+  <p>Sehr geehrter Herr Dr. Moll,</p>
+  <p>nachfolgend berichten wir über Ihre Patientin, Frau Christina Lange, geb. am 13.09.1958, die sich vom 13.09.2022 bis zum 14.09.2022 in unserer stationären Behandlung befand.</p>
+  <p><strong class="field">Diagnose:</strong></p>
+  <ul class="compact"><li>V. a. Colon irritabile bei gestieltem Polypen in der rechten Flexur des Kolons</li></ul>
+  <p><strong class="field">Nebendiagnosen:</strong></p>
+  <ul class="compact">
+    <li>Arterielle Hypertonie, seit 5 Jahren</li>
+    <li>Nikotinabusus, seit dem 18. Lebensjahr</li>
+    <li>Z. n. Appendektomie vor 2 Jahren</li>
+    <li>Birkenpollenallergie</li>
+  </ul>
+  <p><strong class="field">Therapie:</strong></p>
+  <ul class="compact"><li>Koloskopie mit Polypektomie am 13.09.2022</li></ul>
+  <p><strong class="field">Histologie:</strong></p>
+  <ul class="compact"><li>Ergebnis folgt.</li></ul>
+  <p><strong class="field">Anamnese:</strong> Die Patientin stellte sich mit einer hausärztlichen Einweisung wegen seit 4 Monaten bestehender, rezidivierender, dumpfartiger, umbilikaler Schmerzen bei uns vor. Die Schmerzen seien ohne Ausstrahlung oder Wanderung. Die Schmerzintensität liege bei 6/10 auf der Schmerzskala. Des Weiteren klagte die Patientin über unblutige, breiige Diarrhö im Wechsel mit Obstipation sowie schmerzhaften Meteorismus. Darüber hinaus gab sie an, dass sich die Schmerzen vor dem Stuhlgang sowie bei Stress verstärken und nach der Defäkation sowie nach Anwendung einer Wärmflasche bessern würden. Außerdem klagte sie über ein Gefühl der unvollständigen Darmentleerung nach dem Stuhlgang. Die Fragen nach Fieber, Meläna, Hämatochezie, Bleistiftstuhl, Nausea, Inappetenz sowie Insomnie wurden von ihr verneint. Die vegetative Anamnese sei im Übrigen unauffällig. Die Familien- sowie Sozialanamnese dürfen wir freundlicherweise als Ihnen bekannt voraussetzen.</p>
+  <p><strong class="field">Aufnahmebefund:</strong> Siehe Anhang.</p>
+  <p><strong class="field">Therapie und Verlauf:</strong> Die stationäre Aufnahme von Frau Lange erfolgte wegen des Verdachts auf ein Colon irritabile und zum Ausschluss anderer Erkrankungen. Die klinischen Befunde sowie die laborchemische und sonographische Unauffälligkeit deuteten am ehesten auf ein Reizdarmsyndrom hin. Zur weiteren Abklärung und zum Ausschluss anderer Differenzialdiagnosen wurde nach entsprechender Vorbereitung und Untersuchung sowie ausführlicher Aufklärung am 13.09.2022 unter Sedierung mit Midazolam und Propofol eine Koloskopie durchgeführt. Koloskopisch zeigte sich ein gestielter Polyp in der rechten Flexur des Kolons. Der Polyp wurde mit einer elektrischen Schlinge entfernt und zur histologischen Untersuchung eingeschickt. Die Endoskopie sowie der post-endoskopische Verlauf gestalteten sich komplikationslos. Der Kostaufbau wurde von der Patientin gut toleriert. Somit konnten wir Frau Lange in gutem Allgemeinzustand in Ihre weitere Betreuung entlassen.</p>
+  <p><strong class="field">Empfehlungen:</strong></p>
+  <ul class="compact">
+    <li>Körperliche Schonung für 2 Tage.</li>
+    <li>Kontrollkoloskopie (abhängig von der Histologie).</li>
+    <li>Stressabbau sowie Nikotin- und Alkoholkarenz.</li>
+    <li>Beibehaltung gesunder Ernährungsgewohnheiten.</li>
+    <li>Wiedervorstellung nach Erhalt der histologischen Ergebnisse und bei anhaltenden Symptomen.</li>
+  </ul>
+  <p><strong class="field">Medikation bei Entlassung:</strong></p>
+  <ul class="compact">
+    <li>Mebeverin 135 mg, bei Bedarf bis 1-1-1</li>
+    <li>Fortsetzung der Hausarztmedikation</li>
+  </ul>
+  <p class="closing">Wir bedanken uns für die gute Zusammenarbeit und stehen Ihnen gerne für Rückfragen zur Verfügung.<br>Mit freundlichen kollegialen Grüßen<br>OA – AA</p>
+</article>
+
+<article class="letter" id="brief-4">
+  <h4>6.4 ÖGD (Ulkuskrankheit)</h4>
+  <div class="letter-meta">Rostock, den 16.03.2022</div>
+  <p>Sehr geehrter Herr Dr. Moll,</p>
+  <p>nachfolgend berichten wir über Ihren Patienten, Herrn Friedrich Nieberg, geb. am 18.07.1960, der sich vom 14.03.2022 bis zum 16.03.2022 in unserer stationären Behandlung befand.</p>
+  <p><strong class="field">Diagnose:</strong></p>
+  <ul class="compact"><li>Ulcus ventriculi</li></ul>
+  <p><strong class="field">Nebendiagnosen:</strong></p>
+  <ul class="compact">
+    <li>Arterielle Hypertonie, seit 10 Jahren</li>
+    <li>Z. n. umbilikaler Herniotomie</li>
+    <li>Pflasterallergie</li>
+    <li>Nikotinabusus (15 pack years)</li>
+  </ul>
+  <p><strong class="field">Therapie:</strong></p>
+  <ul class="compact"><li>Diagnostische ÖGD am 15.03.2022</li></ul>
+  <p><strong class="field">Histologie:</strong></p>
+  <ul class="compact"><li>Ergebnis folgt.</li></ul>
+  <p><strong class="field">Anamnese:</strong> Herr Nieberg stellte sich mit einer hausärztlichen Einweisung wegen seit 3 Wochen bestehender, drückender, essens- sowie stressabhängiger Bauchschmerzen im Epigastriumbereich bei uns vor. Die Schmerzen seien ohne Ausstrahlung oder Wanderung. Der Patient habe zweimal Ibuprofen gegen die Schmerzen eingenommen, jedoch ohne Besserung. Des Weiteren berichtete er, dass die Schmerzen von zweimaliger kaffeesatzartiger Emesis (bzw. Hämatemesis) und Nausea begleitet seien. Darüber hinaus berichtete er, dass sich die Schmerzen direkt nach dem Essen sowie unter Stress verstärkt hätten und eine Intensität von 8/10 auf der Schmerzskala aufwiesen. Außerdem klagte er über Inappetenz und Pyrosis. Die Fragen nach Fieber, Meläna, Diarrhö, Obstipation und Abgeschlagenheit wurden von ihm verneint. Bis auf Inappetenz und einen Gewichtsverlust von ca. 5 kg binnen 8 Wochen sei die vegetative Anamnese unauffällig. Die Familien- sowie die Sozialanamnese dürfen wir freundlicherweise als Ihnen bekannt voraussetzen.</p>
+  <p><strong class="field">Aufnahmebefund:</strong> Der 63-jährige Patient befand sich in leicht reduziertem Allgemeinzustand und normosomem Ernährungszustand.</p>
+  <p>Weitere Diagnostik: siehe Anhang.</p>
+  <p><strong class="field">Therapie und Verlauf:</strong> Die stationäre Aufnahme von Herrn Nieberg erfolgte wegen des Verdachts auf eine Ulkuskrankheit (Ulcus duodeni). Zur weiteren Abklärung der Beschwerden wurde nach entsprechender Vorbereitung sowie ausführlicher Aufklärung am 15.03.2022 eine diagnostische Endoskopie (ÖGD) des oberen Verdauungstrakts unter Sedierung mit Propofol durchgeführt. Endoskopisch fand sich eine leicht gerötete Magenschleimhaut sowie ein Ulkus an der kleinen Kurvatur des Magens (ca. 6 mm), das mit Fibrin belegt war. Es wurden 6 Gewebeproben entnommen (2 präpylorisch, 2 aus dem Magenkorpus, 2 aus dem Ulkus), die zur histologischen Untersuchung eingeschickt wurden. Gleichzeitig wurde ein Urease-Schnelltest durchgeführt, der negativ ausfiel. Der übrige Endoskopiebefund war unauffällig.</p>
+  <p>Die Endoskopie sowie der post-endoskopische Verlauf gestalteten sich komplikationslos. Der Kostaufbau und die Mobilisation wurden von dem Patienten gut toleriert. Unter stationärer Therapie mit Pantoprazol besserte sich der Allgemeinzustand des Patienten sowohl klinisch als auch laborchemisch deutlich. Somit konnten wir Herrn Nieberg am 16.03.2022 in gutem Allgemeinzustand in Ihre weitere Betreuung entlassen.</p>
+  <p><strong class="field">Empfehlungen:</strong></p>
+  <ul class="compact">
+    <li>Kontrollgastroskopie in 6 Wochen.</li>
+    <li>Mehrere kleine Mahlzeiten statt großer Portionen.</li>
+    <li>Nikotin- und Alkoholverzicht.</li>
+    <li>Vermeidung von Stress und NSAR-Einnahme.</li>
+    <li>Wiedervorstellung nach Erhalt der histologischen Ergebnisse und bei anhaltenden Symptomen.</li>
+  </ul>
+  <p><strong class="field">Medikation bei Entlassung:</strong></p>
+  <ul class="compact">
+    <li>Pantoprazol 20 mg, 1-0-0</li>
+    <li>Fortsetzung der Hausarztmedikation</li>
+  </ul>
+  <p class="closing">Wir bedanken uns für die gute Zusammenarbeit und stehen Ihnen gerne für Rückfragen zur Verfügung.<br>Mit freundlichen kollegialen Grüßen<br>OA – AA</p>
+</article>
+
+<article class="letter" id="brief-5">
+  <h4>6.5 Tonsillektomie</h4>
+  <div class="letter-meta">Rostock, den 21.10.2022</div>
+  <p>Sehr geehrter Herr Dr. Moll,</p>
+  <p>nachfolgend berichten wir über unsere gemeinsame Patientin, Frau Thea Eichschädt, geb. am 21.02.1968, die sich vom 19.10.2022 bis zum 21.10.2022 in unserer stationären Behandlung befand.</p>
+  <p><strong class="field">Diagnose:</strong></p>
+  <ul class="compact"><li>Chronisch-rezidivierende Tonsillitis</li></ul>
+  <p><strong class="field">Nebendiagnosen:</strong></p>
+  <ul class="compact">
+    <li>Hypothyreose, ED 2000</li>
+    <li>Arterielle Hypertonie, ED 2001</li>
+    <li>Nikotinabusus (50 pack years)</li>
+    <li>Alkoholkonsum</li>
+    <li>Gräserallergie</li>
+  </ul>
+  <p><strong class="field">Therapie:</strong></p>
+  <ul class="compact"><li>Tonsillektomie mit operativer Blutstillung</li></ul>
+  <p><strong class="field">Histologie:</strong></p>
+  <ul class="compact"><li>Ergebnis folgt.</li></ul>
+  <p><strong class="field">Anamnese:</strong> Die Patientin stellte sich bei uns wegen seit 2 Jahren rezidivierender, antibiotikapflichtiger Tonsillitis vor. Des Weiteren berichtete sie, dass die Beschwerden in den letzten 2 Jahren ca. 6-mal aufgetreten seien und sie die letzte Episode vor 3 Monaten gehabt habe, die 8 Tage gedauert habe. Momentan sei die Patientin beschwerdefrei. Außerdem habe sie dagegen Antibiotika und Analgetika eingenommen, um die Beschwerden zu lindern. Darüber hinaus klagte die Patientin während der Episoden über Foetor ex ore, Fieber von 39 °C sowie gelegentliche Diarrhö wegen der Antibiotikaeinnahme. Zudem seien ihr eine zervikale Lymphadenopathie beidseits sowie Cephalgie aufgefallen. Die Fragen nach Dyspnoe, Heiserkeit, Odynophagie, Gewichtsveränderungen sowie einem Auslandsaufenthalt wurden verneint. Bis auf Fieber, Diarrhö und Inappetenz sei die vegetative Anamnese unauffällig. Die Vorgeschichte sowie Familien- und Sozialanamnese dürfen wir freundlicherweise als Ihnen bekannt voraussetzen.</p>
+  <p><strong class="field">Aufnahmebefund:</strong> Die 54-jährige Patientin befand sich in leicht reduziertem Allgemeinzustand und normosomem Ernährungszustand.</p>
+  <p>Weiterführende Diagnostik: siehe Anhang.</p>
+  <p><strong class="field">Therapie und Verlauf:</strong> Die stationäre Aufnahme von Frau Eichschädt erfolgte wegen chronischer, eitriger Tonsillitis. Wegen der hohen Rezidivrate bei der Patientin war eine Tonsillektomie indiziert. Nach entsprechender Vorbereitung und Untersuchung sowie ausführlicher Aufklärung wurde am 19.10.2022 eine Tonsillektomie unter Vollnarkose durchgeführt. Intraoperativ fanden sich geschwollene, eitrige Tonsillen, die entfernt und zur histologischen Untersuchung eingeschickt wurden. Anschließend wurde eine subtile Blutstillung mit resorbierbarem Nahtmaterial durchgeführt.</p>
+  <p class="note">Alternative Verlaufsvarianten, je nach Fall: „Die Operation gestaltete sich komplikationslos, zwei Stunden postoperativ wurde jedoch eine Blutung festgestellt, weshalb erneut unter Vollnarkose operiert und die Blutung mittels operativer Blutstillung behandelt wurde." ODER „Während der OP trat eine Blutung auf der linken Seite auf, die mit einer Naht kontrolliert wurde." ODER „Am 5. postoperativen Tag trat eine erneute Blutung auf der rechten Seite auf, weshalb eine Reoperation durchgeführt wurde."</p>
+  <p>Die Mobilisation und der Kostaufbau wurden von der Patientin gut toleriert. Somit konnten wir Frau Eichschädt in gutem Allgemeinzustand in Ihre weitere Betreuung entlassen.</p>
+  <p><strong class="field">Empfehlungen:</strong></p>
+  <ul class="compact">
+    <li>Wiedervorstellung nach Erhalt der histologischen Ergebnisse und bei anhaltenden Symptomen (Blutungen oder Schmerzen).</li>
+    <li>Das Nahtmaterial ist resorbierbar und muss nicht entfernt werden.</li>
+    <li>Körperliche Schonung für 14 Tage.</li>
+    <li>Vermeidung stark gewürzter, säurehaltiger Speisen und Getränke sowie von Wärmequellen.</li>
+    <li>Alkohol- und Nikotinkarenz.</li>
+  </ul>
+  <p><strong class="field">Medikation bei Entlassung:</strong></p>
+  <ul class="compact">
+    <li>Paracetamol 1 g, 1-0-0</li>
+    <li>Fortsetzung der Hausarztmedikation</li>
+  </ul>
+  <p class="closing">Wir bedanken uns für die gute Zusammenarbeit und stehen Ihnen gerne für Rückfragen zur Verfügung.<br>Mit freundlichen kollegialen Grüßen<br>OA – AA</p>
+</article>
+
+<article class="letter" id="brief-6">
+  <h4>6.6 Zervikale Lymphadenopathie</h4>
+  <div class="letter-meta">Rostock, den 16.03.2022</div>
+  <p>Sehr geehrter Herr Dr. Moll,</p>
+  <p>nachfolgend berichten wir über Ihren Patienten, Herrn Martin Winter, geb. am 18.07.1958, der sich vom 14.03.2022 bis zum 16.03.2022 in unserer stationären Behandlung befand.</p>
+  <p><strong class="field">Diagnose:</strong></p>
+  <ul class="compact"><li>Singuläre, zervikale Lymphadenopathie unklarer Genese</li></ul>
+  <p><strong class="field">Histologischer Befund:</strong></p>
+  <ul class="compact"><li>ausstehend</li></ul>
+  <p><strong class="field">Nebendiagnosen:</strong></p>
+  <ul class="compact">
+    <li>Arterielle Hypertonie, seit 15 Jahren</li>
+    <li>Nikotinabusus (50 pack years)</li>
+    <li>Alkoholkonsum</li>
+    <li>Birkenpollenallergie</li>
+  </ul>
+  <p><strong class="field">Therapie:</strong></p>
+  <ul class="compact"><li>Zervikale Lymphknotenexstirpation am 15.03.2022</li></ul>
+  <p><strong class="field">Histologie:</strong></p>
+  <ul class="compact"><li>Ergebnis folgt.</li></ul>
+  <p><strong class="field">Anamnese:</strong> Herr Winter stellte sich bei uns mit einer hausärztlichen Einweisung wegen seit 4 Monaten bestehender, progredienter, rechtsseitiger, zervikaler Schwellung vor. Des Weiteren berichtete er, dass die Schwellung indolent, fest und unverschieblich sei. Die Frage nach ähnlichen Schwellungen wurde vom Patienten bejaht, und zwar habe er eine Schwellung in der Leiste bemerkt. Die Fragen nach B-Symptomatik, Husten, Dyspnoe, Halsschmerzen und Dysphonie wurden verneint. Bis auf Abgeschlagenheit sei die vegetative Anamnese unauffällig. Die Vorgeschichte sowie Familien- und Sozialanamnese dürfen wir freundlicherweise als Ihnen bekannt voraussetzen.</p>
+  <p><strong class="field">Aufnahmebefund:</strong> Der 64-jährige Patient befand sich in leicht reduziertem Allgemeinzustand und normosomem Ernährungszustand.</p>
+  <p>Weiterführende Diagnostik: siehe Anhang.</p>
+  <p><strong class="field">Therapie und Verlauf:</strong> Die stationäre Aufnahme von Herrn Winter erfolgte am 14.03.2022 wegen einer einzelnen, rechtsseitigen, zervikalen Lymphadenopathie unklarer Genese. Nach entsprechender Vorbereitung und Untersuchung sowie ausführlicher Aufklärung wurde am 15.03.2022 eine diagnostische Lymphknotenexstirpation unter Lokalanästhesie komplikationslos durchgeführt. Intraoperativ fand sich ein vergrößerter Lymphknoten, der entfernt und zur histologischen Untersuchung eingeschickt wurde. Der postoperative Verlauf gestaltete sich komplikationslos. Die Drainage wurde zeitgerecht entfernt, die Wunde heilte reizlos. Die Mobilisation und der Kostaufbau wurden von dem Patienten gut toleriert. Somit konnten wir Herrn Winter in gutem Allgemeinzustand in Ihre weitere Betreuung entlassen.</p>
+  <p><strong class="field">Empfehlungen:</strong></p>
+  <ul class="compact">
+    <li>Wiedervorstellung nach Erhalt der histologischen Ergebnisse und bei anhaltenden Symptomen.</li>
+    <li>Nahtmaterialentfernung am 6. postoperativen Tag.</li>
+    <li>Körperliche Schonung sowie Vermeidung ruckartiger Kopfbewegungen.</li>
+    <li>Regelmäßige Wund- und Befundkontrolle.</li>
+    <li>Alkohol- und Nikotinkarenz.</li>
+  </ul>
+  <p><strong class="field">Medikation bei Entlassung:</strong></p>
+  <ul class="compact">
+    <li>Paracetamol 1 g, 1-0-0</li>
+    <li>Fortsetzung der Hausarztmedikation</li>
+  </ul>
+  <p class="closing">Wir bedanken uns für die gute Zusammenarbeit und stehen Ihnen gerne für Rückfragen zur Verfügung.<br>Mit freundlichen kollegialen Grüßen<br>OA – AA</p>
+</article>
+
+<article class="letter" id="brief-7">
+  <h4>6.7 Cholezystitis</h4>
+  <div class="letter-meta">Rostock, den 29.03.2022</div>
+  <p>Sehr geehrter Herr Dr. Schmidt,</p>
+  <p>nachfolgend berichten wir über Ihren Patienten, Herrn Jens Berger, geb. am 18.07.1957, der sich vom 26.03.2022 bis zum 29.03.2022 in unserer stationären Behandlung befand.</p>
+  <p><strong class="field">Diagnose:</strong></p>
+  <ul class="compact"><li>Chronisch-rezidivierende Cholezystitis</li></ul>
+  <p><strong class="field">Nebendiagnosen:</strong></p>
+  <ul class="compact">
+    <li>Arterielle Hypertonie, seit 10 Jahren</li>
+    <li>Haselnusspollenallergie</li>
+  </ul>
+  <p><strong class="field">Therapie:</strong></p>
+  <ul class="compact"><li>Laparoskopische Cholezystektomie am 26.03.2022</li></ul>
+  <p><strong class="field">Histologie:</strong></p>
+  <ul class="compact"><li>Ergebnis folgt.</li></ul>
+  <p><strong class="field">Anamnese:</strong> Herr Berger stellte sich mit einer hausärztlichen Einweisung wegen seit einem Jahr bestehender, krampfartiger, progredienter, rezidivierender, rechtsseitiger Oberbauchschmerzen bei uns vor. Die Schmerzen seien krampfartig, mit Ausstrahlung in die rechte Schulter und in den Rücken. Des Weiteren berichtete er, dass die Schmerzen nahrungsabhängig seien, insbesondere nach fettigem Essen, und eine Schmerzintensität von 5/10 auf der Schmerzskala aufwiesen. Darüber hinaus gab er an, dass er dunklen Urin, acholischen Stuhl und Sklerenikterus bemerkt habe. Er habe keine Medikamente eingenommen. Er fügte hinzu, dass die Schmerzen seit gestern intensiver und persistierend geworden seien und bei 7/10 auf der Schmerzskala lägen. Bis auf eine seit gestern bestehende Inappetenz sei die vegetative Anamnese unauffällig. Die Vorgeschichte sowie die Familien- und Sozialanamnese dürfen wir freundlicherweise als Ihnen bekannt voraussetzen.</p>
+  <p><strong class="field">Aufnahmebefund:</strong> Der 64-jährige Patient befand sich in leicht reduziertem Allgemeinzustand und adipösem Ernährungszustand, in allen Qualitäten orientiert.</p>
+  <p>Weiterführende Diagnostik: siehe Anhang.</p>
+  <p><strong class="field">Therapie und Verlauf:</strong> Die stationäre Aufnahme erfolgte wegen des Verdachts auf eine chronische Cholezystitis bei Cholezystolithiasis. In Zusammenschau des klinischen Bildes sowie der laborchemischen und sonographischen Befunde wurde die Diagnose bestätigt. Nach entsprechender Vorbereitung sowie ausführlicher Aufklärung wurde eine laparoskopische Cholezystektomie unter Allgemeinanästhesie durchgeführt. Intraoperativ fand sich eine Wandverdickung der Gallenblase mit weißlichen Belägen auf der Leber; in der eröffneten Gallenblase zeigten sich mehrere kleine Konkremente.</p>
+  <p>Die Operation sowie der postoperative Verlauf gestalteten sich regelrecht und komplikationslos. Die Drainage wurde rechtzeitig entfernt. Die Wunden heilten reizlos. Die Laborwerte lagen bei Entlassung im Normbereich. Der Kostaufbau und die Mobilisation wurden von dem Patienten gut toleriert. In gutem Allgemeinzustand konnten wir Herrn Berger am 29.03.2022 in Ihre weitere Betreuung entlassen.</p>
+  <p><strong class="field">Empfehlungen:</strong></p>
+  <ul class="compact">
+    <li>Körperliche Schonung.</li>
+    <li>Regelmäßige Wund- sowie Befundkontrolle beim Hausarzt.</li>
+    <li>Nahtmaterialentfernung am 10. postoperativen Tag.</li>
+    <li>Sofortige Vorstellung in unserer Ambulanz bei erneuten Bauchbeschwerden.</li>
+  </ul>
+  <p><strong class="field">Medikation bei Entlassung:</strong></p>
+  <ul class="compact">
+    <li>Pantoprazol 20 mg, 1-0-0</li>
+    <li>Paracetamol 1 g, 1-1-1</li>
+    <li>Fortsetzung der Hausarztmedikation</li>
+  </ul>
+  <p class="closing">Wir bedanken uns für die gute Zusammenarbeit und stehen für Rückfragen gerne zur Verfügung.<br>Mit freundlichen kollegialen Grüßen<br>OA – AA</p>
+</article>
+
+<article class="letter" id="brief-8">
+  <h4>6.8 Appendizitis</h4>
+  <div class="letter-meta">Rostock, den 17.05.2026</div>
+  <p>Sehr geehrter Herr Dr. Schneider,</p>
+  <p>nachfolgend berichten wir über Ihren Patienten Herrn Max Krüger, geb. am 12.04.1998, der sich vom 16.05.2026 bis zum 19.05.2026 in unserer stationären Behandlung befand.</p>
+  <p><strong class="field">Diagnose:</strong> Akute phlegmonöse Appendizitis<br>
+  <strong class="field">Nebendiagnosen:</strong> keine<br>
+  <strong class="field">Therapie:</strong> Laparoskopische Appendektomie am 16.05.2026<br>
+  <strong class="field">Histologie:</strong> Ergebnis ausstehend.</p>
+  <p><strong class="field">Anamnese:</strong> Der Patient stellte sich in unserer Notaufnahme wegen seit zwei Tagen bestehender, plötzlich aufgetretener, stechender, periumbilikaler Schmerzen vor, welche im Verlauf in den rechten Unterbauch gewandert seien. Die Schmerzen seien bei Bewegung unerträglich gewesen. Begleitend klagte der Patient über Nausea, zweimalige Emesis sowie ein subjektives Fiebergefühl. Fieber zu Hause, Miktionsbeschwerden oder Defäkationsstörungen wurden verneint. Bis auf eine Inappetenz zeigte sich die vegetative Anamnese unauffällig.</p>
+  <p><strong class="field">Aufnahmebefund:</strong> 28-jähriger Patient in reduziertem Allgemeinzustand und normalem Ernährungszustand. RR 125/80 mmHg, Puls 95/min, Temperatur 38,2 °C (subfebril). Abdominell ausgeprägte Druckdolenz sowie Loslassschmerz im rechten Unterbauch (McBurney- und Lanz-Punkt positiv). Psoas-Zeichen positiv.</p>
+  <p><strong class="field">Diagnostik:</strong> Laborchemisch Leukozytose (14.500/µl), erhöhtes CRP (45 mg/l). Sonographisch Appendix vermiformis mit 8 mm Durchmesser (Kokarden-Phänomen), geringe freie Flüssigkeit perityphlitisch.</p>
+  <p><strong class="field">Therapie und Verlauf:</strong> Aufgrund des dringenden Verdachts auf eine akute Appendizitis erfolgte die Indikationsstellung zur Operation. Nach entsprechender Vorbereitung und ausführlicher Aufklärung wurde am 16.05.2026 eine komplikationslose laparoskopische Appendektomie in Vollnarkose durchgeführt. Intraoperativ bestätigte sich der Befund einer phlegmonösen Appendizitis.</p>
+  <p>Der postoperative Verlauf gestaltete sich vollkommen komplikationslos. Die abdominellen Wunden heilten reizlos. Zur Analgesie wurde initial Metamizol i.v. verabreicht. Kostaufbau sowie Remobilisation wurden vom Patienten beschwerdefrei toleriert. Wir entlassen Herrn Krüger am heutigen Tage in gutem Allgemeinzustand in Ihre weitere ambulante Betreuung.</p>
+  <p><strong class="field">Empfehlungen:</strong></p>
+  <ul class="compact">
+    <li>Körperliche Schonung (kein Sport, kein Heben &gt; 5 kg) für 2–3 Wochen.</li>
+    <li>Regelmäßige Wundkontrollen.</li>
+    <li>Fädenziehen am 10. postoperativen Tag (26.05.2026).</li>
+  </ul>
+  <p><strong class="field">Medikation bei Entlassung:</strong></p>
+  <ul class="compact"><li>Ibuprofen 400 mg bei Bedarf, bis zu 3× täglich für max. 3–5 Tage.</li></ul>
+  <p class="closing">Wir bedanken uns für die angenehme Zusammenarbeit.<br>Mit freundlichen Grüßen<br>Assistenzarzt der chirurgischen Klinik</p>
+</article>
+
+</main>
+
+<footer class="page-footer">
+  FSP-Rostock-Vorbereitung — Teil 1: Dokumentation | <a href="index.html">Zurück zum Hauptmenü</a>
+</footer>
+<a href="#toc" class="toc-float-btn" id="tocBtn">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+  Inhaltsverzeichnis
+</a>
+
+<script>
+  const tocBtn = document.getElementById('tocBtn');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) {
+      tocBtn.classList.add('visible');
+    } else {
+      tocBtn.classList.remove('visible');
+    }
+  });
+</script>
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
