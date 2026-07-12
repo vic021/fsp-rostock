@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSP Rostock – Arzt-Patient- &amp; Arzt-Arzt-Gespräch</title>
+<style>
+  :root {
+    --primary: #1b4965;
+    --accent: #5fa8d3;
+    --bg: #f7f9fb;
+    --card: #ffffff;
+    --border: #d9e2ec;
+    --text: #1f2937;
+    --muted: #5b6b7c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    line-height: 1.6;
+  }
+  header.page-header { background: var(--primary); color: white; padding: 24px 20px; }
+  header.page-header h1 { margin: 0 0 6px 0; font-size: 1.6rem; }
+  header.page-header p { margin: 0; opacity: 0.85; font-size: 0.95rem; }
+  .back-link { display: inline-block; margin-top: 10px; color: #cfe8ff; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+
+  main { max-width: 950px; margin: 0 auto; padding: 24px 20px 60px; }
+
+  nav.toc { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 22px; margin-bottom: 30px; }
+  nav.toc h2 { margin-top: 0; font-size: 1.1rem; color: var(--primary); }
+  nav.toc ul { columns: 2; -webkit-columns: 2; padding-left: 20px; margin: 0; }
+  nav.toc li { margin-bottom: 6px; }
+  nav.toc a { color: var(--primary); text-decoration: none; font-size: 0.92rem; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  h2.section-title { color: var(--primary); border-bottom: 3px solid var(--accent); padding-bottom: 6px; margin-top: 46px; }
+  h3.sub-title { color: var(--primary); margin-top: 30px; font-size: 1.1rem; }
+
+  .qa-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+  }
+  .qa-q {
+    margin: 0 0 8px 0;
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 0.98rem;
+  }
+  .qa-a {
+    margin: 0;
+    font-size: 0.97rem;
+    color: var(--text);
+  }
+  .qa-ap { border-left: 4px solid #22c55e; }
+  .qa-aa { border-left: 4px solid var(--accent); }
+  .qa-tableau { border-left: 4px solid #f59e0b; background: #fffbeb; }
+  .qa-dd { border-left: 4px solid #db2777; background: #fdf2f8; }
+
+  footer.page-footer { text-align: center; padding: 24px; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 40px; }
+
+  .toc-float-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(27,73,101,0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 999;
+    transition: background 0.15s, transform 0.15s;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .toc-float-btn.visible { opacity: 1; pointer-events: auto; }
+  .toc-float-btn:hover { background: var(--accent); transform: translateY(-2px); }
+  .toc-float-btn svg { width: 16px; height: 16px; }
+
+  @media (max-width: 600px) {
+    nav.toc ul { columns: 1; }
+    .toc-float-btn { bottom: 16px; right: 16px; padding: 10px 16px; font-size: 0.82rem; }
+  }
+
+  .home-btn {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    background: #1b4965;
+    color: #ffffff;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 1000;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .home-btn:hover { background: #5fa8d3; transform: scale(1.08); }
+  .home-btn svg { width: 20px; height: 20px; }
+  @media (max-width: 600px) {
+    .home-btn { top: 10px; left: 10px; width: 38px; height: 38px; }
+    .home-btn svg { width: 18px; height: 18px; }
+  }
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b4965">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FSP Rostock">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+</head>
+<body>
+<a href="index.html" class="home-btn" title="Zum Hauptmenü" aria-label="Zum Hauptmenü">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+</a>
+
+<header class="page-header">
+  <h1>Arzt-Patient- &amp; Arzt-Arzt-Gespräch</h1>
+  <p>Teil 2: Dialoge, Patientenfragen mit Antworten, Prüfergespräche — nach Thema geordnet</p>
+  <a class="back-link" href="index.html">← Zurück zum Hauptmenü</a>
+</header>
+
+<main>
+
+<nav class="toc" id="toc">
+  <h2>Inhaltsverzeichnis</h2>
+  <ul>
+    <li><a href="#t1--hämaturie">1. Hämaturie</a></li>
+    <li><a href="#t2--ulkus--magengeschwür">2. Ulkus (Magengeschwür)</a></li>
+    <li><a href="#t3--reizdarmsyndrom---kolonkarzinom">3. Reizdarmsyndrom / Kolonkarzinom</a></li>
+    <li><a href="#t4--appendizitis">4. Appendizitis</a></li>
+    <li><a href="#t5--cholezystitis">5. Cholezystitis</a></li>
+    <li><a href="#t6--leistenhernie">6. Leistenhernie</a></li>
+    <li><a href="#t7--tonsillitis">7. Tonsillitis</a></li>
+    <li><a href="#t8--lymphadenopathie">8. Lymphadenopathie</a></li>
+    <li><a href="#t9--akute-pankreatitis">9. Akute Pankreatitis</a></li>
+    <li><a href="#t10--allgemeine-begriffe---klassifikationen">10. Allgemeine Begriffe &amp; Klassifikationen</a></li>
+  </ul>
+</nav>
+
+<h2 class="section-title" id="t1--hämaturie">1. Hämaturie</h2>
+<h3 class="sub-title">Patient-Arzt-Gespräch</h3>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Gibt es keine Alternative zur Blasenspiegelung?</p>
+  <p class="qa-a">Es gibt Alternativen wie Ultraschall oder MRT, aber die zeigen die Blase nur von außen. Bei der Spiegelung sehen wir direkt hinein, können Proben nehmen und kleine Veränderungen sofort behandeln – ganz ohne Strahlenbelastung.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was ist diese Blaulichtmethode / Fluoreszenzzystoskopie?</p>
+  <p class="qa-a">Dabei geben wir einen Farbstoff in die Blase. Bösartige Zellen leuchten dann unter blauem Licht auf. Wir nutzen das nur bei dringendem Verdacht – für heute reicht die normale Spiegelung völlig aus.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Ein Gerät in die Harnröhre? Das klingt schrecklich! Kann man das nicht in Vollnarkose machen?</p>
+  <p class="qa-a">Ich verstehe Ihre Angst vollkommen. Ein betäubendes Gleitgel macht die Harnröhre unempfindlich – Sie spüren höchstens einen leichten Druck. Eine Vollnarkose dauert viel länger, belastet den Kreislauf und bringt mehr Risiken mit sich als dieser kurze, fünfminütige Eingriff.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Und wenn Sie eine Gewebeprobe entnehmen – tut das weh?</p>
+  <p class="qa-a">Ich kann Sie beruhigen: Die Blasenschleimhaut hat fast keine Schmerznerven. Sie spüren höchstens ein kurzes Ziehen, aber es tut nicht weh.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was machen Sie, wenn Sie da drinnen etwas verletzen?</p>
+  <p class="qa-a">Sollte es zu einer kleinen Verletzung kommen, können wir diese meist direkt während des Eingriffs versorgen. Größere Komplikationen sind die absolute Ausnahme, und unser Team ist für jeden Notfall sofort bereit.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Wie häufig kommt es zu ernsthaften Komplikationen?</p>
+  <p class="qa-a">Die genaue Zahl habe ich gerade nicht im Kopf, aber ich schaue das gerne für Sie nach. Was ich Ihnen sagen kann: Komplikationen sind bei diesem Routineeingriff wirklich sehr selten.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Sie machen mich mit diesen Risiken nur noch ängstlicher!</p>
+  <p class="qa-a">Das tut mir leid, das ist absolut nicht meine Absicht. Ich bin gesetzlich verpflichtet, Sie über alle Möglichkeiten aufzuklären – Sie sind hier in sicheren Händen.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was passiert, wenn Sie direkt Krebs finden? Behandeln Sie das sofort?</p>
+  <p class="qa-a">Wenn wir auffälliges Gewebe sehen, nehmen wir eine Probe und schicken sie ins Labor. Während der Spiegelung selbst können wir keinen Krebs behandeln – wir können nur Blutungen stillen oder Steine entfernen. Eine sichere Diagnose bekommen wir erst, wenn der Laborbericht da ist.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Darf ich direkt danach nach Hause und alles normal machen?</p>
+  <p class="qa-a">Sie bleiben noch etwa zwei Stunden zur Überwachung bei uns. Da Sie ein Beruhigungsmittel bekommen, dürfen Sie 24 Stunden lang nicht Auto fahren, keinen Alkohol trinken und keine wichtigen Entscheidungen treffen. Bitte trinken Sie in den nächsten Tagen viel Wasser, um die Blase durchzuspülen.</p>
+</div>
+<h3 class="sub-title">Arzt-Arzt-Gespräch</h3>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Warum vermuten Sie ein Blasenkarzinom, und welche DD kommen infrage?</p>
+  <p class="qa-a">Leitsymptom ist die schmerzlose (indolente) Makrohämaturie. Bei schmerzhafter Hämaturie eher Nephrolithiasis.<br>DD: Infektionen (Zystitis, Pyelonephritis, Glomerulonephritis, Urogenitaltuberkulose), Parasiten (Schistosomiasis), Konkremente, Tumoren (Nieren-, Harnleiter-, Prostatakarzinom, benigne Polypen), Prostataerkrankungen (BPH, Prostatitis), Endometriose der Blase, Medikamente (Antikoagulantien, Cyclophosphamid), Marschhämaturie. Bei jungen Frauen: Menstruation als Störquelle ausschließen (Präanalytik).</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht Ihr diagnostisches Vorgehen bei V.a. Blasenkarzinom aus?</p>
+  <p class="qa-a">Körperliche Untersuchung: Inspektion (Genitale, Hoden), Palpation (Abdomen, Lymphknoten, Flanken-Klopfschmerz), Auskultation Abdomen, DRU (Prostata, rektale Raumforderung).<br>Labor/Urin: Blutbild, CRP, BSG; Kreatinin, Harnstoff, Harnsäure, Elektrolyte; Urinstatus, Sediment, Urinkultur, Urinzytologie.<br>Bildgebung: Abdomensonographie, CT-Pyelographie mit Kontrastmittel.<br>Goldstandard: Urozystoskopie mit Biopsie.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was versteht man unter Hämaturie, und wie wird sie eingeteilt?</p>
+  <p class="qa-a">Erythrozyten im Urin, abzugrenzen von der Hämoglobinurie (nur freies Hämoglobin).<br>Mikrohämaturie: Urin makroskopisch unauffällig, Nachweis nur per Teststreifen oder Sediment.<br>Makrohämaturie: sichtbare Rotfärbung des Urins.<br>Dysmorphe Erythrozyten (z. B. Akanthozyten) im Sediment → Hinweis auf glomeruläre Ursache.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was bedeuten die Befunde „zottig“ und „gestielt“?</p>
+  <p class="qa-a">Zottig: nicht glatte, blumenkohlartige Oberfläche → spricht für Malignität.<br>Gestielt: polypenähnlich, mit klar abgrenzbarem Hals → eher gutartig.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die wichtigen urologischen Begriffe zur Miktion.</p>
+  <p class="qa-a">Dysurie: erschwertes, schmerzhaftes Wasserlassen.<br>Algurie: Schmerzen beim Wasserlassen.<br>Pollakisurie: häufiges Wasserlassen in kleinen Mengen.<br>Strangurie: brennende, krampfartige Schmerzen in Harnröhre/Blase beim Wasserlassen.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche Risikofaktoren für ein Urothelkarzinom kennen Sie?</p>
+  <p class="qa-a">Höheres Lebensalter, männliches Geschlecht (doppelt so häufig), Nikotinabusus, berufliche Exposition gegenüber aromatischen Aminen (Maler, Gummiindustrie, Friseure, LKW-Fahrer), Medikamente (Cyclophosphamid, Pioglitazon).</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie wird das Urothelkarzinom therapiert?</p>
+  <p class="qa-a">Nicht-muskelinvasiv: TUR-B, danach intravesikale Instillation mit BCG oder Mitomycin-C zur Rezidivprophylaxe.<br>Carcinoma in situ: BCG-Instillation ist Standard, gefolgt von Kontroll-Zystoskopie nach 1–4 Wochen.<br>Muskelinvasiv: radikale Zystektomie + pelvine Lymphadenektomie + Harnableitung (Ileum-Neoblase oder Harnleiterhautfistel) + perioperative Chemotherapie.<br>Metastasiert: palliative Chemotherapie.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Besteht ein Zusammenhang zwischen Urethrozystoskopie und Hirnschädigung?</p>
+  <p class="qa-a">In extrem seltenen Fällen kann Gleitgel oder ein Medikament einen anaphylaktischen Schock auslösen. Der konsekutive Blutdruckabfall führt zu zerebraler Hypoxie und damit zu Hirnschädigung.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Die Patientin trinkt Kirschlikör – besteht hier ein Zusammenhang zu den Beschwerden?</p>
+  <p class="qa-a">Nein. Kirschlikör ist ein süßes, stark alkoholisches Getränk. Da die Patientin diesen bereits seit Jahren vor Auftreten der Beschwerden konsumiert, besteht kein kausaler Zusammenhang zur akuten Hämaturie.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht die Thromboseprophylaxe aus?</p>
+  <p class="qa-a">Gabe von niedermolekularem Heparin, z. B. Clexane 10.000 IE subkutan.</p>
+</div>
+<div class="qa-block qa-tableau">
+  <p class="qa-q">🩺 Tableau clinique der Hämaturie / des Urothelkarzinoms?</p>
+  <p class="qa-a">Schmerzlose Makrohämaturie (sichtbares Blut ohne Schmerzen) → Leitsymptom.<br>Mikrohämaturie (nur laborchemisch nachweisbar).<br>Dysurie (Schmerzen/Brennen beim Wasserlassen).<br>Pollakisurie (häufiges Wasserlassen in kleinen Mengen).<br>Drangsymptomatik (plötzlicher, starker Harndrang).<br>Flankenschmerz (bei Harnstau).<br>Gewichtsverlust, Kachexie → Spätsymptom.<br>Anämie (durch chronischen Blutverlust).</p>
+</div>
+<div class="qa-block qa-dd">
+  <p class="qa-q">🔍 Differentialdiagnosen der Hämaturie (Fachbegriffe)?</p>
+  <p class="qa-a">Urolithiasis.<br>Harnwegsinfekt / Zystitis.<br>Nierenzellkarzinom.<br>Prostatakarzinom.<br>Benigne Prostatahyperplasie (BPH).<br>Strahlenzystitis.<br>Koagulopathie / Antikoagulation.</p>
+</div>
+
+<h2 class="section-title" id="t2--ulkus--magengeschwür">2. Ulkus (Magengeschwür)</h2>
+<h3 class="sub-title">Patient-Arzt-Gespräch</h3>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Gibt es Alternativen zur Magenspiegelung?</p>
+  <p class="qa-a">Ja, Ultraschall oder CT. Die tun nicht weh, aber wir sehen dabei nicht direkt auf die Schleimhaut und können keine Gewebeprobe nehmen. Für eine sichere Diagnose brauchen wir die Spiegelung.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was ist eine Färbeendoskopie?</p>
+  <p class="qa-a">Wir spritzen dabei eine blaue Flüssigkeit auf die Magenschleimhaut – dadurch sieht man kranke Stellen besser. Das machen wir aber kaum noch, weil unsere normalen Kameras heute schon sehr gut sind.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Wie oft gibt es schwere Komplikationen?</p>
+  <p class="qa-a">Die genaue Zahl für unser Haus weiß ich nicht auswendig – das frage ich nachher nach. Das Risiko ist aber extrem gering. Wir machen den Eingriff nur, weil er für Ihre Gesundheit sehr wichtig ist.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Sie machen mich noch ängstlicher!</p>
+  <p class="qa-a">Das tut mir leid, das ist nicht meine Absicht. Ich bin gesetzlich verpflichtet, Ihnen alle theoretischen Risiken aufzuzählen. Die Magenspiegelung ist ein sehr sicherer Routineeingriff, den wir hier täglich problemlos durchführen.</p>
+</div>
+<h3 class="sub-title">Arzt-Arzt-Gespräch</h3>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Warum vermuten Sie ein Ulcus ventriculi, und welche DD kommen infrage?</p>
+  <p class="qa-a">Typische Klinik: epigastrischer Schmerz, der direkt nach dem Essen oder nahrungsunabhängig auftritt.<br>DD: Ulcus duodeni (Nüchternschmerz, bessert sich nach Essen), Magenkarzinom (nur histologisch auszuschließen), Cholezystitis (Ausschluss per Sonographie), Pankreatitis (Amylase/Lipase), Hinterwandinfarkt (EKG + Troponin), GERD/Refluxösophagitis (pH-Metrie oder ÖGD), Ulcus simplex Dieulafoy, Mallory-Weiss-Syndrom, Ösophagusvarizen, Hiatushernie.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht Ihr diagnostisches Vorgehen bei V.a. Ulcus ventriculi aus?</p>
+  <p class="qa-a">Palpation: epigastrischer Druckschmerz, Abwehrspannung (V.a. Perforation). Auskultation: Darmgeräusche, fehlend → paralytischer Ileus?<br>Labor: Blutbild, CRP, BSG, Leukozyten; Amylase, Lipase; Serumgastrin (Zollinger-Ellison?).<br>Goldstandard: ÖGD mit mindestens 6 Biopsien aus Ulkusrand und -grund, obligat bei &gt; 2 cm.<br>HP-Diagnostik: Urease-Schnelltest oder Histologie (invasiv), Atemtest oder Stuhl-Antigen (nicht-invasiv).<br>Röntgen-Abdomen im Stehen: freie Luft unter dem Zwerchfell → Perforation.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist ein Ulkus, und wie entsteht es?</p>
+  <p class="qa-a">Schleimhautdefekt, der die Lamina muscularis mucosae durchbricht.<br>Pathophysiologie: Ungleichgewicht zwischen aggressiven Faktoren (Magensäure, Pepsin, Gallensäuren) und Schutzfaktoren (Muzinbarriere, gute Durchblutung, Prostaglandine).</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die Johnson-Klassifikation des Magenulkus.</p>
+  <p class="qa-a">Typ I: kleine Kurvatur, meist subazid (~60%).<br>Typ II: Magen + Duodenum kombiniert, normal- oder hyperazid (~20%).<br>Typ III: präpylorisch, meist hyperazid.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die ABC-Klassifikation der chronischen Gastritis.</p>
+  <p class="qa-a">Typ A (Autoimmun): Antikörper gegen Belegzellen → Vitamin-B12-Mangel → perniziöse Anämie.<br>Typ B (Bakteriell): Helicobacter pylori, häufigste Form.<br>Typ C (Chemisch): NSAR, Alkohol, Gallereflux, Rauchen.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche Komplikationen kann ein Ulcus ventriculi haben?</p>
+  <p class="qa-a">Blutung (Hämatemesis, Meläna, Anämie).<br>Perforation (freie Luft, akute Peritonitis).<br>Magenausgangsstenose (Sanduhrmagen, Narbenstrikturen).<br>Maligne Entartung (Magenkarzinom).</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist ein Ulcus simplex Dieulafoy?</p>
+  <p class="qa-a">Schleimhautläsion durch eine fehlangelegte, aneurysmatisch veränderte Arteriole → plötzliche, lebensbedrohliche Blutung.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist ein Mallory-Weiss-Syndrom?</p>
+  <p class="qa-a">Longitudinale Schleimhauteinrisse am gastroösophagealen Übergang durch forciertes Erbrechen, typisch bei chronischem Alkoholabusus → schmerzhafte Hämatemesis.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist ein Zollinger-Ellison-Syndrom?</p>
+  <p class="qa-a">Gastrinproduzierender Tumor (Gastrinom) im Pankreas oder Duodenum → schwere, rezidivierende peptische Ulzera durch Hypergastrinämie.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie unterscheiden sich Ulcus duodeni und Ulcus ventriculi klinisch?</p>
+  <p class="qa-a">Ulcus duodeni: Nüchternschmerz, bessert sich nach dem Essen.<br>Ulcus ventriculi: Schmerz nach dem Essen oder nahrungsunabhängig.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wo liegt die häufigste Lokalisation von Ulcus ventriculi und Ulcus duodeni?</p>
+  <p class="qa-a">Ulcus ventriculi: kleine Kurvatur und Antrum.<br>Ulcus duodeni: Bulbus duodeni.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Warum entnimmt man Biopsien aus Ulkusrand und -grund?</p>
+  <p class="qa-a">Erstens zum Ausschluss eines Magenkarzinoms, zweitens zum Nachweis oder Ausschluss von Helicobacter pylori.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht die Eradikationstherapie (Triple-Therapie) bei Helicobacter pylori aus?</p>
+  <p class="qa-a">PPI (z. B. Pantoprazol 40 mg 2×/Tag) + Amoxicillin 1000 mg + Clarithromycin 500 mg für 7 Tage. Danach PPI in Standarddosis weiterführen.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wann erfolgt die Kontrollendoskopie nach Ulcus ventriculi?</p>
+  <p class="qa-a">Nach 4–6 Wochen, zur Kontrolle des Therapieerfolgs und zum Ausschluss von Malignität.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie wirken Protonenpumpeninhibitoren (PPI)?</p>
+  <p class="qa-a">PPI hemmen irreversibel die H⁺/K⁺-ATPase (Protonenpumpe) in den Belegzellen → die Säureproduktion wird blockiert.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht die Thromboseprophylaxe bei Ulkus aus?</p>
+  <p class="qa-a">Niedermolekulares Heparin (z. B. Clexane 10.000 IE s.c.) – nur wenn keine akute gastrointestinale Blutung vorliegt.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie gehen Sie bei einer oberen gastrointestinalen Blutung vor?</p>
+  <p class="qa-a">Stationäre Aufnahme, Vitalzeichen überwachen, Nüchternheit, O2-Gabe, i.v.-Zugang.<br>Infusionstherapie, ggf. Erythrozytenkonzentrate.<br>Notfall-ÖGD zur Blutstillung: Adrenalin-Unterspritzung, Fibrinkleber, Hämoclips, Thermokoagulation.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie behandeln Sie blutende Ösophagusvarizen?</p>
+  <p class="qa-a">Goldstandard: endoskopische Gummibandligatur. Alternativ: Polidocanol-Sklerosierung. Medikamentös: Somatostatin oder Vasopressin. Ultima Ratio: Sengstaken-Blakemore-Ballonsonde.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die Forrest-Klassifikation der oberen gastrointestinalen Blutung.</p>
+  <p class="qa-a">Ia: arteriell spritzend.<br>Ib: Sickerblutung.<br>IIa: sichtbarer Gefäßstumpf.<br>IIb: Koagelauflagerung.<br>IIc: Hämatinauflagerung (schwarz).<br>III: sauberer Ulkusgrund, keine Blutung.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist ein Barrett-Ösophagus?</p>
+  <p class="qa-a">Umwandlung von Plattenepithel zu Zylinderepithel (intestinale Metaplasie) bei chronischem GERD → obligate Präkanzerose für das Adenokarzinom.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist portale Hypertension?</p>
+  <p class="qa-a">Dauerhafter Pfortaderdruck über 12 mmHg (normal 3–6 mmHg). Ursachen: Leberzirrhose, Pfortaderthrombose. Komplikationen: Ösophagus-, Fundus-, anorektale Varizen. Therapie: Propranolol, Spironolacton, Nitrate.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist ein Krukenberg-Tumor?</p>
+  <p class="qa-a">Magenkarzinom-Metastasierung, meist diffuser Typ mit Siegelringzellen, in die Ovarien – typischerweise beidseitig.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Definieren Sie Hämatemesis, Kaffeesatzerbrechen, Meläna und Hämatochezie.</p>
+  <p class="qa-a">Hämatemesis: Erbrechen von frischem Blut, proximale akute Blutung.<br>Kaffeesatzerbrechen: Blut + Magensäure = Hämatin, braun-schwarz.<br>Meläna (Teerstuhl): glänzend-schwarzer Stuhl, Blut über 5–8 h im GI-Trakt.<br>Hämatochezie: frisches rotes Blut per rectum, untere gastrointestinale Blutung.</p>
+</div>
+<div class="qa-block qa-tableau">
+  <p class="qa-q">🩺 Tableau clinique des Ulkus?</p>
+  <p class="qa-a">Epigastrischer Schmerz.<br>Nüchternschmerz / nächtlicher Schmerz → typisch für Duodenalulkus.<br>Postprandialer Schmerz → typisch für Magenulkus.<br>Sodbrennen.<br>Übelkeit, Erbrechen.<br>Appetitlosigkeit.<br>Besserung durch Essen oder Antazida → beim Duodenalulkus.<br>Hämatemesis → Alarmsymptom.<br>Meläna / Teerstuhl → Alarmsymptom.<br>Perforation → brettharter Bauch, akutes Abdomen, chirurgischer Notfall.</p>
+</div>
+<div class="qa-block qa-dd">
+  <p class="qa-q">🔍 Differentialdiagnosen des Ulkus (Fachbegriffe)?</p>
+  <p class="qa-a">Gastritis.<br>Gastroösophageale Refluxkrankheit (GERD).<br>Funktionelle Dyspepsie.<br>Magenkarzinom.<br>Pankreatitis.<br>Cholezystitis / Cholelithiasis.<br>Myokardinfarkt (atypisch).</p>
+</div>
+
+<h2 class="section-title" id="t3--reizdarmsyndrom---kolonkarzinom">3. Reizdarmsyndrom / Kolonkarzinom</h2>
+<h3 class="sub-title">Patient-Arzt-Gespräch</h3>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Gibt es Alternativen zur Darmspiegelung?</p>
+  <p class="qa-a">Ja: Ultraschall, CT, Röntgen oder Kapselkamera. Vorteil: kein Schmerz. Nachteil: wir sehen nicht direkt auf die Schleimhaut, können keine Gewebeprobe nehmen, und es gibt oft Strahlenbelastung.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was ist eine Färbeendoskopie?</p>
+  <p class="qa-a">Wir sprühen einen harmlosen Farbstoff auf die Schleimhaut – damit sieht man kranke Stellen besser. Das machen wir aber kaum noch, weil unsere normalen Kameras heute sehr gut sind.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was ist das CO2, das Sie bei der Darmspiegelung verwenden?</p>
+  <p class="qa-a">Das ist Kohlendioxid – ein harmloses Gas, das wir auch selbst ausatmen. Wir nutzen es, um den Darm für die Untersuchung leicht aufzuweiten.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Ich will eine Vollnarkose!</p>
+  <p class="qa-a">Das ist möglich, wenn Sie es unbedingt wünschen. Wir empfehlen aber eine Beruhigungsspritze (Sedierung) – das ist schonender und hat weniger Risiken als eine echte Vollnarkose.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was machen Sie, falls ein Durchbruch (Perforation) passiert?</p>
+  <p class="qa-a">Das ist extrem selten. Falls es passiert, müssen wir operieren: Wir nähen das Loch sofort zu, und Sie bekommen ein Antibiotikum gegen Entzündungen.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was machen Sie bei einer Blutung?</p>
+  <p class="qa-a">Blutungen können wir meistens direkt bei der Spiegelung stoppen – mit einem Medikament, Hitze oder einer kleinen Metallklammer. Eine Operation ist fast nie nötig.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was ist ein Polyp?</p>
+  <p class="qa-a">Das ist eine gutartige Wucherung der Schleimhaut. Ursachen können fettiges Essen, Bewegungsmangel, Übergewicht, Alkohol, Rauchen oder Vererbung sein.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Wie wird ein Polyp entfernt?</p>
+  <p class="qa-a">Direkt bei der Spiegelung. Wir schieben eine feine Drahtschlinge durch das Gerät, trennen den Polypen mit Strom ab und ziehen ihn heraus. Davon spüren Sie gar nichts.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Habe ich danach Blähungen?</p>
+  <p class="qa-a">Ja, das ist ganz normal. Am besten hilft Bewegung und Herumlaufen. Meiden Sie in den ersten Tagen blähende Lebensmittel wie Bohnen oder Kohl.</p>
+</div>
+<h3 class="sub-title">Arzt-Arzt-Gespräch</h3>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche endoskopischen Befunde sehen Sie bei Colitis ulcerosa und Morbus Crohn?</p>
+  <p class="qa-a">Colitis ulcerosa: diffuse Rötung, Kontaktblutungen, unscharf begrenzte Ulzerationen, Pseudopolypen.<br>Morbus Crohn: aphthöse Läsionen, scharf begrenzte (landkartenartige) Ulzerationen, Stenosen, Fisteln, Pflastersteinrelief.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche Risiko- und Schutzfaktoren kennen Sie beim Kolonkarzinom?</p>
+  <p class="qa-a">Risiko: positive Familienanamnese, FAP, HNPCC, kolorektale Adenome, Colitis ulcerosa, Diabetes Typ 2, Alter &gt; 40 J., Adipositas, fleisch- und fettreiche Ernährung.<br>Schutz: körperliche Aktivität, ballaststoff-, gemüse- und kalziumreiche Ernährung.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie behandeln Sie ein Reizdarmsyndrom?</p>
+  <p class="qa-a">Symptomatisch: Spasmolytika (Buscopan, Mebeverin), Laxantien, Antidiarrhoika.<br>Lifestyle: ballaststoffreiche Kost, regelmäßige Mahlzeiten, Stressabbau, Psychotherapie.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie ist das Polypenmanagement und die Kontrollintervalle geregelt?</p>
+  <p class="qa-a">≤ 5 mm: Biopsiezange. &gt; 5 mm: elektrische Schlinge.<br>Kontrollkoloskopie: alle 10 Jahre bei kleinem, nicht-neoplastischem Polyp; alle 5 Jahre bei 1–2 Adenomen &lt; 1 cm; alle 3 Jahre bei 3–10 Adenomen, &gt; 1 cm oder villös/HGIN.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht die Therapie des Morbus Crohn aus?</p>
+  <p class="qa-a">Im Schub: Mesalazin + Glukokortikoide (Prednison).<br>Erhaltung: Azathioprin, Methotrexat.<br>Chirurgisch: nur bei Komplikationen (Fisteln, Abszesse, Perforation).</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist eine Zöliakie?</p>
+  <p class="qa-a">Immunologische Unverträglichkeit der Dünndarmschleimhaut gegenüber Gluten → Zottenatrophie → Malabsorption. Klinik: reizdarmähnliche Beschwerden, Fettstuhl (Steatorrhö), vorgewölbtes Abdomen, Tabaksbeutelgesäß (Lipoatrophie).</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was sind Pseudopolypen?</p>
+  <p class="qa-a">Harmlose Schleimhautinseln, die bei schwerer Colitis ulcerosa stehen bleiben, während die Umgebung geschwürig zerstört ist. Keine echten Tumorneubildungen.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Unterscheiden Sie LGIN und HGIN.</p>
+  <p class="qa-a">LGIN (low-grade): leichte Zellveränderung, geringes Entartungsrisiko.<br>HGIN (high-grade): schwere Zellveränderung, ernsthafte Präkanzerose.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist eine Piecemeal-Resektion?</p>
+  <p class="qa-a">Stückweise Abtragung eines großen, flachen Polypen mit der Schlinge, weil er nicht en bloc entfernt werden kann – höheres Risiko für Gewebereste.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie definieren Sie eine Diarrhö, und wie unterteilen Sie die Ursachen?</p>
+  <p class="qa-a">Mindestens 3 flüssige Stühle pro Tag.<br>Ursachen: infektiös (Bakterien, Viren, Parasiten) vs. nicht-infektiös (CED, Tumor, RDS, Unverträglichkeiten, Medikamente).<br>Therapie: Flüssigkeits- und Volumenersatz oral oder i.v. (Ringer-Laktat, NaCl).</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist eine FAP?</p>
+  <p class="qa-a">Familiäre adenomatöse Polyposis: autosomal-dominant, über 100 Adenome im Kolon → unweigerliche maligne Entartung → prophylaktische Proktokolektomie mit ileoanaler Pouch-Anastomose.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Charakterisieren Sie den Morbus Crohn.</p>
+  <p class="qa-a">Chronisch-entzündliche Darmerkrankung mit diskontinuierlichem, transmuralem Befall des gesamten GI-Trakts, meist terminales Ileum + Kolon. Ursache: Autoimmunreaktion.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Charakterisieren Sie die Colitis ulcerosa.</p>
+  <p class="qa-a">Kontinuierliche Ausbreitung von distal nach proximal, streng auf Kolon und Mukosa/Submukosa beschränkt, immer mit blutig-schleimiger Diarrhö.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist ein toxisches Megakolon?</p>
+  <p class="qa-a">Akute, lebensbedrohliche Erweiterung des Dickdarms bei schwerer Kolitis, meist CED-Komplikation → sofortige Intensivtherapie oder Operation.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche Resektion wählen Sie je nach Lage des Kolonkarzinoms?</p>
+  <p class="qa-a">Zäkum/Ascendens → Hemikolektomie rechts.<br>Transversum → Transversumresektion.<br>Descendens/Sigma → Hemikolektomie links bzw. Sigmaresektion.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht die Vorsorge-Koloskopie aus?</p>
+  <p class="qa-a">Ab 50 Jahren alle 10 Jahre, bei familiärer Belastung ab 40–45 Jahren.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist der Guajak-Test?</p>
+  <p class="qa-a">Biochemischer Nachweis von okkultem, also unsichtbarem, Blut im Stuhl.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist eine Divertikulitis?</p>
+  <p class="qa-a">Ausstülpungen von Mukosa und Submukosa durch Muskelschwachstellen des Sigmas, begünstigt durch ballaststoffarme Ernährung und Obstipation. Die Entzündung heißt Divertikulitis, umgangssprachlich auch „Linksappendizitis“. Labor: erhöhte Entzündungswerte. Therapie: unkompliziert konservativ, kompliziert operativ.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wann ist die Diagnose Reizdarmsyndrom zulässig?</p>
+  <p class="qa-a">Das Reizdarmsyndrom ist eine Ausschlussdiagnose – nur zu stellen, wenn alle organischen Differenzialdiagnosen ausgeschlossen sind.</p>
+</div>
+<div class="qa-block qa-tableau">
+  <p class="qa-q">🩺 Tableau clinique des Kolonkarzinoms?</p>
+  <p class="qa-a">Änderung der Stuhlgewohnheiten → Leitsymptom.<br>Hämatochezie → eher linksseitiger Tumor.<br>Okkultes Blut im Stuhl → Zufallsbefund beim Screening.<br>Bleistiftdünner Stuhl → Zeichen einer Einengung.<br>Meteorismus / Blähungen.<br>Abdominelle Schmerzen.<br>Palpabler Tumor → Spätsymptom.<br>Gewichtsverlust, Kachexie → Spätsymptom.<br>Anämie.<br>Ileus → Notfall.<br>Rechtsseitiger Tumor: okkulte Blutung + Anämie, spät symptomatisch.<br>Linksseitiger Tumor: Hämatochezie + Stenosezeichen, früh symptomatisch.</p>
+</div>
+<div class="qa-block qa-dd">
+  <p class="qa-q">🔍 Differentialdiagnosen des Kolonkarzinoms (Fachbegriffe)?</p>
+  <p class="qa-a">Rektumkarzinom.<br>Divertikulitis.<br>Morbus Crohn / Colitis ulcerosa.<br>Kolonpolypen.<br>Hämorrhoiden.<br>Ischämische Kolitis.<br>Reizdarmsyndrom (RDS).<br>Appendizitis.</p>
+</div>
+
+<h2 class="section-title" id="t4--appendizitis">4. Appendizitis</h2>
+<h3 class="sub-title">Patient-Arzt-Gespräch</h3>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Warum bin ich erkrankt?</p>
+  <p class="qa-a">Die genaue Ursache lässt sich oft nicht sicher feststellen. Eine häufige Theorie: Der Ausgang des Blinddarms war durch einen kleinen Kotstein oder Fremdkörper verstopft – dadurch hat sich das Gewebe entzündet.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Warum nicht nur Medikamente?</p>
+  <p class="qa-a">Bei einer so starken Entzündung sind Medikamente allein nicht sicher genug. Wir müssen operieren, um einen Durchbruch zu verhindern, der zu einer gefährlichen Bauchfellentzündung führen könnte.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Warum CO2 bei der Operation?</p>
+  <p class="qa-a">Das Gas hilft uns, den Bauchraum sanft zu weiten, damit wir besser sehen können. Es ist völlig harmlos – der Rest wird einfach über die Lunge ausgeatmet.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Warum muss ich nüchtern sein?</p>
+  <p class="qa-a">Während der Narkose entspannen sich die Muskeln. Wenn Sie nüchtern sind, minimieren wir das Risiko, dass Mageninhalt zurückfließt und in die Lunge gelangt.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Warum darf ich nach der OP nicht sofort essen?</p>
+  <p class="qa-a">Ihr Darm muss nach der Narkose erst langsam wieder „aufwachen“. Isst man zu früh, kommt es oft zu Übelkeit. Wir fangen mit etwas Wasser oder Tee an.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Warum wird der Blinddarm ins Labor geschickt?</p>
+  <p class="qa-a">Wir schicken ihn routinemäßig zur histologischen Untersuchung, um die Entzündung zu bestätigen und andere Veränderungen wie Tumoren sicher auszuschließen.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was ist eine Drainage?</p>
+  <p class="qa-a">Ein kleiner, weicher Schlauch, den wir im Bauchraum belassen, um Wundflüssigkeit nach außen zu leiten. Er wird meist nach wenigen Tagen schmerzfrei entfernt.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Wann kann ich wieder arbeiten oder Sport treiben?</p>
+  <p class="qa-a">Arbeit: nach etwa 2 Wochen, je nach Belastung. Sport, besonders Bauchmuskeltraining: nach etwa 4 Wochen. Leichte Spaziergänge sind früher möglich.</p>
+</div>
+<h3 class="sub-title">Arzt-Arzt-Gespräch</h3>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie entsteht eine Appendizitis?</p>
+  <p class="qa-a">Lumenobstruktion durch Kotsteine (intraluminal) oder geschwollene Lymphknoten (extraluminal) → Sekretstau → Druckerhöhung → Minderperfusion → bakterielle Invasion.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die Entzündungsstadien der Appendizitis.</p>
+  <p class="qa-a">Katarrhalisch: Ödem, Hyperämie – einziges reversibles Stadium.<br>Ulzero-phlegmonös: diffus-eitrige Infiltration der gesamten Appendixwand mit herdförmigen Ulzera.<br>Gangränös: Wandnekrose durch Ischämie, hohe Perforationsgefahr.<br>Perforiert: Durchbruch – gedeckt als perityphlitischer Abszess, ungedeckt als diffuse Peritonitis.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche therapeutischen Optionen gibt es bei Appendizitis?</p>
+  <p class="qa-a">Standard: laparoskopische Appendektomie.<br>Konservativ, nur im katarrhalischen Stadium: Bettruhe, Nahrungskarenz, Antibiotika (Cefuroxim + Metronidazol).<br>Freie Perforation: offene Appendektomie + Abdominallavage + Drainage.<br>Perityphlitischer Abszess: CT/US-gesteuerte Drainage + Intervallappendektomie.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Beschreiben Sie den Ablauf einer laparoskopischen Appendektomie.</p>
+  <p class="qa-a">Drei Trokare einbringen → diagnostische Laparoskopie → Appendix darstellen → Gefäße im Mesenterium ligieren → Appendixbasis mit Röder-Schlinge absetzen → Bergung im Bergebeutel.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Beschreiben Sie den typischen Symptomverlauf der Appendizitis.</p>
+  <p class="qa-a">Der Schmerz wandert von epigastrisch/periumbilikal in den rechten Unterbauch. Begleitsymptome: Inappetenz, Übelkeit, Erbrechen, subfebrile Temperaturen, Achsel-Rektum-Differenz &gt; 1°C.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was versteht man unter dem „faulen Frieden“?</p>
+  <p class="qa-a">Plötzlicher Schmerznachlass nach Perforation, weil der Druck im Lumen schlagartig abfällt. Danach folgt durch die Peritonitis wieder stärkster Schmerz – akut lebensbedrohlich.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die klinischen Appendizitis-Zeichen.</p>
+  <p class="qa-a">McBurney-Punkt: Mitte zwischen Bauchnabel und rechtem Beckenkamm.<br>Lanz-Punkt: rechtes Drittel der Linie zwischen beiden Beckenkämmen.<br>Blumberg-Zeichen: kontralateraler Loslassschmerz.<br>Rovsing-Zeichen: Schmerz rechts beim retrograden Ausstreichen des Kolons.<br>Psoas-Zeichen: Schmerz beim Anheben des rechten Beins → retrozökale Lage.<br>Douglas-Schmerz: Druckschmerz des Peritoneums bei der DRU.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was bedeutet Loslassschmerz?</p>
+  <p class="qa-a">Schmerz beim plötzlichen Loslassen der Bauchdecke – Zeichen für peritoneale Reizung, z. B. bei Peritonitis oder Appendizitis.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist das Kokardenphänomen im Ultraschall?</p>
+  <p class="qa-a">Zielscheibenförmiges Bild durch Wechsel von echoarmen und echoreichen Wandschichten der entzündeten Appendix. Klassisches sonografisches Zeichen für eine entzündliche Wandverdickung oder Invagination – auch bei Morbus Crohn und Divertikulitis.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche Laborbefunde erwarten Sie bei Appendizitis?</p>
+  <p class="qa-a">Leukozytose, CRP↑, BSG↑.<br>Beta-HCG zum Ausschluss einer Eileiterschwangerschaft.<br>Urinstatus zum Ausschluss von Harnwegsinfekt oder Nephrolithiasis.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie Vor- und Nachteile der konservativen Therapie.</p>
+  <p class="qa-a">Vorteile: kein OP-Risiko, keine unnötige Appendektomie.<br>Nachteile: hohe Aggravationsgefahr, hohe Rezidivrate.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Unterscheiden Sie mechanischen und paralytischen Ileus.</p>
+  <p class="qa-a">Mechanisch: physikalisches Hindernis (Tumor, Adhäsionen, Kotsteine) → Operation.<br>Paralytisch: funktionelle Darmlähmung, z. B. postoperativ oder bei Peritonitis → konservativ.<br>Diagnose: Röntgen-Abdomen im Stehen mit Spiegelbildungen, CT.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Unterscheiden Sie Sepsis und Bakteriämie.</p>
+  <p class="qa-a">Sepsis: lebensbedrohliche Organdysfunktion durch dysregulierte Immunantwort auf eine Infektion.<br>Bakteriämie: nur laborchemischer Nachweis von Bakterien im Blut, ohne zwingende Symptome.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die SIRS-Kriterien.</p>
+  <p class="qa-a">Mindestens 2 von 4: Temperatur über 38°C oder unter 36°C, Herzfrequenz über 90/min, Atemfrequenz über 20/min, Leukozyten über 12.000 oder unter 4.000/µl.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Unterscheiden Sie Exsudat und Transsudat.</p>
+  <p class="qa-a">Exsudat: entzündlich, protein- und zellreich.<br>Transsudat: nicht-entzündlich, protein- und zellarm, z. B. bei Herzinsuffizienz oder Leberzirrhose.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Unterscheiden Sie Empyem und Abszess.</p>
+  <p class="qa-a">Empyem: Eiter in einem präformierten, also bereits vorhandenen Hohlraum, z. B. Pleura oder Gallenblase.<br>Abszess: Eiter in einem neu gebildeten Hohlraum durch Gewebenekrose.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Warum verwendet man CO2 bei Laparoskopien?</p>
+  <p class="qa-a">CO2 ist nicht brennbar und damit sicher beim Elektrokauter, und es hat eine hohe Diffusionskapazität, wird also schnell über die Lunge abgeatmet – minimales Embolierisiko.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht die Thromboseprophylaxe nach Appendektomie aus?</p>
+  <p class="qa-a">Medikamentös: niedermolekulares Heparin (z. B. Enoxaparin) s.c.<br>Physikalisch: Thromboseprophylaxestrümpfe.<br>Funktionell: Frühmobilisation – die effektivste Maßnahme.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht der postoperative Kostaufbau aus?</p>
+  <p class="qa-a">Nüchternheit → Flüssigkeit (Tee) → Suppe/pürierte Kost → leichte Vollkost → normale Vollkost.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wann ist eine Laparoskopie kontraindiziert?</p>
+  <p class="qa-a">Bei diffuser Peritonitis (dann offene OP mit Abdominallavage), ausgeprägten Adhäsionen, massivem Meteorismus, hämodynamischer Instabilität (Schock).</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist ein Meckel-Divertikel?</p>
+  <p class="qa-a">Echte, angeborene Ausstülpung des Ileums, 30–60 cm vor der Ileozökalklappe. Ursache: unvollständige Rückbildung des Ductus omphaloentericus. Kann ektopes Magenepithel enthalten → schmerzlose Blutung.</p>
+</div>
+<div class="qa-block qa-tableau">
+  <p class="qa-q">🩺 Tableau clinique der Appendizitis?</p>
+  <p class="qa-a">Schmerzwanderung von epigastrisch/periumbilikal in den rechten Unterbauch.<br>Inappetenz, Übelkeit, Erbrechen.<br>Subfebrile Temperatur, Achsel-Rektum-Differenz &gt; 1°C.<br>Loslassschmerz.<br>Positive Appendizitis-Zeichen: McBurney, Lanz, Blumberg, Rovsing, Psoas, Douglas.</p>
+</div>
+<div class="qa-block qa-dd">
+  <p class="qa-q">🔍 Differentialdiagnosen der Appendizitis (Fachbegriffe)?</p>
+  <p class="qa-a">Gastrointestinal: Gastroenteritis, Cholezystitis, Pankreatitis, Morbus Crohn, Divertikulitis.<br>Gynäkologisch: Extrauteringravidität, Adnexitis, Ovarialtorsion.<br>Urologisch: Urolithiasis, Pyelonephritis.</p>
+</div>
+
+<h2 class="section-title" id="t5--cholezystitis">5. Cholezystitis</h2>
+<h3 class="sub-title">Patient-Arzt-Gespräch</h3>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Kann ich ohne Gallenblase leben?</p>
+  <p class="qa-a">Ja, absolut kein Problem. Die Gallenblase ist nur ein kleiner Speicher – produziert wird die Galle in der Leber. Nach der OP fließt die Galle einfach direkt in den Darm. Ihre Verdauung funktioniert genauso gut wie vorher.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Warum keine Hybrid-NOTES-Operation?</p>
+  <p class="qa-a">Das ist ein sehr neues Verfahren über die Scheide oder den Darm. Wir machen das nicht, weil uns die Routine fehlt. Die normale Bauchspiegelung ist bei uns ein täglicher Standardeingriff und für Sie viel sicherer.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Warum keine Single-Port-Operation?</p>
+  <p class="qa-a">Dabei operiert man durch nur einen einzigen Schnitt am Nabel. Das sieht zwar besser aus, aber es nimmt uns die Sicht und den Arbeitsraum. Die normale Bauchspiegelung bietet Ihnen einfach mehr Sicherheit.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Wie soll ich mich nach der OP ernähren?</p>
+  <p class="qa-a">Keine strenge Diät nötig. Am Anfang einfach weniger Fettiges und Blähendes, und lieber mehrere kleine Mahlzeiten über den Tag verteilen.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Warum nicht Medikamente statt Operation?</p>
+  <p class="qa-a">Tabletten helfen hier leider nicht dauerhaft. Die Entzündung kommt immer wieder, und Gallensteine können den Gallengang verstopfen. Die Operation ist der einzige sichere Weg, das Problem zu lösen.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Warum nicht rauchen?</p>
+  <p class="qa-a">Rauchen verengt die Blutgefäße. Weniger Sauerstoff führt zu schlechterer Wundheilung und höherem Infektionsrisiko.</p>
+</div>
+<h3 class="sub-title">Arzt-Arzt-Gespräch</h3>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche Ursachen der Cholezystitis kennen Sie?</p>
+  <p class="qa-a">Kalkulös (90%): Gallenstein verstopft den Ductus cysticus → Gallestau → bakterielle Entzündung.<br>Akalkulös (10%): „Stressgalle“ bei Schwerkranken, z. B. Sepsis oder große Operationen, durch Durchblutungsstörungen.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Warum entstehen Gallensteine?</p>
+  <p class="qa-a">Ungleichgewicht zwischen steinbildenden Stoffen (Cholesterin, Bilirubin) und lösenden Stoffen (Gallensäuren). Die Galle wird dickflüssig, kristallisiert, und es bilden sich Steine (Cholelithiasis).</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die drei Gallensteintypen mit Häufigkeit.</p>
+  <p class="qa-a">Cholesterin-/Gemischtsteine: ~80%.<br>Pigmentsteine/Bilirubinsteine: ~10%, bei Hämolyse.<br>Kalksteine: ~10%.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die 6-F-Regel der Risikofaktoren für Gallensteine.</p>
+  <p class="qa-a">Female, Fat, Fertile, Forty, Fair, Family.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die Charcot-Trias.</p>
+  <p class="qa-a">Schmerzen im rechten Oberbauch, Ikterus, hohes Fieber mit Schüttelfrost – typisch für Cholangitis.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche Komplikationen kann eine unbehandelte Cholezystitis haben?</p>
+  <p class="qa-a">Gallenblasenempyem.<br>Gangrän (Wandnekrose).<br>Perforation → Peritonitis oder Abszess.<br>Gallensteinileus (Fistelbildung in den Darm).<br>Porzellangallenblase (Verkalkung) → Präkanzerose.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die Cholestaseparameter.</p>
+  <p class="qa-a">AP↑, Gamma-GT↑, direktes Bilirubin↑.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Unterscheiden Sie indirektes und direktes Bilirubin.</p>
+  <p class="qa-a">Indirektes Bilirubin: wasserunlöslich, lipophil, Transport zur Leber, erhöht bei Hämolyse.<br>Direktes Bilirubin: in der Leber konjugiert, wasserlöslich, Ausscheidung über die Galle, erhöht bei Cholestase.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie ist der Ikterus einzuteilen?</p>
+  <p class="qa-a">Prähepatisch: Hämolyse → indirektes Bilirubin↑.<br>Intrahepatisch: Leberzellschaden, z. B. Hepatitis oder Zirrhose → direktes und indirektes Bilirubin↑.<br>Posthepatisch: mechanischer Gallestau, z. B. Gallengangstein oder Pankreaskopfkarzinom → direktes Bilirubin↑, dunkler Urin, heller Stuhl.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Ab welchem Wert sieht man einen Ikterus?</p>
+  <p class="qa-a">An den Skleren ab 2 mg/dl, an der Haut ab 3 mg/dl.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist das Murphy-Zeichen?</p>
+  <p class="qa-a">Schmerzbedingter Inspirationsstopp beim Einatmen, wenn der Untersucher den rechten Oberbauch unter dem Rippenbogen drückt – pathognomonisch für akute Cholezystitis.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was beschreibt das Courvoisier-Zeichen?</p>
+  <p class="qa-a">Eine schmerzlose, prall-elastisch tastbare Gallenblase zusammen mit einem Ikterus. Tritt auf, wenn der Gallenabfluss langsam blockiert wird, z. B. durch einen Tumor.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie entstehen kolikartige Schmerzen?</p>
+  <p class="qa-a">Wellenartige Schmerzattacken durch krampfhafte Kontraktion glatter Muskulatur, z. B. Gallenwege oder Harnleiter, gegen ein Hindernis wie einen Stein.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die sonografischen Zeichen der Cholezystitis.</p>
+  <p class="qa-a">Wandverdickung über 3 mm.<br>Dreischichtung (Wandödem).<br>Konkremente mit dorsalem Schallschatten.<br>Perichole zystitische Flüssigkeit.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist das Mirizzi-Syndrom?</p>
+  <p class="qa-a">Ein großer Stein im Ductus cysticus komprimiert von außen den Ductus hepaticus communis → Verschlussikterus, obwohl der Hauptgallengang selbst frei ist.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht der Therapie-Algorithmus beim Gallensteinleiden aus?</p>
+  <p class="qa-a">Asymptomatische Cholezystolithiasis: abwarten, keine OP.<br>Symptomatische Cholezystitis: laparoskopische Cholezystektomie innerhalb von 24–72 h + konservative Begleittherapie.<br>Choledocholithiasis: erst ERCP zur Steinextraktion, dann elektive Cholezystektomie.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Warum wird der Stuhl heller und der Urin dunkler bei posthepatischem Gallestau?</p>
+  <p class="qa-a">Die Galle gelangt nicht in den Darm, Sterkobilin fehlt, der Stuhl wird lehmfarben. Direktes Bilirubin weicht ins Blut aus und wird renal ausgeschieden, der Urin wird dunkel.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die Virchow-Trias.</p>
+  <p class="qa-a">Verlangsamter Blutfluss / Stase, z. B. bei Immobilität.<br>Gefäßwandschaden, z. B. durch OP oder Trauma.<br>Erhöhte Gerinnungsneigung / Hyperkoagulabilität, z. B. bei Adipositas, Pille, Faktor-V-Leiden.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist ein Platzbauch?</p>
+  <p class="qa-a">Das plötzliche Aufreißen einer Operationswunde am Bauch nach einem chirurgischen Eingriff.</p>
+</div>
+<div class="qa-block qa-tableau">
+  <p class="qa-q">🩺 Tableau clinique der Cholezystitis?</p>
+  <p class="qa-a">Rechtsseitiger Oberbauchschmerz → Leitsymptom.<br>Kolikartiger Schmerz → bei Gallenkolik.<br>Schmerzausstrahlung in rechte Schulter oder Rücken.<br>Übelkeit, Erbrechen.<br>Fieber, Schüttelfrost → Zeichen der Entzündung.<br>Positives Murphy-Zeichen.<br>Ikterus → bei Stein im Hauptgallengang.<br>Abwehrspannung → bei Komplikation.</p>
+</div>
+<div class="qa-block qa-dd">
+  <p class="qa-q">🔍 Differentialdiagnosen der Cholezystitis (Fachbegriffe)?</p>
+  <p class="qa-a">Choledocholithiasis.<br>Cholangitis.<br>Pankreatitis.<br>Appendizitis.<br>Magenulkus / Duodenalulkus.<br>Myokardinfarkt (atypisch).<br>Pleuritis / Pneumonie rechts.</p>
+</div>
+
+<h2 class="section-title" id="t6--leistenhernie">6. Leistenhernie</h2>
+<h3 class="sub-title">Patient-Arzt-Gespräch</h3>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was genau ist ein Leistenbruch?</p>
+  <p class="qa-a">Knochen brechen hier nicht. Ein Leistenbruch bedeutet, dass es eine kleine Lücke in Ihrer Bauchwand gibt. Durch dieses Loch drückt sich das Bauchfell wie ein kleiner Sack nach außen – manchmal rutscht auch etwas Darm hinein. Das ist die Beule, die Sie sehen.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Wie wird das operiert – offen oder Schlüsselloch?</p>
+  <p class="qa-a">Es gibt zwei Wege: Bei der Schlüsselloch-Methode machen wir drei winzige Schnitte und reparieren den Bruch von innen mit einer Kamera und einem Netz. Bei der offenen Methode machen wir einen Schnitt direkt in der Leiste und vernähen die Schichten – meistens auch mit einem Netz.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Muss das Netz unbedingt sein?</p>
+  <p class="qa-a">Ich verstehe Ihre Sorge. Aber das Netz ist wichtig: Ohne es steht das Gewebe unter Spannung und reißt wieder. Das Netz ist aus einem sehr gut verträglichen Kunststoff, verwächst fest mit Ihrem Gewebe und verhindert zuverlässig, dass der Bruch wiederkommt.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Welche Risiken hat die Operation?</p>
+  <p class="qa-a">Neben normalen Risiken wie Infektion oder Blutergüssen gibt es in der Leiste drei Besonderheiten: Nerven können gereizt werden (Taubheitsgefühl), beim Mann kann der Samenstrang verletzt werden (sehr selten Hodenschwund), und es kommt häufig zu harmlosen Blutergüssen, die von allein verschwinden.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Wie muss ich mich nach der OP verhalten?</p>
+  <p class="qa-a">Die innere Heilung braucht Zeit: zwei bis drei Wochen körperlich schonen, nichts über 5 kg heben, kein Sport. Normales Gehen ist ab dem ersten Tag erlaubt und sogar gut.</p>
+</div>
+<h3 class="sub-title">Arzt-Arzt-Gespräch</h3>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist eine Hernie, und wie ist sie aufgebaut?</p>
+  <p class="qa-a">Eine Hernie ist der Austritt von Darmanteilen durch eine Schwachstelle der Bauchwand.<br>Bruchsack: Ausstülpung des Peritoneum parietale.<br>Bruchinhalt: meist Omentum majus oder Darmschlingen.<br>Bruchpforte: Lücke in der Bauchwand.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Unterscheiden Sie die direkte und indirekte Leistenhernie.</p>
+  <p class="qa-a">Indirekt: lateral der epigastrischen Gefäße, durch den inneren Leistenring, oft angeboren, kann bis ins Skrotum reichen.<br>Direkt: medial der epigastrischen Gefäße, direkt durch die Bauchwand im Hesselbach-Trigonum, immer erworben, meist ältere Männer.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wann wird eine Leistenhernie operiert?</p>
+  <p class="qa-a">Bei Frauen immer, wegen Verwechslungsgefahr mit Schenkelhernie und hohem Inkarzerationsrisiko.<br>Bei Männern bei Symptomen oder Wachstum, asymptomatisch ist Watchful Waiting möglich.<br>Bei jeder Inkarzeration ist es ein Notfall.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die Operationsverfahren bei Leistenhernie.</p>
+  <p class="qa-a">Shouldice: Naht ohne Netz, offen-anterior.<br>Lichtenstein: Netzimplantation, offen-anterior.<br>TAPP/TEP: Netz, laparoskopisch, minimalinvasiv-posterior.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist eine Inkarzeration?</p>
+  <p class="qa-a">Akute Einklemmung von Bruchinhalt, meist Darm, in der Bruchpforte → Ischämie → Nekrose → akutes Abdomen. Symptome: plötzlich stärkste Schmerzen, harte irreponible Schwellung, Ileussymptomatik. Sofortige Notfall-OP.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Unterscheiden Sie Prolene und Vicryl.</p>
+  <p class="qa-a">Prolene: nicht resorbierbarer Faden, bleibt dauerhaft für das Netz.<br>Vicryl: resorbierbar, für innere Gewebeschichten und Hautnaht.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist ein Kompartmentsyndrom?</p>
+  <p class="qa-a">Kritischer Druckanstieg in Muskellogen → Ischämie → Gewebeuntergang, chirurgischer Notfall: Fasziotomie.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht das postoperative Management nach Leistenhernien-OP aus?</p>
+  <p class="qa-a">Sandsack lokal zur Hämatomprophylaxe, Pflasterwechsel alle 2 Tage, Fadenzug nach 7–10 Tagen, Schonung 3–5 Tage, kein Heben über 5 kg für 2–3 Wochen.</p>
+</div>
+<div class="qa-block qa-tableau">
+  <p class="qa-q">🩺 Tableau clinique der Leistenhernie?</p>
+  <p class="qa-a">Tastbare, reponible Schwellung in der Leiste, verstärkt beim Pressen oder Husten, meist schmerzlos bei unkomplizierter Hernie.<br>Bei Inkarzeration: plötzlich stärkste Schmerzen, harte irreponible Schwellung, Ileussymptomatik → Notfall.</p>
+</div>
+<div class="qa-block qa-dd">
+  <p class="qa-q">🔍 Differentialdiagnosen der Leistenhernie (Fachbegriffe)?</p>
+  <p class="qa-a">Schenkelhernie.<br>Lymphknotenschwellung.<br>Leistenabszess.<br>Lipome.<br>Varikosis der V. saphena magna.</p>
+</div>
+
+<h2 class="section-title" id="t7--tonsillitis">7. Tonsillitis</h2>
+<h3 class="sub-title">Patient-Arzt-Gespräch</h3>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Könnte man das nicht mit Medikamenten behandeln?</p>
+  <p class="qa-a">Bei Ihnen wurde die Behandlung schon mehrmals versucht, ohne dauerhaften Erfolg. Da das Risiko für Komplikationen hoch ist, rate ich Ihnen jetzt zur endgültigen Entfernung.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was ist eine Tonsillotomie?</p>
+  <p class="qa-a">Bei der Tonsillotomie werden die Mandeln nur verkleinert, bei der Tonsillektomie vollständig entfernt. Die Verkleinerung machen wir vor allem bei Kindern. Bei Erwachsenen ist die vollständige Entfernung der Standard.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Besteht durch Bluttransfusionen ein Risiko für HIV oder Hepatitis?</p>
+  <p class="qa-a">Dank strengster Kontrollen und moderner Tests ist das Infektionsrisiko durch Blutübertragungen heute extrem gering.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Wie kommt es zu Infektionen – benutzen Sie keine sterilen Instrumente?</p>
+  <p class="qa-a">Natürlich arbeiten wir mit sterilen Instrumenten. Infektionen entstehen meist durch körpereigene Bakterien aus dem Mund-Rachenraum, die über die Wunde ins Gewebe gelangen können.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Kann ich ohne Mandeln leben?</p>
+  <p class="qa-a">Ja, absolut. Bei Erwachsenen haben die Mandeln ihre Immunfunktion bereits erfüllt. Andere Lymphknoten übernehmen diese Aufgabe.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Warum darf ich nicht rauchen oder heiß duschen?</p>
+  <p class="qa-a">Rauchen verschlechtert die Wundheilung. Hitze durch Duschen oder Sonne erweitert die Gefäße und erhöht das Risiko für gefährliche Nachblutungen.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Wann kann ich wieder arbeiten oder Sport treiben?</p>
+  <p class="qa-a">Sport erst nach 2 Wochen. Bei Berufen mit viel Sprechen, zum Beispiel im Callcenter, ebenfalls 2 Wochen Krankschreibung, um die Wunde nicht zu reizen.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was passiert, wenn ich die OP ablehne?</p>
+  <p class="qa-a">Die Entzündung kann sich verschlimmern und einen Abszess im Hals bilden. Außerdem können die Bakterien Herz oder Nieren dauerhaft schädigen.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Worauf muss ich vor und nach der OP achten?</p>
+  <p class="qa-a">Vor der OP nüchtern bleiben. Nach der OP zwei Wochen weiche, kühle Kost, keine scharfen oder sauren Speisen, nicht heiß duschen oder baden.</p>
+</div>
+<h3 class="sub-title">Arzt-Arzt-Gespräch</h3>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie den Waldeyer-Rachenring.</p>
+  <p class="qa-a">Tonsilla pharyngea (Rachenmandel).<br>Tonsilla palatina (Gaumenmandel) – meist gemeint bei „Tonsillitis“.<br>Tonsilla lingualis (Zungenmandel).<br>Tonsilla tubaria (Tubenmandel).</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Unterscheiden Sie Tonsillektomie und Tonsillotomie.</p>
+  <p class="qa-a">Tonsillektomie: vollständige Entfernung inklusive Kapsel, Standard bei Erwachsenen.<br>Tonsillotomie: Teilentfernung, also Verkleinerung, Standard bei Kindern, geringeres Nachblutungsrisiko.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche Ursachen der Tonsillitis kennen Sie?</p>
+  <p class="qa-a">Akut: meist viral, z. B. Adenoviren.<br>Chronisch-rezidivierend: meist bakteriell, beta-hämolysierende Streptokokken der Gruppe A.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die Sorensen-Kriterien zur OP-Indikation.</p>
+  <p class="qa-a">Unter 3 Episoden pro Jahr: keine OP-Indikation.<br>3–5 Episoden: OP kann erwogen werden.<br>Ab 6 Episoden pro Jahr: klare OP-Indikation.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche weiteren Indikationen zur Tonsillektomie gibt es?</p>
+  <p class="qa-a">Peritonsillarabszess, Malignomverdacht, obstruktives Schlafapnoesyndrom, Glomerulonephritis oder rheumatisches Fieber nach Streptokokkeninfektion.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist die häufigste Komplikation der Tonsillektomie?</p>
+  <p class="qa-a">Nachblutung – am OP-Tag oder zwischen Tag 5 und 8, wenn sich Fibrinbeläge lösen. Blutungsquelle meist die Arteria facialis.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche systemischen Komplikationen der Streptokokkentonsillitis kennen Sie?</p>
+  <p class="qa-a">Rheumatisches Fieber: Herzklappenschäden, Arthritis, Chorea minor.<br>Poststreptokokken-Glomerulonephritis: Nierenschädigung.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Warum wird bei der Tonsillektomie eine Intubationsnarkose durchgeführt?</p>
+  <p class="qa-a">Um die Atemwege zu sichern und eine Aspiration von Blut oder Sekret in die Lunge zu verhindern.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie lange bleibt der Patient nach Tonsillektomie stationär?</p>
+  <p class="qa-a">Etwa 3–5 Tage, wegen des hohen Nachblutungsrisikos an Tag 0 und Tag 5–8.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche Nerven sind im Operationsgebiet gefährdet?</p>
+  <p class="qa-a">Nervus lingualis: Geschmack und Gefühl der Zunge.<br>Nervus hypoglossus: Zungenbewegung.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist das Von-Willebrand-Syndrom?</p>
+  <p class="qa-a">Die häufigste angeborene Blutgerinnungsstörung, durch Mangel oder Fehlfunktion des Von-Willebrand-Faktors. Typisch bei Frauen: starke Regelblutung, häufige blaue Flecken.</p>
+</div>
+<div class="qa-block qa-tableau">
+  <p class="qa-q">🩺 Tableau clinique der chronischen Tonsillitis?</p>
+  <p class="qa-a">Rezidivierende Tonsillitis → Leitsymptom, mind. 3–7×/Jahr.<br>Chronische Halsschmerzen.<br>Dysphagie.<br>Fötor ex ore.<br>Tonsillenhypertrophie.<br>Kryptenfüllung / Detritus.<br>Zervikale Lymphadenopathie.<br>Chronische Abgeschlagenheit.<br>Subfebrile Temperaturen.<br>Schnarchen / Schlafstörungen.<br>Immer aktiv erfragen: Peritonsillarabszess (Notfall!), rheumatisches Fieber, Glomerulonephritis.</p>
+</div>
+<div class="qa-block qa-dd">
+  <p class="qa-q">🔍 Differentialdiagnosen der Tonsillitis (Fachbegriffe)?</p>
+  <p class="qa-a">Mononukleose (EBV) – wichtigste DD.<br>Pharyngitis.<br>Scharlach.<br>Herpangina.<br>Peritonsillarabszess.<br>Tonsillenlymphom.<br>Plaut-Vincent-Angina.<br>PFAPA-Syndrom.</p>
+</div>
+
+<h2 class="section-title" id="t8--lymphadenopathie">8. Lymphadenopathie</h2>
+<h3 class="sub-title">Patient-Arzt-Gespräch</h3>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Gibt es Alternativmethoden zum Eingriff?</p>
+  <p class="qa-a">Man könnte mit einer feinen Nadel eine kleine Probe absaugen. Das ist aber nicht sicher genug. Nur wenn wir den ganzen Lymphknoten entnehmen, bekommen wir eine wirklich sichere Diagnose.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Können wir das nicht mit Tabletten behandeln?</p>
+  <p class="qa-a">Im Moment wissen wir noch nicht, was die Ursache ist. Tabletten helfen nur, wenn wir den genauen Grund kennen. Wir müssen erst die Ursache finden.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Kann es Krebs sein?</p>
+  <p class="qa-a">Ausschließen können wir es im Moment nicht. Aber eine Schwellung hat sehr oft harmlose Gründe – Erkältung, Entzündung. Genau um das zu klären, machen wir den kleinen Eingriff.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Was können Sie tun, wenn es zu einer Nervenschädigung kommt?</p>
+  <p class="qa-a">In sehr seltenen Fällen kann man den Nerv in einer kleinen Operation wieder zusammennähen. Danach hilft vor allem gezielte Physiotherapie.</p>
+</div>
+<div class="qa-block qa-ap">
+  <p class="qa-q">Warum darf kein Wasser an die Wunde?</p>
+  <p class="qa-a">Damit keine Bakterien aus dem Leitungswasser in die Wunde gelangen. Die Wunde muss in den ersten Tagen trocken bleiben, um sich nicht zu entzünden.</p>
+</div>
+<h3 class="sub-title">Arzt-Arzt-Gespräch</h3>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wann ist eine Lymphknotenbiopsie indiziert?</p>
+  <p class="qa-a">Operative Exzision (Ganzentnahme) bei Größenprogredienz oder Dauer über 4 Wochen, harten, indolenten, nicht verschieblichen Lymphknoten, B-Symptomatik (Fieber, Nachtschweiß, Gewichtsverlust) oder generalisiertem Pruritus.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche malignen Differentialdiagnosen der Lymphadenopathie kennen Sie?</p>
+  <p class="qa-a">Morbus Hodgkin, Non-Hodgkin-Lymphome.<br>Metastasen von HNO-Tumoren (Nasopharynxkarzinom, Tonsillenkarzinom) oder Bronchialkarzinom.<br>Virchow-Lymphknoten links supraklavikulär → Metastasen gastrointestinaler Tumoren, v. a. Magenkarzinom.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche benignen Differentialdiagnosen der Lymphadenopathie kennen Sie?</p>
+  <p class="qa-a">Reaktive Lymphadenitis (EBV, HIV, Tuberkulose, Toxoplasmose, Streptokokken), Sklerosierung nach Infektion, medikamentös (Allopurinol, Phenytoin, Isoniazid).</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was sagen die Palpationskriterien der Lymphknoten aus?</p>
+  <p class="qa-a">Weich, druckdolent, verschieblich → akute Entzündung.<br>Indolent, verschieblich → Autoimmunerkrankung, Speicherkrankheit.<br>Hart, indolent, nicht verschieblich, verbacken → Malignom oder chronische Infektion, z. B. Tuberkulose.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht die Diagnostik bei Lymphadenopathie aus?</p>
+  <p class="qa-a">Labor: Blutbild, CRP, LDH, HIV-Serologie, EBV-Serologie, Toxoplasma-Serologie, TSH, Leberenzyme, Rachenabstrich mit Streptokokken-Schnelltest, IGRA-Test.<br>Bildgebung: Sonographie Hals + Abdomen, Röntgen-Thorax, CT/MRT für Staging.<br>Invasiv: Panendoskopie, Knochenmarksbiopsie.<br>Keine Feinnadelpunktion – erlaubt keine Beurteilung der Lymphknotenarchitektur.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Beschreiben Sie den Morbus Hodgkin.</p>
+  <p class="qa-a">Malignes B-Zell-Lymphom mit zwei Häufigkeitsgipfeln, 20–30 Jahre und hohes Alter. Ätiologie: EBV, HIV, Zytostatika, Strahlung. Klinik: derbe, indolente, nicht verschiebliche Lymphknoten, meist zervikal, B-Symptomatik, Hepatosplenomegalie, Pruritus. Goldstandard: Lymphknotenexstirpation, pathognomonisch sind Reed-Sternberg-Riesenzellen und Hodgkin-Zellen. Therapie: Radio-Chemotherapie nach Ann-Arbor-Stadium.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die Ann-Arbor-Klassifikation.</p>
+  <p class="qa-a">Stadium I: eine Lymphknotenregion.<br>Stadium II: mindestens zwei Regionen auf der gleichen Zwerchfellseite.<br>Stadium III: beidseits des Zwerchfells.<br>Stadium IV: diffuser extranodaler Befall, z. B. Knochenmark oder Leber.<br>Zusatz A: ohne B-Symptomatik. Zusatz B: mit B-Symptomatik.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Beschreiben Sie das Pfeiffersche Drüsenfieber (EBV-Mononukleose).</p>
+  <p class="qa-a">Leitsymptom-Trias: fieberhafte Tonsillitis, generalisierte Lymphadenopathie, Splenomegalie. Amoxicillin und Ampicillin sind kontraindiziert wegen Exanthemgefahr. Sportverbot bei Splenomegalie für 3–4 Wochen wegen Milzrupturgefahr. Therapie rein symptomatisch.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Beschreiben Sie die Toxoplasmose.</p>
+  <p class="qa-a">Infektion mit Toxoplasma gondii durch Katzenkot oder rohes Fleisch. Immunkompetent meist asymptomatisch, keine Therapie nötig. Schwangere unter der 16. SSW: Spiramycin. Ab der 16. SSW: Pyrimethamin + Sulfadiazin + Folinsäure.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie das Standardtherapieschema der Tuberkulose.</p>
+  <p class="qa-a">HRZE-Schema für 2 Monate als Initialphase: Isoniazid (H), Rifampicin (R), Pyrazinamid (Z), Ethambutol (E). Danach 4 Monate Rifampicin + Isoniazid.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist das Pel-Ebstein-Fieber?</p>
+  <p class="qa-a">Zyklisch wellenförmiges Fieber bei malignen Lymphomen, fieberhafte Phasen wechseln sich mit fieberfreien Intervallen von je 3–10 Tagen ab.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Nennen Sie die Leukämieklassifikation.</p>
+  <p class="qa-a">ALL, akut lymphatisch: häufigster Krebs im Kindesalter.<br>AML, akut myeloisch: häufiger bei Erwachsenen.<br>CLL, chronisch lymphatisch: indolentes Non-Hodgkin-Lymphom.<br>CML, chronisch myeloisch: charakteristisch ist das Philadelphia-Chromosom.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist die histologische Besonderheit des Hodgkin-Lymphoms?</p>
+  <p class="qa-a">Pathognomonisch sind Reed-Sternberg-Riesenzellen, mehrkernig, und Hodgkin-Zellen, einkernig. Popcorn-Zellen (L&amp;H-Zellen) sind atypische B-Zellen beim nodulären lymphozytenprädominanten Hodgkin-Lymphom (NLPHL).</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Unterscheiden Sie SCLC und NSCLC beim Bronchialkarzinom.</p>
+  <p class="qa-a">SCLC, kleinzellig: extrem schnelles Wachstum, früh metastasiert, fast immer inoperabel, palliative Radio-Chemotherapie.<br>NSCLC, nicht-kleinzellig: langsameres Wachstum, im Frühstadium operabel, Lobektomie + mediastinale Lymphadenektomie.</p>
+</div>
+<div class="qa-block qa-tableau">
+  <p class="qa-q">🩺 Tableau clinique der Lymphadenopathie unklarer Genese?</p>
+  <p class="qa-a">Lymphknotenschwellung an ein oder mehreren Stellen.<br>Schmerzlose Lymphadenopathie → Alarmsignal, immer Malignom ausschließen.<br>Druckdolente Lymphknoten → eher gutartig, reaktiv.<br>Derbe, gummiartige Konsistenz → V.a. Lymphom.<br>Verbackene Lymphknoten → V.a. Malignom.<br>Lokalisierte vs. generalisierte Lymphadenopathie.<br>B-Symptomatik immer aktiv erfragen: Fieber, Nachtschweiß, Gewichtsverlust.<br>B-Symptomatik + Lymphadenopathie → immer V.a. Lymphom.</p>
+</div>
+<div class="qa-block qa-dd">
+  <p class="qa-q">🔍 Differentialdiagnosen der Lymphadenopathie (Fachbegriffe)?</p>
+  <p class="qa-a">Reaktive Lymphadenitis.<br>Mononukleose (EBV).<br>Toxoplasmose.<br>HIV-Infektion.<br>Tuberkulose.<br>Morbus Hodgkin.<br>Non-Hodgkin-Lymphom.<br>Lymphknotenmetastasen.<br>Sarkoidose.<br>Lupus erythematodes (SLE).</p>
+</div>
+
+<h2 class="section-title" id="t9--akute-pankreatitis">9. Akute Pankreatitis</h2>
+<h3 class="sub-title">Arzt-Arzt-Gespräch</h3>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche Ursachen der akuten Pankreatitis kennen Sie?</p>
+  <p class="qa-a">Biliär: Gallenstein verlegt die Papilla Vateri → Autodigestion.<br>Alkohol.<br>Idiopathisch.<br>Iatrogen, z. B. post-ERCP.<br>Metabolisch: Hyperkalzämie, Hypertriglyzeridämie.<br>Weitere: Trauma, Virusinfektion, z. B. Mumps.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Beschreiben Sie die Klinik der akuten Pankreatitis.</p>
+  <p class="qa-a">Plötzliche, heftige, gürtelförmige Oberbauchschmerzen mit Ausstrahlung in den Rücken. Übelkeit, Erbrechen, Meteorismus. „Gummibauch“: elastische Abwehrspannung ohne Loslassschmerz.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht die Diagnostik der akuten Pankreatitis aus?</p>
+  <p class="qa-a">Labor: Lipase über dem 3-fachen Normalwert, der spezifischste Parameter; Amylase; Cholestaseparameter (GGT, AP, Bilirubin); CRP; Blutbild; Kalzium; Kreatinin.<br>Bildgebung: Abdomensonographie – Ödeme, Nekrosen, Gallensteine.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie behandeln Sie eine akute Pankreatitis?</p>
+  <p class="qa-a">Stationäre Aufnahme, ggf. Intensivstation.<br>Aggressive i.v. Flüssigkeitsgabe mit Ringer-Laktat.<br>Frühzeitige enterale Ernährung, wenn schmerzfrei und ohne Erbrechen.<br>Analgesie mit Metamizol oder Pethidin/Buprenorphin – Morphin meiden wegen Sphinkter-Oddi-Spasmus.<br>Antibiotika nur bei bakteriellen Komplikationen.<br>ERCP bei biliärer Pankreatitis mit Cholangitis oder persistierender Gallengangsobstruktion.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche Komplikationen der akuten Pankreatitis kennen Sie?</p>
+  <p class="qa-a">Hypovolämischer Schock durch Flüssigkeitsverlust in den dritten Raum.<br>Pankreasnekrosen, die sekundär infiziert werden können → Abszesse, Pseudozysten.</p>
+</div>
+<div class="qa-block qa-tableau">
+  <p class="qa-q">🩺 Tableau clinique der akuten Pankreatitis?</p>
+  <p class="qa-a">Plötzliche, heftige, gürtelförmige Oberbauchschmerzen mit Ausstrahlung in den Rücken.<br>Übelkeit, Erbrechen, Meteorismus.<br>„Gummibauch“: elastische Abwehrspannung ohne Loslassschmerz.<br>Bei schwerem Verlauf: hypovolämischer Schock, infizierte Nekrosen.</p>
+</div>
+
+<h2 class="section-title" id="t10--allgemeine-begriffe---klassifikationen">10. Allgemeine Begriffe &amp; Klassifikationen</h2>
+<h3 class="sub-title">Arzt-Arzt-Gespräch</h3>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie behandeln Sie eine Peritonitis?</p>
+  <p class="qa-a">Sofortige i.v. Breitbandantibiose + chirurgische Herdsanierung (Naht + Lavage).</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was bewirken Spasmolytika?</p>
+  <p class="qa-a">Sie bewirken eine Relaxation der glatten Muskulatur, wirken also krampflösend, z. B. Buscopan.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was bedeutet die fraktionierte Gabe von Propofol?</p>
+  <p class="qa-a">Eine stufenweise, wirkungsorientierte Titration des Anästhetikums, keine Bolusgabe, um kardiovaskuläre Nebenwirkungen zu vermeiden.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie lange dauert ein histologisches Ergebnis in der Regel?</p>
+  <p class="qa-a">In der Regel 3–7 Werktage.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie teilen Sie einem Patienten eine maligne Diagnose mit?</p>
+  <p class="qa-a">Der Patient wird persönlich zu einem Befundgespräch einbestellt – unter vier Augen, einfühlsam.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was prüfen Sie bei der digital-rektalen Untersuchung (DRU)?</p>
+  <p class="qa-a">Sphinktertonus, Prostata, Hämorrhoiden, Fissuren, frische Blutspuren, Douglas-Schmerz.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Warum darf man nach einer Koloskopie nicht sofort essen?</p>
+  <p class="qa-a">Um eine iatrogene Perforation sicher auszuschließen – im Falle einer Perforation muss der Patient für die Notfall-Laparotomie nüchtern sein.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Warum ist der postoperative Nikotinstopp wichtig?</p>
+  <p class="qa-a">Vasokonstriktion durch Nikotin und Kohlenmonoxid → Hypoxie → schwere Wundheilungsstörungen, erhöhtes Infektionsrisiko, erhöhtes kardiovaskuläres Risiko.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht die Therapie der GERD aus?</p>
+  <p class="qa-a">Lebensstil: Gewichtsabnahme, Noxen meiden, kein Essen vor dem Schlafengehen.<br>Medikamentös: PPI als Mittel der Wahl, H2-Blocker, Antazida.<br>Operativ: Fundoplikatio nach Nissen bei therapierefraktärer GERD.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Welche refluxbegünstigenden Faktoren kennen Sie?</p>
+  <p class="qa-a">Alkohol, Nikotin, Adipositas, Fettessen, Anticholinergika, Betablocker, Calciumantagonisten, Nitrate, Theophyllin, Schwangerschaft, enge Gürtel.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Unterscheiden Sie die Savary-Miller- und die Los-Angeles-Klassifikation der Refluxösophagitis.</p>
+  <p class="qa-a">Beide klassifizieren die Refluxösophagitis nach Ausmaß der Schleimhautschäden, Savary-Miller in Stadien I–IV, Los-Angeles in Stadien A–D. Savary-Miller-Stadium IV entspricht dem Barrett-Ösophagus.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Wie sieht die kurative Therapie des Magenkarzinoms aus?</p>
+  <p class="qa-a">Gastrektomie mit Sicherheitsabstand, 5 cm beim intestinalen Typ, 8 cm beim diffusen Typ, + Lymphadenektomie + Resektion von Omentum majus und minus. Nachsorge: Jahr 1 alle 3 Monate, Jahr 2 alle 6 Monate, danach jährlich.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist das Calot-Dreieck?</p>
+  <p class="qa-a">Ein anatomischer Raum bei der Gallenblasen-OP, begrenzt durch Ductus cysticus, Ductus hepaticus communis und die Leberunterfläche; hier verläuft die Arteria cystica.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist das Sherren-Dreieck?</p>
+  <p class="qa-a">Ein gedachtes Dreieck auf der Bauchwand zwischen Bauchnabel, Symphyse und rechtem Beckenstachel, das zur Beurteilung der Appendizitis dient.</p>
+</div>
+<div class="qa-block qa-aa">
+  <p class="qa-q">Was ist das Baldwin-Zeichen?</p>
+  <p class="qa-a">Schmerzen in der Flanke, die beim Beugen des rechten Beins auftreten.</p>
+</div>
+
+
+</main>
+
+<footer class="page-footer">
+  FSP-Rostock-Vorbereitung — Teil 2: Kommunikation &amp; Fachsprache | <a href="index.html">Zurück zum Hauptmenü</a>
+</footer>
+
+<a href="#toc" class="toc-float-btn" id="tocBtn">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+  Inhaltsverzeichnis
+</a>
+
+<script>
+  const tocBtn = document.getElementById('tocBtn');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) { tocBtn.classList.add('visible'); }
+    else { tocBtn.classList.remove('visible'); }
+  });
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js').catch(() => {});
+    });
+  }
+</script>
+
+</body>
+</html>
