@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSP Rostock – OP- und Untersuchungsverfahren</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b4965">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FSP Rostock">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root {
+    --primary: #1b4965;
+    --accent: #5fa8d3;
+    --bg: #f7f9fb;
+    --card: #ffffff;
+    --border: #d9e2ec;
+    --text: #1f2937;
+    --muted: #5b6b7c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    line-height: 1.6;
+  }
+  header.page-header { background: var(--primary); color: white; padding: 24px 20px; }
+  header.page-header h1 { margin: 0 0 6px 0; font-size: 1.5rem; }
+  header.page-header p { margin: 0; opacity: 0.85; font-size: 0.92rem; }
+  .back-link { display: inline-block; margin-top: 10px; color: #cfe8ff; text-decoration: none; font-size: 0.9rem; }
+  .back-link:hover { text-decoration: underline; }
+
+  main { max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  nav.toc { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; }
+  nav.toc h2 { margin-top: 0; font-size: 1.05rem; color: var(--primary); }
+  nav.toc ul { list-style: none; padding-left: 0; margin: 0; columns: 2; }
+  nav.toc li { margin-bottom: 8px; break-inside: avoid; }
+  nav.toc a { color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  .proc-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 22px;
+    scroll-margin-top: 16px;
+  }
+  .proc-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .proc-icon { font-size: 1.8rem; line-height: 1; }
+  .proc-header h2 { margin: 0 0 3px 0; color: var(--primary); font-size: 1.15rem; }
+  .proc-sub { margin: 0; color: var(--muted); font-size: 0.88rem; }
+
+  details {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  summary {
+    cursor: pointer;
+    padding: 11px 14px;
+    font-weight: 600;
+    color: var(--primary);
+    background: #eef6fb;
+    list-style: none;
+    user-select: none;
+    font-size: 0.94rem;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "＋"; float: right; color: var(--accent); }
+  details[open] summary::after { content: "－"; }
+  .details-body { padding: 14px 16px; font-size: 0.93rem; }
+  .details-body p { margin: 0 0 8px 0; }
+  .details-body p:last-child { margin-bottom: 0; }
+
+  .ind-list, .steps-list { margin: 0; padding-left: 20px; }
+  .ind-list li { margin-bottom: 5px; }
+  .steps-list { list-style: decimal; }
+  .steps-list li { margin-bottom: 12px; }
+  .step-text { margin-bottom: 3px; }
+  .step-instr-tag {
+    display: inline-block;
+    font-size: 0.78rem;
+    color: var(--accent);
+    background: #eef6fb;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table.instr-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 420px; }
+  table.instr-table th {
+    background: var(--primary); color: white; padding: 8px 10px; text-align: left; font-size: 0.78rem;
+  }
+  table.instr-table th:first-child { width: 34px; }
+  table.instr-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  table.instr-table tr:nth-child(even) td { background: #f5f8fc; }
+  table.instr-table .fach { font-weight: 700; color: var(--primary); white-space: nowrap; }
+  table.instr-table .umg { color: var(--muted); font-style: italic; }
+  .instr-icon-cell svg { width: 20px; height: 20px; color: var(--accent); display: block; }
+
+  .flow-outline { display: flex; flex-direction: column; gap: 8px; }
+  .flow-item {
+    border-radius: 8px;
+    padding: 9px 13px;
+    font-size: 0.88rem;
+    border-left: 4px solid var(--border);
+  }
+  .flow-start, .flow-end { font-weight: 700; color: var(--primary); background: #eef6fb; text-align: center; border-left-color: var(--primary); }
+  .flow-prep { background: #f5f8fc; border-left-color: var(--muted); }
+  .flow-prep ul { margin: 6px 0 0 0; padding-left: 18px; }
+  .flow-step { background: #eef6fb; border-left-color: var(--accent); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .flow-tag { font-size: 0.75rem; color: var(--accent); white-space: nowrap; }
+  .flow-decision, .flow-check { background: #fffbeb; border-left-color: #f59e0b; }
+  .flow-branch { margin-top: 6px; padding: 6px 10px; border-radius: 6px; font-size: 0.86rem; }
+  .flow-branch.flow-no { background: #fef2f2; color: #991b1b; }
+  .flow-branch.flow-yes { background: #f0fdf4; color: #14532d; }
+  .flow-branch ul { margin: 4px 0 0 0; padding-left: 18px; }
+
+  footer.page-footer { text-align: center; padding: 24px; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 30px; }
+
+  .home-btn {
+    position: fixed; top: 14px; left: 14px; background: #1b4965; color: #ffffff;
+    width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1000;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .home-btn:hover { background: #5fa8d3; transform: scale(1.08); }
+  .home-btn svg { width: 20px; height: 20px; }
+
+  .toc-float-btn {
+    position: fixed; bottom: 24px; right: 24px; background: var(--primary); color: white;
+    border: none; border-radius: 50px; padding: 12px 20px; font-size: 0.9rem; font-weight: 600;
+    text-decoration: none; box-shadow: 0 4px 14px rgba(27,73,101,0.4); display: flex; align-items: center; gap: 8px;
+    z-index: 999; transition: background 0.15s, transform 0.15s; opacity: 0; pointer-events: none;
+  }
+  .toc-float-btn.visible { opacity: 1; pointer-events: auto; }
+  .toc-float-btn:hover { background: var(--accent); transform: translateY(-2px); }
+  .toc-float-btn svg { width: 16px; height: 16px; }
+
+  @media (max-width: 600px) {
+    nav.toc ul { columns: 1; }
+    .proc-header { align-items: center; }
+    .home-btn { top: 10px; left: 10px; width: 38px; height: 38px; }
+    .home-btn svg { width: 18px; height: 18px; }
+    .toc-float-btn { bottom: 16px; right: 16px; padding: 10px 16px; font-size: 0.82rem; }
+    summary { font-size: 0.88rem; padding: 10px 12px; }
+    .details-body { font-size: 0.88rem; padding: 12px; }
+  }
+</style>
+</head>
+<body>
+<a href="index.html" class="home-btn" title="Zum Hauptmenü" aria-label="Zum Hauptmenü">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+</a>
+
+<header class="page-header">
+  <h1>OP- und Untersuchungsverfahren</h1>
+  <p>Teil 3: Ablauf, Indikationen, Instrumente und Komplikationen der wichtigsten Eingriffe</p>
+  <a class="back-link" href="index.html">← Zurück zum Hauptmenü</a>
+</header>
+
+<main>
+
+<nav class="toc" id="toc">
+  <h2>Inhaltsverzeichnis</h2>
+  <ul>
+    <li><a href="#proc-u">🔭 Urethrozystoskopie</a></li>
+    <li><a href="#proc-o">🩺 ÖGD</a></li>
+    <li><a href="#proc-k">🔬 Koloskopie</a></li>
+    <li><a href="#proc-a">✂️ Appendektomie</a></li>
+    <li><a href="#proc-c">🏥 Laparosk. Cholezystektomie</a></li>
+    <li><a href="#proc-l">🩹 Lichtenstein</a></li>
+    <li><a href="#proc-t">👄 Tonsillektomie</a></li>
+    <li><a href="#proc-z">🫀 Zervikale Lymphknotenexstirpation</a></li>
+  </ul>
+</nav>
+
+
+<section class="proc-card" id="proc-u">
+  <div class="proc-header">
+    <span class="proc-icon">🔭</span>
+    <div>
+      <h2>Urethrozystoskopie</h2>
+      <p class="proc-sub">Blasenspiegelung</p>
+    </div>
+  </div>
+
+  <details open>
+    <summary>📖 Definition &amp; Ziel</summary>
+    <div class="details-body">
+      <p>Die <strong>Urethrozystoskopie (Blasenspiegelung)</strong> ist eine endoskopische (durch ein optisches Gerät durchgeführte) Untersuchung der <strong>Urethra (Harnröhre)</strong> und der <strong>Vesica urinaria (Harnblase)</strong> mittels eines optischen Instruments.</p>
+      <p><strong>Ziel:</strong> Direkte Visualisierung (Sichtbarmachung) der Urothelmukosa (Schleimhaut der Harnwege) zur Diagnostik und ggf. therapeutischen Intervention (Behandlung).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Indikationen</summary>
+    <div class="details-body">
+      <ul class="ind-list"><li>Hämaturie (Blut im Urin) — makroskopisch oder mikroskopisch</li><li>Verdacht auf Urothelkarzinom (Blasentumor)</li><li>Rezidivierende Harnwegsinfektionen (wiederkehrende Blasenentzündungen)</li><li>Urolithiasis (Harnsteine) der Blase</li><li>Miktionsbeschwerden (Probleme beim Wasserlassen) unklarer Genese</li><li>Verlaufskontrollen nach Tumorresektion (Tumornachsorge)</li><li>Striktur (Verengung) der Urethra</li></ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔢 Ablauf — Schritte</summary>
+    <div class="details-body">
+      <ol class="steps-list"><li><div class="step-text">Instillation (Einbringen) von Instillagel in die Urethra zur Lokalanästhesie (örtlichen Betäubung) und Gleitfähigkeit.</div><div class="step-instr-tag">🔧 Instillagel-Spritze</div></li><li><div class="step-text">Das Zystoskop (Blasenspiegel) wird unter Sichtkontrolle transurethral (durch die Harnröhre) eingeführt.</div><div class="step-instr-tag">🔧 Starres / flexibles Zystoskop</div></li><li><div class="step-text">Füllung der Vesica urinaria (Harnblase) mit steriler Spüllösung (Kochsalzlösung) über den Spülkanal zur Übersichtsverbesserung.</div><div class="step-instr-tag">🔧 Spülkanal des Zystoskops</div></li><li><div class="step-text">Inspektion der Urethralschleimhaut (Harnröhrenschleimhaut) auf Strikturen (Verengungen), Läsionen (Verletzungen), Tumoren (Geschwüre).</div><div class="step-instr-tag">🔧 Optik des Zystoskops</div></li><li><div class="step-text">Systematische Inspektion der Blasenschleimhaut: Trigonum vesicae (Blasendreieck), Ostia ureterica (Harnleitermündungen), Blasendach.</div><div class="step-instr-tag">🔧 30°- und 70°-Optik</div></li><li><div class="step-text">Bei suspekten (verdächtigen) Läsionen: Biopsie (Gewebeentnahme) oder transurethrale Resektion (Tumorentfernung).</div><div class="step-instr-tag">🔧 Biopsiezange, Resektionsschlinge (Schneideinstrument)</div></li></ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>🛠️ Instrumente</summary>
+    <div class="details-body">
+      <div class="table-scroll">
+      <table class="instr-table">
+        <thead><tr><th></th><th>Fachbegriff</th><th>Umgangssprache</th><th>Funktion</th></tr></thead>
+        <tbody><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="12" x2="16" y2="12"/><circle cx="19" cy="12" r="3"/></svg></td><td class="fach">Starres Zystoskop</td><td class="umg">Starrer Blasenspiegel</td><td>Visualisierung von Urethra und Blase</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="12" x2="16" y2="12"/><circle cx="19" cy="12" r="3"/></svg></td><td class="fach">Flexibles Zystoskop</td><td class="umg">Biegsamer Blasenspiegel</td><td>Schonendere Inspektion, v.a. beim Mann</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="2" y1="16" x2="14" y2="8"/><circle cx="17" cy="6" r="3"/></svg></td><td class="fach">30°-Optik</td><td class="umg">Schrägblick-Linse</td><td>Inspektion der Blasenseitenwände</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="2" y1="16" x2="14" y2="8"/><circle cx="17" cy="6" r="3"/></svg></td><td class="fach">70°-Optik</td><td class="umg">Weitwinkel-Linse</td><td>Inspektion von Blasendach und Trigonum</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3 12 12 6 21"/><path d="M18 3 12 12 18 21"/></svg></td><td class="fach">Biopsiezange</td><td class="umg">Gewebezange</td><td>Entnahme von Gewebeproben</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="20" x2="12" y2="12"/><circle cx="16" cy="8" r="5"/></svg></td><td class="fach">Resektionsschlinge</td><td class="umg">Schneideinstrument</td><td>Transurethrale Resektion von Tumoren</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="9" width="10" height="6" rx="1"/><line x1="13" y1="12" x2="21" y2="12"/><line x1="3" y1="9" x2="3" y2="15"/></svg></td><td class="fach">Instillagel-Spritze</td><td class="umg">Betäubungsgel-Spritze</td><td>Lokalanästhesie + Gleitfähigkeit</td></tr></tbody>
+      </table>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>🗺️ Vollständiger Ablauf mit Entscheidungen</summary>
+    <div class="details-body">
+      <div class="flow-outline">
+<div class="flow-item flow-start">▶ Start</div>
+<div class="flow-item flow-prep"><strong>Vorbereitung</strong><ul><li>Aufklärung + Einwilligung</li><li>Urinkultur — Infektausschluss obligat!</li><li>Steinschnittlage (Rückenlage mit angehobenen Beinen)</li><li>Lokalanästhesie: Instillagel-Spritze</li></ul></div>
+<div class="flow-item flow-step"><span>Instillation (Einbringen) von Instillagel in die Urethra (Harnröhre)</span><span class="flow-tag">🔧 Instillagel-Spritze</span></div>
+<div class="flow-item flow-step"><span>Einführen des Zystoskops (Blasenspiegels) transurethral (durch die Harnröhre) unter Sichtkontrolle</span><span class="flow-tag">🔧 Starres / flexibles Zystoskop</span></div>
+<div class="flow-item flow-step"><span>Füllung der Vesica urinaria (Harnblase) mit steriler Spüllösung (Kochsalzlösung)</span><span class="flow-tag">🔧 Spülkanal des Zystoskops</span></div>
+<div class="flow-item flow-step"><span>Inspektion der Urethra (Harnröhre) beim Einführen und beim Rückzug</span><span class="flow-tag">🔧 Optik des Zystoskops</span></div>
+<div class="flow-item flow-step"><span>Systematische Inspektion: Trigonum vesicae (Blasendreieck), Ostia ureterica (Harnleitermündungen), Blasenseitenwände, Blasendach</span><span class="flow-tag">🔧 30°- und 70°-Optik</span></div>
+<div class="flow-item flow-decision"><strong>❓ Suspekte Läsion (verdächtige Veränderung)?</strong><div class="flow-branch flow-no">✗ NEIN → Kontrollierter Rückzug, Abschluss der Untersuchung</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>Biopsie (Gewebeentnahme)</strong> → Biopsiezange → Histologie (Gewebeuntersuchung)</li><li><strong>Tumorresektion (Tumorentfernung)</strong> → Resektionsschlinge → TUR-B</li></ul></div></div>
+<div class="flow-item flow-decision"><strong>❓ Komplikation?</strong><div class="flow-branch flow-no">✗ NEIN → Geordneter Abschluss, Nachsorge ambulant</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>Hämaturie (Blutung)</strong> → Blasenspülung → ggf. Koagulation (Blutstillung)</li><li><strong>Via falsa (Falschpassage)</strong> → Sofortiger Abbruch → Dauerkatheter</li><li><strong>Urosepsis (Blutvergiftung)</strong> → Blut- + Urinkultur → sofortige Antibiose (Antibiotikatherapie)</li></ul></div></div>
+<div class="flow-item flow-end">■ Ende</div>
+      </div>
+    </div>
+  </details>
+</section>
+
+
+<section class="proc-card" id="proc-o">
+  <div class="proc-header">
+    <span class="proc-icon">🩺</span>
+    <div>
+      <h2>ÖGD</h2>
+      <p class="proc-sub">Magenspiegelung</p>
+    </div>
+  </div>
+
+  <details open>
+    <summary>📖 Definition &amp; Ziel</summary>
+    <div class="details-body">
+      <p>Die <strong>Ösophagogastroduodenoskopie / ÖGD (Magenspiegelung)</strong> ist eine endoskopische (optische) Untersuchung des <strong>Ösophagus (Speiseröhre)</strong>, des <strong>Magens (Gaster)</strong> und des <strong>Duodenums (Zwölffingerdarms)</strong> mittels eines flexiblen Gastroskops (Magenspiegelgeräts).</p>
+      <p><strong>Ziel:</strong> Direkte Visualisierung (Sichtbarmachung) der Mukosa (Schleimhaut) des oberen Gastrointestinaltrakts (Magen-Darm-Trakts) zur Diagnostik und therapeutischen Intervention.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Indikationen</summary>
+    <div class="details-body">
+      <ul class="ind-list"><li>Hämatemesis (Bluterbrechen) oder Meläna (Teerstuhl)</li><li>Epigastrische Beschwerden (Oberbauchschmerzen) unklarer Genese</li><li>Verdacht auf Ulcus ventriculi (Magengeschwür) oder Ulcus duodeni (Zwölffingerdarmgeschwür)</li><li>Verdacht auf Ösophaguskarzinom (Speiseröhrenkrebs) oder Magenkarzinom (Magenkrebs)</li><li>Dysphagie (Schluckstörung) oder Odynophagie (Schluckschmerz)</li><li>Gastroösophageale Refluxkrankheit (Sodbrennen) mit Verdacht auf Barrett-Ösophagus</li><li>Fremdkörperentfernung, Tumornachsorge</li></ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔢 Ablauf — Schritte</summary>
+    <div class="details-body">
+      <ol class="steps-list"><li><div class="step-text">Applikation (Anwendung) von Lidocain-Rachenspray auf die Rachenhinterwand + Beißring (Zahnschutz) anlegen.</div><div class="step-instr-tag">🔧 Lidocain-Rachenspray, Beißring</div></li><li><div class="step-text">Einführen des Gastroskops (Magenspiegelgeräts) über den Oropharynx (Mundrachenraum) und Hypopharynx (unteren Rachenraum) in den Ösophagus (Speiseröhre).</div><div class="step-instr-tag">🔧 Flexibles Gastroskop</div></li><li><div class="step-text">Systematische Inspektion der Ösophagusmukosa (Speiseröhrenschleimhaut): ösophagogastraler Übergang (Magenmund), Varizen (Krampfadern), Stenosen (Verengungen).</div><div class="step-instr-tag">🔧 Gastroskop</div></li><li><div class="step-text">Luftinsufflation (Lufteinblasung) → Magenentfaltung → Inspektion von Fundus (Magengrund), Korpus (Magenkörper), Antrum (Magenausgang).</div><div class="step-instr-tag">🔧 Gastroskop, Luftkanal</div></li><li><div class="step-text">Retroflexion (Umkehren) des Gastroskops im Magen → Beurteilung von Fundus und Kardia (Mageneingang) von innen.</div><div class="step-instr-tag">🔧 Gastroskop retroflektiert</div></li><li><div class="step-text">Passage des Pylorus (Magenpförtners) → Inspektion des Duodenums (Zwölffingerdarms) einschließlich Papilla Vateri (Gallengangsöffnung).</div><div class="step-instr-tag">🔧 Gastroskop</div></li><li><div class="step-text">Aktive Blutung: Hämostase (Blutstillung) per Clipping (Klammern), Injektion (Einspritzung) oder Koagulation (Wärmebehandlung). Läsion (Veränderung): Biopsie (Gewebeentnahme).</div><div class="step-instr-tag">🔧 Hämostaseclip, Injektionsnadel, Koagulationssonde, Biopsiezange</div></li><li><div class="step-text">Kontrollierter Rückzug mit erneuter Inspektion; Absaugen von Luft und Sekret (Flüssigkeit).</div><div class="step-instr-tag">🔧 Gastroskop, Absaugkanal</div></li></ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>🛠️ Instrumente</summary>
+    <div class="details-body">
+      <div class="table-scroll">
+      <table class="instr-table">
+        <thead><tr><th></th><th>Fachbegriff</th><th>Umgangssprache</th><th>Funktion</th></tr></thead>
+        <tbody><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="12" x2="16" y2="12"/><circle cx="19" cy="12" r="3"/></svg></td><td class="fach">Flexibles Gastroskop</td><td class="umg">Magenspiegelgerät</td><td>Visualisierung des oberen GI-Trakts</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg></td><td class="fach">Beißring</td><td class="umg">Zahnschutz</td><td>Schutz des Endoskops vor Biss</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3 12 12 6 21"/><path d="M18 3 12 12 18 21"/></svg></td><td class="fach">Biopsiezange</td><td class="umg">Gewebezange</td><td>Entnahme von Gewebeproben</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 4 18 4 14 12 18 20 6 20 10 12 Z"/></svg></td><td class="fach">Hämostaseclip</td><td class="umg">Blutstillungsklammer</td><td>Mechanische Blutstillung</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="9" width="10" height="6" rx="1"/><line x1="13" y1="12" x2="21" y2="12"/><line x1="3" y1="9" x2="3" y2="15"/></svg></td><td class="fach">Injektionsnadel</td><td class="umg">Einspritznadel</td><td>Unterspritzung mit Adrenalin / NaCl</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="20" x2="12" y2="12"/><path d="M14 10 18 4 15 9 19 9 14 15 16 10 Z" fill="currentColor" stroke="none"/></svg></td><td class="fach">Koagulationssonde</td><td class="umg">Wärme-Blutstillungssonde</td><td>Thermische Hämostase (Wärmeblutstillung)</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="10" width="8" height="11" rx="1.5"/><line x1="11" y1="10" x2="11" y2="6"/><line x1="9" y1="6" x2="13" y2="6"/><line x1="15" y1="7" x2="18" y2="5"/><line x1="15" y1="10" x2="19" y2="9"/></svg></td><td class="fach">Lidocain-Rachenspray</td><td class="umg">Betäubungsspray</td><td>Pharyngeale Lokalanästhesie (Rachenbetäubung)</td></tr></tbody>
+      </table>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>🗺️ Vollständiger Ablauf mit Entscheidungen</summary>
+    <div class="details-body">
+      <div class="flow-outline">
+<div class="flow-item flow-start">▶ Start</div>
+<div class="flow-item flow-prep"><strong>Vorbereitung</strong><ul><li>Nüchternheit (mind. 6h Nahrungskarenz)</li><li>Venöser Zugang (Venenverweilkanüle) + Monitoring (Überwachung)</li><li>Linksseitenlage</li><li>Propofol oder Midazolam — Analgosedierung (Dämmerschlaf)</li></ul></div>
+<div class="flow-item flow-step"><span>Pharyngeale Lokalanästhesie (Rachenbetäubung) + Beißring (Zahnschutz) anlegen</span><span class="flow-tag">🔧 Lidocain-Rachenspray, Beißring</span></div>
+<div class="flow-item flow-step"><span>Einführen des Gastroskops (Magenspiegelgeräts) über Oropharynx (Mundrachenraum)</span><span class="flow-tag">🔧 Flexibles Gastroskop</span></div>
+<div class="flow-item flow-step"><span>Inspektion des Ösophagus (Speiseröhre) — Varizen (Krampfadern), Stenosen (Verengungen), Läsionen</span><span class="flow-tag">🔧 Gastroskop</span></div>
+<div class="flow-item flow-step"><span>Luftinsufflation (Lufteinblasung) → Magenentfaltung → Inspektion: Fundus (Magengrund), Korpus (Magenkörper), Antrum (Magenausgang)</span><span class="flow-tag">🔧 Gastroskop + Luftkanal</span></div>
+<div class="flow-item flow-step"><span>Retroflexion (Umkehren) im Magen → Inspektion von Fundus und Kardia (Mageneingang) von innen</span><span class="flow-tag">🔧 Gastroskop retroflektiert</span></div>
+<div class="flow-item flow-step"><span>Passage des Pylorus (Magenpförtners) → Inspektion des Duodenums (Zwölffingerdarms) + Papilla Vateri (Gallengangsöffnung)</span><span class="flow-tag">🔧 Gastroskop</span></div>
+<div class="flow-item flow-decision"><strong>❓ Pathologischer Befund?</strong><div class="flow-branch flow-no">✗ NEIN → Kontrollierter Rückzug, Luftabsaugung, Abschluss</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>Läsion (Veränderung)</strong> → Biopsie (Gewebeentnahme) → Biopsiezange → Histologie (Gewebeuntersuchung)</li><li><strong>Aktive Blutung</strong> → Hämostase (Blutstillung): Clip + Injektion (Einspritzung) + Koagulation (Wärmebehandlung)</li></ul></div></div>
+<div class="flow-item flow-decision"><strong>❓ Komplikation?</strong><div class="flow-branch flow-no">✗ NEIN → Überwachung nach Sedierung (Dämmerschlaf), Entlassung</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>Perforation (Durchbruch)</strong> → Sofortiger Abbruch → Chirurgie (Bauchoperation)</li><li><strong>Aspiration (Einatmen von Mageninhalt)</strong> → Seitenlage + Absaugen → O₂ → Antibiose</li><li><strong>Hypoxie (O₂-Mangel)</strong> → O₂-Gabe → ggf. Antagonisierung (Gegenmittel: Flumazenil)</li></ul></div></div>
+<div class="flow-item flow-end">■ Ende</div>
+      </div>
+    </div>
+  </details>
+</section>
+
+
+<section class="proc-card" id="proc-k">
+  <div class="proc-header">
+    <span class="proc-icon">🔬</span>
+    <div>
+      <h2>Koloskopie</h2>
+      <p class="proc-sub">Darmspiegelung</p>
+    </div>
+  </div>
+
+  <details open>
+    <summary>📖 Definition &amp; Ziel</summary>
+    <div class="details-body">
+      <p>Die <strong>Koloskopie (Darmspiegelung)</strong> ist eine endoskopische Untersuchung des gesamten <strong>Kolons (Dickdarms)</strong> vom <strong>Rektum (Mastdarm)</strong> bis zur <strong>Ileozäkalklappe (Bauhin-Klappe)</strong> — ggf. einschließlich des terminalen Ileums (letzten Dünndarmabschnitts) — mittels eines flexiblen Koloskops (Darmspiegelgeräts).</p>
+      <p><strong>Ziel:</strong> Visualisierung der Kolonmukosa (Dickdarmschleimhaut) zur Diagnostik, Surveillance (Überwachung) und therapeutischen Intervention.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Indikationen</summary>
+    <div class="details-body">
+      <ul class="ind-list"><li>Rektale Blutung (Blutabgang über den Darm) oder okkultes Blut im Stuhl (nicht sichtbares Blut)</li><li>Verdacht auf kolorektales Karzinom (Darmkrebs) oder Kolonpolypen (Darmgeschwülste)</li><li>Morbus Crohn (Crohn-Krankheit) + Colitis ulcerosa (Dickdarmentzündung) — Diagnose + Verlauf</li><li>Vorsorgekoloskopie (Darmkrebsvorsorge) ab dem 50. Lebensjahr</li><li>Unklare Diarrhoe (Durchfall) oder Obstipation (Verstopfung)</li><li>Surveillance (Überwachung) nach Polypektomie (Polypenentfernung)</li></ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔢 Ablauf — Schritte</summary>
+    <div class="details-body">
+      <ol class="steps-list"><li><div class="step-text">Digitale rektale Untersuchung (Tastuntersuchung des Mastdarms) zum Ausschluss von Stenosen (Verengungen) im Analkanal (Afterkanal).</div><div class="step-instr-tag">🔧 Untersuchungshandschuh</div></li><li><div class="step-text">Einführen des Koloskops (Darmspiegelgeräts) transanal (durch den After) unter Sichtkontrolle.</div><div class="step-instr-tag">🔧 Flexibles Koloskop</div></li><li><div class="step-text">CO₂-Insufflation (Kohlendioxideinblasung) zur Entfaltung des Kolonlumens (Dickdarminnenraums); schrittweises Vorschieben.</div><div class="step-instr-tag">🔧 Koloskop, CO₂-Insufflationsgerät</div></li><li><div class="step-text">Passage durch alle Kolonabschnitte (Dickdarmabschnitte): Sigmoideum (S-förmig), Colon descendens (absteigend), linke + rechte Flexur (Krümmungen), Colon transversum (quer), Colon ascendens (aufsteigend).</div><div class="step-instr-tag">🔧 Koloskop, ggf. manuelle Bauchkompression</div></li><li><div class="step-text">Identifikation des Zäkums (Blinddarms) + Ileozäkalklappe (Bauhin-Klappe); ggf. Intubation des terminalen Ileums (letzten Dünndarmabschnitts).</div><div class="step-instr-tag">🔧 Koloskop</div></li><li><div class="step-text">Systematische Inspektion beim kontrollierten Rückzug — Mindestrückzugszeit: 6 Minuten! — wichtigster diagnostischer Schritt.</div><div class="step-instr-tag">🔧 Koloskop mit Spül- und Absaugkanal</div></li><li><div class="step-text">Polypen (Darmgeschwülste): Polypektomie (Polypenentfernung) mit Diathermieschlinge (Elektroschneidschlinge). Läsion: Biopsie (Gewebeentnahme).</div><div class="step-instr-tag">🔧 Diathermieschlinge, Biopsiezange, Hämostaseclip</div></li></ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>🛠️ Instrumente</summary>
+    <div class="details-body">
+      <div class="table-scroll">
+      <table class="instr-table">
+        <thead><tr><th></th><th>Fachbegriff</th><th>Umgangssprache</th><th>Funktion</th></tr></thead>
+        <tbody><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="12" x2="16" y2="12"/><circle cx="19" cy="12" r="3"/></svg></td><td class="fach">Flexibles Koloskop</td><td class="umg">Darmspiegelgerät</td><td>Visualisierung der gesamten Kolonmukosa (Dickdarmschleimhaut)</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="20" x2="12" y2="12"/><circle cx="16" cy="8" r="5"/></svg></td><td class="fach">Diathermieschlinge</td><td class="umg">Elektroschneidschlinge</td><td>Abtragung von Polypen (Darmgeschwülsten)</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3 12 12 6 21"/><path d="M18 3 12 12 18 21"/></svg></td><td class="fach">Biopsiezange</td><td class="umg">Gewebezange</td><td>Entnahme von Gewebeproben</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 4 18 4 14 12 18 20 6 20 10 12 Z"/></svg></td><td class="fach">Hämostaseclip</td><td class="umg">Blutstillungsklammer</td><td>Mechanische Blutstillung nach Polypektomie</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="6" width="10" height="15" rx="2"/><rect x="10" y="2" width="4" height="4"/></svg></td><td class="fach">CO₂-Insufflationsgerät</td><td class="umg">Kohlendioxideinblasgerät</td><td>Entfaltung des Kolonlumens (Dickdarminnenraums)</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="9" width="10" height="6" rx="1"/><line x1="13" y1="12" x2="21" y2="12"/><line x1="3" y1="9" x2="3" y2="15"/></svg></td><td class="fach">Injektionsnadel</td><td class="umg">Einspritznadel</td><td>Submuköse Injektion (Unterspritzung) vor Mukosaresektion</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4 Q4 20 20 20"/><circle cx="20" cy="20" r="2"/></svg></td><td class="fach">Absaugkanal</td><td class="umg">Absaugvorrichtung</td><td>Entfernung von Sekret und Luft</td></tr></tbody>
+      </table>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>🗺️ Vollständiger Ablauf mit Entscheidungen</summary>
+    <div class="details-body">
+      <div class="flow-outline">
+<div class="flow-item flow-start">▶ Start</div>
+<div class="flow-item flow-prep"><strong>Vorbereitung</strong><ul><li>Darmlavage (Darmspülung): PEG-Lösung Vorabend + Morgen</li><li>Antikoagulanzien (Blutgerinnungshemmer) pausieren</li><li>Analgosedierung (Dämmerschlaf): Propofol oder Midazolam</li><li>Venöser Zugang + Monitoring (Überwachung), Linksseitenlage</li></ul></div>
+<div class="flow-item flow-step"><span>Digitale rektale Untersuchung (Tastuntersuchung des Mastdarms) — Ausschluss Stenose (Verengung)</span><span class="flow-tag">🔧 Untersuchungshandschuh</span></div>
+<div class="flow-item flow-step"><span>Einführen des Koloskops (Darmspiegelgeräts) transanal (durch den After) unter Sichtkontrolle</span><span class="flow-tag">🔧 Flexibles Koloskop</span></div>
+<div class="flow-item flow-step"><span>CO₂-Insufflation (Kohlendioxideinblasung) + Passage aller Kolonabschnitte (Dickdarmabschnitte) bis Zäkum (Blinddarm)</span><span class="flow-tag">🔧 Koloskop + CO₂-Insufflationsgerät</span></div>
+<div class="flow-item flow-check"><strong>❓ Zäkum (Blinddarm) + Ileozäkalklappe (Bauhin-Klappe) erreicht?</strong><div class="flow-branch flow-no"><strong>✓ JA</strong> Ggf. Intubation des terminalen Ileums (letzten Dünndarmabschnitts) bei Indikation</div><div class="flow-branch flow-yes"><strong>✗ NEIN</strong> Repositionierung + erneuter Versuch — ggf. Sedierung (Betäubung) anpassen</div></div>
+<div class="flow-item flow-step"><span>Systematische Inspektion beim kontrollierten Rückzug — ⏱ Mindest-Rückzugszeit: 6 Minuten!</span><span class="flow-tag">🔧 Koloskop mit Spül- + Absaugkanal</span></div>
+<div class="flow-item flow-decision"><strong>❓ Pathologischer Befund?</strong><div class="flow-branch flow-no">✗ NEIN → Luftabsaugung, Abschluss, Überwachung nach Sedierung</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>Polyp (Darmgeschwulst)</strong> → Polypektomie (Polypenentfernung) → Diathermieschlinge (Elektroschneidschlinge)</li><li><strong>Läsion (Veränderung)</strong> → Biopsie (Gewebeentnahme) → Biopsiezange → Histologie (Gewebeuntersuchung)</li><li><strong>Blutung nach Polypektomie</strong> → Hämostaseclip (Blutstillungsklammer) + Koagulation (Verödung)</li></ul></div></div>
+<div class="flow-item flow-decision"><strong>❓ Postoperative Komplikation?</strong><div class="flow-branch flow-no">✗ NEIN → Überwachung nach Sedierung, Entlassung</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>Perforation (Darmdurchbruch)</strong> → Abbruch → Clipverschluss oder operative Revision (Bauchoperation)</li><li><strong>Postpolypektomie-Blutung (Nachblutung)</strong> → Rekoloskopie (erneute Darmspiegelung) → Hämostase (Blutstillung)</li><li><strong>Hypoxie (O₂-Mangel)</strong> → O₂-Gabe → Antagonisierung (Gegenmittel) bei Midazolam</li></ul></div></div>
+<div class="flow-item flow-end">■ Ende</div>
+      </div>
+    </div>
+  </details>
+</section>
+
+
+<section class="proc-card" id="proc-a">
+  <div class="proc-header">
+    <span class="proc-icon">✂️</span>
+    <div>
+      <h2>Appendektomie</h2>
+      <p class="proc-sub">Blinddarmentfernung</p>
+    </div>
+  </div>
+
+  <details open>
+    <summary>📖 Definition &amp; Ziel</summary>
+    <div class="details-body">
+      <p>Die <strong>Appendektomie (Blinddarmentfernung)</strong> ist die operative Entfernung der <strong>Appendix vermiformis (Wurmfortsatzes)</strong> — fingerförmiger Anhang des <strong>Zäkums (Blinddarms)</strong> — mittels <strong>Laparoskopie (Bauchspiegelung)</strong>.</p>
+      <p><strong>Ziel:</strong> Entfernung der entzündeten Appendix zur Verhinderung von Perforation (Durchbruch) und Peritonitis (Bauchfellentzündung).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Indikationen</summary>
+    <div class="details-body">
+      <ul class="ind-list"><li>Akute Appendizitis (Blinddarmentzündung) — häufigste Indikation</li><li>Perforierte Appendizitis (durchgebrochene Entzündung) mit Peritonitis (Bauchfellentzündung)</li><li>Appendizitis mit Abszessbildung (Eiteransammlung)</li><li>Inzidentelle Appendektomie (Zufallsentfernung) bei anderer Bauchoperation</li><li>Appendixkarzinoid (Tumor des Wurmfortsatzes) < 2 cm</li></ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔢 Ablauf — Schritte</summary>
+    <div class="details-body">
+      <ol class="steps-list"><li><div class="step-text">Periumbilicale Inzision (Einschnitt um den Bauchnabel) → Veress-Nadel (Insufflationsnadel) → CO₂-Insufflation (Gaseinleitung) bis 12–15 mmHg → Pneumoperitoneum (Bauchgasraum).</div><div class="step-instr-tag">🔧 Veress-Nadel, CO₂-Insufflationsgerät</div></li><li><div class="step-text">Einbringen des ersten Trokars (Hohlstabs) periumbilikal → Laparoskop (Bauchspiegelgerät) → Diagnostische Laparoskopie (Bauchspiegelung).</div><div class="step-instr-tag">🔧 10/12-mm-Trokar, 30°-Laparoskop</div></li><li><div class="step-text">Einbringen von 2 Arbeitstrokaren (Hohlstäben): suprapubisch (oberhalb der Schambeinfuge) + linker Unterbauch.</div><div class="step-instr-tag">🔧 5-mm-Trokare</div></li><li><div class="step-text">Aufsuchen + Anheben der Appendix vermiformis (Wurmfortsatzes); Mobilisation (Lösung) vom umgebenden Gewebe.</div><div class="step-instr-tag">🔧 Atraumatische Faszzange (gewebeschonende Greifzange)</div></li><li><div class="step-text">Skelettierung (Freipräparation) des Mesoappendix (Gekröses des Wurmfortsatzes) + Koagulation (Verödung) der A. appendicularis (Appendixarterie).</div><div class="step-instr-tag">🔧 Elektrohaken, Ultraschallschere (Harmonicschere)</div></li><li><div class="step-text">Ligatur (Abbinden) der Appendixbasis (Wurmfortsatzansatzes) mit 2 Endoloops (Ligaturchlaufen) + Durchtrennung dazwischen.</div><div class="step-instr-tag">🔧 Endoloop (Ligaturchlaufe), Schere</div></li><li><div class="step-text">Appendix in Bergebeutel (Extraktionsbeutel) → Bergung über Trokarkanal zur Vermeidung von Kontamination (Keimverschleppung).</div><div class="step-instr-tag">🔧 Bergebeutel, Faszzange</div></li><li><div class="step-text">Spülung + Hämostasekontrolle (Blutstillungsprüfung) → CO₂-Ablassen → Fasziennaht (Bindegewebsnaht) + Hautnaht.</div><div class="step-instr-tag">🔧 Spüll-Saug-System, Nadelhalter, Nahtmaterial</div></li></ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>🛠️ Instrumente</summary>
+    <div class="details-body">
+      <div class="table-scroll">
+      <table class="instr-table">
+        <thead><tr><th></th><th>Fachbegriff</th><th>Umgangssprache</th><th>Funktion</th></tr></thead>
+        <tbody><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="9" width="10" height="6" rx="1"/><line x1="13" y1="12" x2="21" y2="12"/><line x1="3" y1="9" x2="3" y2="15"/></svg></td><td class="fach">Veress-Nadel</td><td class="umg">Insufflationsnadel</td><td>Anlage des Pneumoperitoneums (Bauchgasraums)</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="2" width="8" height="14" rx="1"/><path d="M8 16 12 22 16 16 Z"/></svg></td><td class="fach">Trokar</td><td class="umg">Hohlstab</td><td>Zugangskanal für Instrumente</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="12" x2="16" y2="12"/><circle cx="19" cy="12" r="3"/></svg></td><td class="fach">Laparoskop</td><td class="umg">Bauchspiegelgerät</td><td>Visualisierung der Bauchhöhle</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3 12 12 6 21"/><path d="M18 3 12 12 18 21"/></svg></td><td class="fach">Atraumatische Faszzange</td><td class="umg">Gewebeschonende Greifzange</td><td>Halten + Mobilisieren (Lösen) der Appendix</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="20" x2="12" y2="12"/><path d="M14 10 18 4 15 9 19 9 14 15 16 10 Z" fill="currentColor" stroke="none"/></svg></td><td class="fach">Elektrohaken</td><td class="umg">Koagulationshaken</td><td>Durchtrennung + Koagulation (Verödung) des Mesoappendix</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="2.3"/><circle cx="6" cy="18" r="2.3"/><line x1="8" y1="8" x2="20" y2="16"/><line x1="8" y1="16" x2="20" y2="8"/></svg></td><td class="fach">Ultraschallschere</td><td class="umg">Harmonicschere</td><td>Gewebeschonende Durchtrennung + Blutstillung</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a4 4 0 1 1-5.66 5.66L4 17l3 3 5.04-5.04a4 4 0 1 1 5.66-5.66z"/></svg></td><td class="fach">Endoloop</td><td class="umg">Ligaturchlaufe</td><td>Ligatur (Abbinden) der Appendixbasis</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8 18 8 16 21 8 21 Z"/><path d="M9 8 C9 4 15 4 15 8"/></svg></td><td class="fach">Bergebeutel</td><td class="umg">Extraktionsbeutel</td><td>Kontaminationsfreie Bergung der Appendix</td></tr></tbody>
+      </table>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>🗺️ Vollständiger Ablauf mit Entscheidungen</summary>
+    <div class="details-body">
+      <div class="flow-outline">
+<div class="flow-item flow-start">▶ Start</div>
+<div class="flow-item flow-prep"><strong>Vorbereitung</strong><ul><li>Blutbild + CRP (Entzündungswert) + Sonographie (Ultraschall)</li><li>Alvarado-Score (klinischer Diagnosewertscore)</li><li>Antibiotikaprophylaxe (vorbeugende Keimhemmung): Cephalosporin + Metronidazol</li><li>Allgemeinanästhesie (Vollnarkose), Rückenlage + Linkskippung</li></ul></div>
+<div class="flow-item flow-step"><span>Anlage des Pneumoperitoneums (Bauchgasraums) über periumbilicale Inzision (Einschnitt um den Bauchnabel)</span><span class="flow-tag">🔧 Veress-Nadel + CO₂-Insufflationsgerät</span></div>
+<div class="flow-item flow-step"><span>Einbringen des Laparoskops (Bauchspiegelgeräts) + 2 Arbeitstrokare (Hohlstäbe) suprapubisch (oberhalb der Schambeinfuge) und im linken Unterbauch</span><span class="flow-tag">🔧 10/12-mm-Trokar + 5-mm-Trokare + 30°-Laparoskop</span></div>
+<div class="flow-item flow-step"><span>Darstellung + Anheben der Appendix vermiformis (Wurmfortsatzes); Mobilisation (Lösung) vom Gewebe</span><span class="flow-tag">🔧 Atraumatische Faszzange (gewebeschonende Greifzange)</span></div>
+<div class="flow-item flow-step"><span>Skelettierung (Freipräparation) des Mesoappendix (Gekröses) + Koagulation (Verödung) der A. appendicularis (Appendixarterie)</span><span class="flow-tag">🔧 Elektrohaken / Ultraschallschere (Harmonicschere)</span></div>
+<div class="flow-item flow-step"><span>Ligatur (Abbinden) der Appendixbasis (Wurmfortsatzansatzes) mit 2 Endoloops (Ligaturchlaufen) + Durchtrennung</span><span class="flow-tag">🔧 Endoloop (Ligaturchlaufe) + Schere</span></div>
+<div class="flow-item flow-step"><span>Bergung der Appendix im Bergebeutel (Extraktionsbeutel) — Vermeidung von Kontamination (Keimverschleppung)!</span><span class="flow-tag">🔧 Bergebeutel + Faszzange</span></div>
+<div class="flow-item flow-decision"><strong>❓ Intraoperative Komplikation?</strong><div class="flow-branch flow-no">✗ NEIN → Spülung + Hämostasekontrolle (Blutstillungsprüfung) → CO₂-Ablassen → Wundverschluss</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>Blutung</strong> → Koagulation (Verödung) + Clip (Klammer)</li><li><strong>Darmverletzung</strong> → Übernähung oder Resektion (Darmabschnittentfernung)</li><li><strong>Gefäßverletzung</strong> → Kompression → Konversion (Umstieg auf offene OP) → Gefäßchirurgie</li></ul></div></div>
+<div class="flow-item flow-decision"><strong>❓ Postoperative Komplikation?</strong><div class="flow-branch flow-no">✗ NEIN → Kostaufbau (Nahrungsaufbau) ab OP-Tag, Entlassung nach 1–2 Tagen</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>Abszess (Eiteransammlung)</strong> → CT-Abdomen → CT-gesteuerte Drainage</li><li><strong>Stumpfinsuffizienz (undichte Stumpfnaht)</strong> → Relaparoskopie (erneute Bauchspiegelung)</li><li><strong>Ileus (Darmverschluss)</strong> → Nahrungskarenz → ggf. operative Therapie</li></ul></div></div>
+<div class="flow-item flow-end">■ Ende</div>
+      </div>
+    </div>
+  </details>
+</section>
+
+
+<section class="proc-card" id="proc-c">
+  <div class="proc-header">
+    <span class="proc-icon">🏥</span>
+    <div>
+      <h2>Laparosk. Cholezystektomie</h2>
+      <p class="proc-sub">Gallenblasenentfernung</p>
+    </div>
+  </div>
+
+  <details open>
+    <summary>📖 Definition &amp; Ziel</summary>
+    <div class="details-body">
+      <p>Die <strong>laparoskopische Cholezystektomie (Gallenblasenentfernung durch Bauchspiegelung)</strong> ist die minimalinvasive (kleinschnittchirurgische) Entfernung der <strong>Vesica biliaris (Gallenblase)</strong> mittels Laparoskopie (Bauchspiegelung).</p>
+      <p><strong>Ziel:</strong> Entfernung der erkrankten Gallenblase zur Verhinderung von Cholangitis (Gallengangsentzündung), Perforation (Durchbruch) oder biliärer Pankreatitis (Bauchspeicheldrüsenentzündung durch Gallensteine).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Indikationen</summary>
+    <div class="details-body">
+      <ul class="ind-list"><li>Symptomatische Cholezystolithiasis (Gallensteinleiden mit Beschwerden) — häufigste Indikation</li><li>Akute + chronische Cholezystitis (Gallenblasenentzündung)</li><li>Biliäre Kolik (Gallensteinanfall) mit rezidivierenden (wiederkehrenden) Episoden</li><li>Biliäre Pankreatitis (Bauchspeicheldrüsenentzündung durch Gallensteine) nach Abklingen</li><li>Porzellanblase (verkalkte Gallenblase) wegen Karzinomrisikos</li></ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔢 Ablauf — Schritte</summary>
+    <div class="details-body">
+      <ol class="steps-list"><li><div class="step-text">Periumbilicale Inzision → Veress-Nadel (Insufflationsnadel) → CO₂-Insufflation bis 12–15 mmHg → Pneumoperitoneum (Bauchgasraum).</div><div class="step-instr-tag">🔧 Veress-Nadel, CO₂-Insufflationsgerät</div></li><li><div class="step-text">Einbringen des ersten Trokars (Hohlstabs) periumbilikal → Laparoskop (Bauchspiegelgerät) → Diagnostische Übersicht.</div><div class="step-instr-tag">🔧 10/12-mm-Trokar, 30°-Laparoskop</div></li><li><div class="step-text">Einbringen von 3 Arbeitstrokaren (Hohlstäben): epigastrisch (im Oberbauch) + 2 im rechten Oberbauch.</div><div class="step-instr-tag">🔧 5-mm- und 10-mm-Trokare</div></li><li><div class="step-text">Fassen der Gallenblase am Fundus (Gallenblasenboden) → kraniale Retraktion (Aufwärtsziehen) → Darstellung des Calot-Dreiecks (anatomischen Präparationsdreiecks).</div><div class="step-instr-tag">🔧 Atraumatische Faszzange (gewebeschonende Greifzange)</div></li><li><div class="step-text">Präparation des Calot-Dreiecks → Critical View of Safety (sichere Präparationsansicht): Ductus cysticus (Gallenblasengang) und A. cystica (Gallenblasenarterie) klar identifiziert!</div><div class="step-instr-tag">🔧 Elektrohaken, Dissektor (Präparationsinstrument), Schere</div></li><li><div class="step-text">Optionale intraoperative Cholangiographie (Röntgendarstellung der Gallengänge) bei Verdacht auf Choledocholithiasis (Gallensteine im Gallengang).</div><div class="step-instr-tag">🔧 Cholangiographiekatheter, C-Bogen (Röntgengerät)</div></li><li><div class="step-text">Clipping (Abklemmen) von Ductus cysticus und A. cystica mit je 2 Titanclips (Metallklammern) + Durchtrennung dazwischen.</div><div class="step-instr-tag">🔧 Clipapplikator (Klammersetzer), Titanclips, Schere</div></li><li><div class="step-text">Ablösung der Gallenblase vom Leberbett (Gallenblasenloge) unter Koagulation (Verödung) kleiner Gefäße.</div><div class="step-instr-tag">🔧 Elektrohaken, Ultraschallschere (Harmonicschere)</div></li><li><div class="step-text">Gallenblase in Bergebeutel (Extraktionsbeutel) → Bergung über Trokarkanal.</div><div class="step-instr-tag">🔧 Bergebeutel, Faszzange</div></li><li><div class="step-text">Spülung + Hämostasekontrolle → ggf. Drainage (Ableitungsschlauch) → CO₂-Ablassen → Wundverschluss.</div><div class="step-instr-tag">🔧 Spüll-Saug-System, Drainage, Nahtmaterial</div></li></ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>🛠️ Instrumente</summary>
+    <div class="details-body">
+      <div class="table-scroll">
+      <table class="instr-table">
+        <thead><tr><th></th><th>Fachbegriff</th><th>Umgangssprache</th><th>Funktion</th></tr></thead>
+        <tbody><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="9" width="10" height="6" rx="1"/><line x1="13" y1="12" x2="21" y2="12"/><line x1="3" y1="9" x2="3" y2="15"/></svg></td><td class="fach">Veress-Nadel</td><td class="umg">Insufflationsnadel</td><td>Anlage des Pneumoperitoneums (Bauchgasraums)</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="12" x2="16" y2="12"/><circle cx="19" cy="12" r="3"/></svg></td><td class="fach">Laparoskop 30°</td><td class="umg">Bauchspiegelgerät</td><td>Visualisierung der Bauchhöhle</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3 12 12 6 21"/><path d="M18 3 12 12 18 21"/></svg></td><td class="fach">Atraumatische Faszzange</td><td class="umg">Gewebeschonende Greifzange</td><td>Retraktion (Zurückhalten) der Gallenblase</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="20" x2="12" y2="12"/><path d="M14 10 18 4 15 9 19 9 14 15 16 10 Z" fill="currentColor" stroke="none"/></svg></td><td class="fach">Elektrohaken</td><td class="umg">Koagulationshaken</td><td>Präparation + Koagulation (Verödung)</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 4 18 4 14 12 18 20 6 20 10 12 Z"/></svg></td><td class="fach">Clipapplikator + Titanclips</td><td class="umg">Klammersetzer + Metallklammern</td><td>Ligatur (Abbinden) von Ductus cysticus + A. cystica</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8 18 8 16 21 8 21 Z"/><path d="M9 8 C9 4 15 4 15 8"/></svg></td><td class="fach">Bergebeutel</td><td class="umg">Extraktionsbeutel</td><td>Kontaminationsfreie Bergung der Gallenblase</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21 Q10 21 12 12 Q14 3 21 3"/><circle cx="21" cy="3" r="1.8" fill="currentColor" stroke="none"/></svg></td><td class="fach">Cholangiographiekatheter</td><td class="umg">Gallengangskatheter</td><td>Intraoperative Gallengangdarstellung (Röntgenuntersuchung)</td></tr></tbody>
+      </table>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>🗺️ Vollständiger Ablauf mit Entscheidungen</summary>
+    <div class="details-body">
+      <div class="flow-outline">
+<div class="flow-item flow-start">▶ Start</div>
+<div class="flow-item flow-prep"><strong>Vorbereitung</strong><ul><li>Sonographie (Ultraschall) + Leberwerte (Leberenzyme): GOT, GPT, GGT, AP, Bilirubin</li><li>MRCP (Gallenwegdarstellung mittels MRT) bei Verdacht auf Choledocholithiasis (Gallensteine im Gallengang)</li><li>Antibiotikaprophylaxe (vorbeugende Keimhemmung): Cephalosporin</li><li>Allgemeinanästhesie (Vollnarkose), Rückenlage mit Linkskippung, Magensonde</li></ul></div>
+<div class="flow-item flow-step"><span>Anlage des Pneumoperitoneums (Bauchgasraums) + 4 Trokare (Hohlstäbe) einbringen</span><span class="flow-tag">🔧 Veress-Nadel + CO₂-Insufflationsgerät + Trokare</span></div>
+<div class="flow-item flow-step"><span>Gallenblase am Fundus (Gallenblasenboden) fassen → kraniale Retraktion (Aufwärtsziehen) → Exposition des Calot-Dreiecks (anatomischen Präparationsdreiecks)</span><span class="flow-tag">🔧 Atraumatische Faszzange (gewebeschonende Greifzange)</span></div>
+<div class="flow-item flow-step"><span>Präparation des Calot-Dreiecks bis zum Critical View of Safety (sichere Präparationsansicht): Ductus cysticus + A. cystica klar isoliert</span><span class="flow-tag">🔧 Elektrohaken + Dissektor (Präparationsinstrument)</span></div>
+<div class="flow-item flow-check"><strong>❓ Critical View of Safety (sichere Präparationsansicht) erreicht?</strong><div class="flow-branch flow-no"><strong>✓ JA</strong> Weiter mit Clipping (Abklemmen) — sichere Identifikation bestätigt</div><div class="flow-branch flow-yes"><strong>✗ NEIN</strong> Weitere Präparation oder Konversion (Umstieg auf offene OP) — niemals blind clippen!</div></div>
+<div class="flow-item flow-step"><span>Intraoperative Cholangiographie (Röntgendarstellung der Gallengänge) bei Verdacht auf Choledocholithiasis (Gallensteine im Gallengang)</span><span class="flow-tag">🔧 Cholangiographiekatheter + C-Bogen (Röntgengerät)</span></div>
+<div class="flow-item flow-step"><span>Clipping (Abklemmen) + Durchtrennung von Ductus cysticus (Gallenblasengang) + A. cystica (Gallenblasenarterie) mit je 2 Titanclips (Metallklammern)</span><span class="flow-tag">🔧 Clipapplikator + Titanclips + Schere</span></div>
+<div class="flow-item flow-step"><span>Ablösung der Gallenblase vom Leberbett (Gallenblasenloge) + Bergung im Bergebeutel (Extraktionsbeutel)</span><span class="flow-tag">🔧 Elektrohaken / Ultraschallschere (Harmonicschere) + Bergebeutel</span></div>
+<div class="flow-item flow-decision"><strong>❓ Intraoperative Komplikation?</strong><div class="flow-branch flow-no">✗ NEIN → Spülung + Hämostasekontrolle + CO₂-Ablassen + Wundverschluss</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>Gallengangsläsion (Gallengangverletzung)</strong> → Abbruch → Cholangiographie → Hepatikojejunostomie (Gallengang-Dünndarm-Verbindung)</li><li><strong>Blutung aus A. cystica</strong> → Clip + Koagulation (Verödung) → ggf. Konversion (Umstieg)</li><li><strong>Gallenblasenruptur (Gallenblaseneinriss)</strong> → Bergebeutel + ausgiebige Peritonealspülung (Bauchspülung)</li></ul></div></div>
+<div class="flow-item flow-decision"><strong>❓ Postoperative Komplikation?</strong><div class="flow-branch flow-no">✗ NEIN → Kostaufbau (Nahrungsaufbau), ambulante Entlassung nach 1–2 Tagen</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>Galleleck (Gallenaustritt)</strong> → Sonographie → ERCP (Gallengangsspiegelung) → Stenteinlage (Gangschienung)</li><li><strong>Nachblutung</strong> → Relaparoskopie (erneute Bauchspiegelung) → Hämostase (Blutstillung)</li><li><strong>Postoperative Cholangitis (Gallengangsentzündung)</strong> → Antibiose → ERCP-Drainage</li></ul></div></div>
+<div class="flow-item flow-end">■ Ende</div>
+      </div>
+    </div>
+  </details>
+</section>
+
+
+<section class="proc-card" id="proc-l">
+  <div class="proc-header">
+    <span class="proc-icon">🩹</span>
+    <div>
+      <h2>Lichtenstein</h2>
+      <p class="proc-sub">Leistenbruchreparation</p>
+    </div>
+  </div>
+
+  <details open>
+    <summary>📖 Definition &amp; Ziel</summary>
+    <div class="details-body">
+      <p>Die <strong>Leistenhernioplastik nach Lichtenstein (Leistenbruchreparation mit Netzimplantation)</strong> ist ein offenes, spannungsfreies Netzverfahren zur Versorgung der <strong>Hernia inguinalis (Leistenhernie / Leistenbruchs)</strong> durch Implantation (Einsetzen) eines alloplastischen Netzes (Kunststoffnetzes).</p>
+      <p><strong>Ziel:</strong> Spannungsfreier Verschluss der Bruchpforte (Hernienöffnung) durch dauerhafte Verstärkung der Hinterwand des Canalis inguinalis (Leistenkanals) — Rezidivrate (Wiederauftretensrate) < 1%.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Indikationen</summary>
+    <div class="details-body">
+      <ul class="ind-list"><li>Symptomatische Hernia inguinalis lateralis (indirekte Leistenhernie) — häufigste Form</li><li>Symptomatische Hernia inguinalis medialis (direkte Leistenhernie)</li><li>Inkarzerierte Hernie (eingeklemmter Leistenbruch) — Notfallindikation</li><li>Rezidivhernie (Wiederauftreten nach Voroperation) nach anteriorem Zugang</li><li>Hernia inguinoscrotalis (Leistenhodenbruch) mit Skrotalanteil</li></ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔢 Ablauf — Schritte</summary>
+    <div class="details-body">
+      <ol class="steps-list"><li><div class="step-text">Oblique (schräge) Hautinzision (Einschnitt) von ca. 6–8 cm parallel zum Ligamentum inguinale (Leistenband) → Fascia Camper (oberflächliche Bauchfaszie) + Fascia Scarpa (tiefe Unterhautfaszie) durchtrennen.</div><div class="step-instr-tag">🔧 Skalpell, Elektrokauter</div></li><li><div class="step-text">Spaltung der Externusaponeurose (Sehnenplatte des äußeren Bauchmuskels) → Eröffnung des Canalis inguinalis (Leistenkanals).</div><div class="step-instr-tag">🔧 Schere, Wundhaken (Wundspreizer)</div></li><li><div class="step-text">Identifikation + Schonung von N. ilioinguinalis (Leistennerv), N. iliohypogastricus (Bauchnerv) und R. genitalis des N. genitofemoralis (Genitalast).</div><div class="step-instr-tag">🔧 Präparierschere, Dissektor (Präparationsinstrument)</div></li><li><div class="step-text">Umschlingen des Funiculus spermaticus (Samenstrangs) mit einem Vessel-Loop (Gummizügel) → Freilegung der Leistenkanalhinterwand.</div><div class="step-instr-tag">🔧 Vessel-Loop, atraumatische Faszzange</div></li><li><div class="step-text">Bruchsack (Herniensack) versorgen: Indirekte Hernie → Ligatur (Abbinden) + Resektion (Entfernung). Direkte Hernie → Reposition (Zurückverlagern) ohne Resektion.</div><div class="step-instr-tag">🔧 Präparierschere, Ligaturfaden, Skalpell</div></li><li><div class="step-text">Polypropylennetz (Kunststoffnetz) ca. 6 × 11 cm zuschneiden, lateraler Schlitz für Funiculus spermaticus (Samenstrang) → spannungsfreie Platzierung auf der Fascia transversalis (Querbauchfaszie).</div><div class="step-instr-tag">🔧 Schere, Polypropylennetz</div></li><li><div class="step-text">Fixation (Befestigung) des Netzes mit nichtresorbierbarem Nahtmaterial am Tuberculum pubicum (Schambein-Höcker) und Ligamentum inguinale (Leistenband).</div><div class="step-instr-tag">🔧 Nadelhalter, nichtresorbierbares Nahtmaterial (Prolene)</div></li><li><div class="step-text">Verschluss der Externusaponeurose → Subkutannaht (Unterhautnaht) → Hautnaht.</div><div class="step-instr-tag">🔧 Nadelhalter, resorbierbares Nahtmaterial, Hautklammern</div></li></ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>🛠️ Instrumente</summary>
+    <div class="details-body">
+      <div class="table-scroll">
+      <table class="instr-table">
+        <thead><tr><th></th><th>Fachbegriff</th><th>Umgangssprache</th><th>Funktion</th></tr></thead>
+        <tbody><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="20" x2="14" y2="10"/><path d="M14 10 21 3 18 9 Z" fill="currentColor" stroke="none"/></svg></td><td class="fach">Skalpell</td><td class="umg">Operationsmesser</td><td>Hautinzision (Hauteinschnitt)</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="20" x2="12" y2="12"/><path d="M14 10 18 4 15 9 19 9 14 15 16 10 Z" fill="currentColor" stroke="none"/></svg></td><td class="fach">Elektrokauter</td><td class="umg">Elektrisches Schneid- und Koagulationsinstrument</td><td>Durchtrennung und Blutstillung</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3 12 12 6 21"/><path d="M18 3 12 12 18 21"/></svg></td><td class="fach">Wundhaken</td><td class="umg">Wundspreizer</td><td>Offenhalten der Wunde</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="12" rx="7" ry="4" transform="rotate(30 12 12)"/></svg></td><td class="fach">Vessel-Loop</td><td class="umg">Gummizügel</td><td>Anschlingen des Funiculus spermaticus (Samenstrangs)</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><line x1="3" y1="8" x2="21" y2="8"/><line x1="3" y1="14" x2="21" y2="14"/><line x1="8" y1="3" x2="8" y2="21"/><line x1="14" y1="3" x2="14" y2="21"/></svg></td><td class="fach">Polypropylennetz</td><td class="umg">Kunststoffnetz</td><td>Spannungsfreie Verstärkung der Leistenkanalrückwand</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20 10 14"/><path d="M20 4 10 14"/><circle cx="4" cy="20" r="1.4" fill="currentColor" stroke="none"/><circle cx="20" cy="4" r="1.4" fill="currentColor" stroke="none"/></svg></td><td class="fach">Nadelhalter</td><td class="umg">Nahtinstrument</td><td>Führen der Nadel beim Nähen</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12 Q7 6 11 12 T19 12"/><circle cx="21" cy="10" r="1.4" fill="currentColor" stroke="none"/></svg></td><td class="fach">Nichtresorbierbares Nahtmaterial</td><td class="umg">Bleibendes Nahtmaterial</td><td>Dauerhafte Netzfixation (Netzbefestigung)</td></tr></tbody>
+      </table>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>🗺️ Vollständiger Ablauf mit Entscheidungen</summary>
+    <div class="details-body">
+      <div class="flow-outline">
+<div class="flow-item flow-start">▶ Start</div>
+<div class="flow-item flow-prep"><strong>Vorbereitung</strong><ul><li>Klinische Untersuchung im Stehen + Valsalva-Manöver (Pressversuch)</li><li>Sonographie (Ultraschall) Leiste — Nyhus-Klassifikation (Einteilung der Hernientypen)</li><li>Antibiotikaprophylaxe (vorbeugende Keimhemmung): Cephalosporin</li><li>Spinal- oder Lokalanästhesie (Betäubung), Rückenlage</li></ul></div>
+<div class="flow-item flow-step"><span>Hautinzision (Hauteinschnitt) ca. 6–8 cm parallel zum Ligamentum inguinale (Leistenband) → Fascia Camper + Fascia Scarpa durchtrennen</span><span class="flow-tag">🔧 Skalpell + Elektrokauter</span></div>
+<div class="flow-item flow-step"><span>Spaltung der Externusaponeurose (Sehnenplatte) → Eröffnung des Canalis inguinalis (Leistenkanals)</span><span class="flow-tag">🔧 Schere + Wundhaken (Wundspreizer)</span></div>
+<div class="flow-item flow-step"><span>Identifikation + Schonung der 3 Leistennerven (Nerven in der Leistenregion): N. ilioinguinalis, N. iliohypogastricus, R. genitalis</span><span class="flow-tag">🔧 Präparierschere + Dissektor (Präparationsinstrument)</span></div>
+<div class="flow-item flow-step"><span>Funiculus spermaticus (Samenstrang) mit Vessel-Loop (Gummizügel) anschlingen → Hinterwand des Canalis inguinalis (Leistenkanals) freilegen</span><span class="flow-tag">🔧 Vessel-Loop + atraumatische Faszzange</span></div>
+<div class="flow-item flow-check"><strong>❓ Hernientyp (Bruchtyp)?</strong><div class="flow-branch flow-no"><strong>Indirekte Hernie</strong> Bruchsack (Herniensack) am Anulus inguinalis internus (innerem Leistenring) ligieren (abbinden) + resezieren (entfernen)</div><div class="flow-branch flow-yes"><strong>Direkte Hernie</strong> Bruchsack (Herniensack) reponieren (zurückverlagern) ohne Resektion (Entfernung)</div></div>
+<div class="flow-item flow-step"><span>Polypropylennetz (Kunststoffnetz) ca. 6 × 11 cm zuschneiden + spannungsfrei auf Fascia transversalis (Querbauchfaszie) platzieren</span><span class="flow-tag">🔧 Schere + Polypropylennetz</span></div>
+<div class="flow-item flow-step"><span>Netz fixieren (befestigen) am Tuberculum pubicum (Schambein-Höcker) + Ligamentum inguinale (Leistenband) → Schlitz um Funiculus spermaticus (Samenstrang) rekonstruieren</span><span class="flow-tag">🔧 Nadelhalter + Prolene (nichtresorbierbares Nahtmaterial)</span></div>
+<div class="flow-item flow-decision"><strong>❓ Komplikation?</strong><div class="flow-branch flow-no">✗ NEIN → Externusaponeurose (Sehnenplatte) verschließen → Subkutannaht → Hautnaht</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>Nervenläsion (Nervenverletzung): N. ilioinguinalis</strong> → Dokumentation → postoperative Physiotherapie (Krankengymnastik) / Neurektomie (Nervenentfernung)</li><li><strong>Netzinfektion (Kunststoffnetzinfektion)</strong> → Antibiose → ggf. Netzexplantation (Netzentfernung)</li><li><strong>Darmverletzung bei Inkarzeration (Einklemmung)</strong> → Laparotomie (Bauchöffnung) → Darmnaht / Resektion</li></ul></div></div>
+<div class="flow-item flow-decision"><strong>❓ Postoperative Komplikation?</strong><div class="flow-branch flow-no">✗ NEIN → Frühmobilisierung (frühzeitiges Aufstehen), ambulante Entlassung möglich</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>Hämatom (Blutansammlung)</strong> → Kompressionsverband (Druckverband) → ggf. Ausräumung</li><li><strong>Serom (Flüssigkeitsansammlung)</strong> → Punktion (Absaugen) bei symptomatischem Befund</li><li><strong>Rezidivhernie (erneuter Bruch)</strong> → laparoskopische Revision: TAPP (transabdominell) oder TEPP (extraperitoneal)</li></ul></div></div>
+<div class="flow-item flow-end">■ Ende</div>
+      </div>
+    </div>
+  </details>
+</section>
+
+
+<section class="proc-card" id="proc-t">
+  <div class="proc-header">
+    <span class="proc-icon">👄</span>
+    <div>
+      <h2>Tonsillektomie</h2>
+      <p class="proc-sub">Mandelentfernung</p>
+    </div>
+  </div>
+
+  <details open>
+    <summary>📖 Definition &amp; Ziel</summary>
+    <div class="details-body">
+      <p>Die <strong>Tonsillektomie (Mandelentfernung)</strong> ist die vollständige operative Entfernung der <strong>Tonsilla palatina (Gaumenmandel)</strong> beidseits einschließlich ihrer Kapsel (Tonsillärkapsel) aus der <strong>Tonsillarloge (Mandelgrube)</strong>.</p>
+      <p><strong>Ziel:</strong> Dauerhafte Beseitigung rezidivierender Tonsillitiden (wiederkehrender Mandelentzündungen) oder Sanierung eines chronischen Infektionsherdes (dauerhaften Entzündungsherds).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Indikationen</summary>
+    <div class="details-body">
+      <ul class="ind-list"><li>Rezidivierende Tonsillitiden (wiederkehrende Mandelentzündungen) — mind. 5–7 Episoden/Jahr oder 3/Jahr über 2 Jahre</li><li>Peritonsillarabszess (Mandelabszess) — als Intervalltonsillektomie (verzögerte Mandelentfernung)</li><li>Chronische Tonsillitis (dauerhaft entzündete Mandel) mit persistierenden Beschwerden</li><li>Obstruktive Schlafapnoe (Atemaussetzer im Schlaf) durch Tonsillenhyperplasie (Mandelvergrößerung)</li><li>Verdacht auf Tonsillenkarzinom (Mandelkrebs) zur histologischen Sicherung</li><li>PFAPA-Syndrom (periodisches Fiebersyndrom mit Mundgeschwüren und Halsentzündung)</li></ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔢 Ablauf — Schritte</summary>
+    <div class="details-body">
+      <ol class="steps-list"><li><div class="step-text">Rückenlage + Schulterrolle (Lagerungsrolle) → Halsüberstreckung → Einsetzen des Mundsperrers (Rosenbach-Spatel / Dingman-Mundsperrer) zur Exposition (Freilegung) des Operationsfeldes.</div><div class="step-instr-tag">🔧 Schulterrolle, Mundsperrer (Mundöffner)</div></li><li><div class="step-text">Inzision (Einschnitt) der Mukosa (Schleimhaut) über dem Arcus palatoglossus (vorderen Gaumenbogen) zur Eröffnung des Zugangs zur Tonsillärkapsel (Mandelkapsel).</div><div class="step-instr-tag">🔧 Skalpell oder Elektrokauter</div></li><li><div class="step-text">Fassen der Tonsilla palatina (Gaumenmandel) mit der Tonsillenzange (Mandelgreifzange) → mediale Retraktion (Zurückziehen) → stumpfe + scharfe Dissektion (Durchtrennung) entlang der Kapsel.</div><div class="step-instr-tag">🔧 Tonsillenzange, Raspatorium (Ablöselöffel), Präparierschere</div></li><li><div class="step-text">Umschlingen des unteren Tonsillenpols mit der Tonsillenschlinge (Drahtschlinge) → Abtrennung + vollständige Entnahme der Tonsille aus der Tonsillarloge (Mandelgrube).</div><div class="step-instr-tag">🔧 Tonsillenschlinge, Tonsillenzange</div></li><li><div class="step-text">Inspektion der Tonsillarloge → Hämostase (Blutstillung) mittels Tupferkompression (Drucktupfer), bipolarer Koagulation (gezielter Wärmebehandlung) oder Ligatur (Abbindung).</div><div class="step-instr-tag">🔧 Tupfer, Bipolare Koagulationszange, Ligaturfaden, Yankauer-Sauger</div></li><li><div class="step-text">Identischer Ablauf Gegenseite + Abschlusskontrolle beider Tonsillarlogen auf vollständige Hämostase (Blutstillung). Entfernung des Mundsperrers.</div><div class="step-instr-tag">🔧 Identische Instrumente, Sauger</div></li></ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>🛠️ Instrumente</summary>
+    <div class="details-body">
+      <div class="table-scroll">
+      <table class="instr-table">
+        <thead><tr><th></th><th>Fachbegriff</th><th>Umgangssprache</th><th>Funktion</th></tr></thead>
+        <tbody><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="12" rx="9" ry="5"/><line x1="12" y1="7" x2="12" y2="17"/></svg></td><td class="fach">Mundsperrer (Rosenbach-Spatel)</td><td class="umg">Mundöffner</td><td>Exposition (Freilegung) der Tonsillarloge (Mandelgrube)</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6 Q4 14 12 14 Q20 14 20 20"/></svg></td><td class="fach">RAE-Tubus</td><td class="umg">Geformter HNO-Beatmungsschlauch</td><td>Orotracheale Intubation (Beatmungsschlaucheinführung)</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3 12 12 6 21"/><path d="M18 3 12 12 18 21"/></svg></td><td class="fach">Tonsillenzange</td><td class="umg">Mandelgreifzange</td><td>Fassen + Retrahieren (Zurückziehen) der Tonsille</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="20" x2="14" y2="10"/><path d="M14 10 20 4 20 10 16 12 Z"/></svg></td><td class="fach">Raspatorium</td><td class="umg">Ablöselöffel</td><td>Stumpfe Ablösung der Tonsille aus der Tonsillarloge</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="20" x2="12" y2="12"/><circle cx="16" cy="8" r="5"/></svg></td><td class="fach">Tonsillenschlinge</td><td class="umg">Drahtschlinge</td><td>Abtrennung des unteren Tonsillenpols</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="20" x2="12" y2="12"/><path d="M14 10 18 4 15 9 19 9 14 15 16 10 Z" fill="currentColor" stroke="none"/></svg></td><td class="fach">Bipolare Koagulationszange</td><td class="umg">Gezielte Wärmezange</td><td>Präzise Blutstillung ohne Umgebungsschaden</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4 Q4 20 20 20"/><circle cx="20" cy="20" r="2"/></svg></td><td class="fach">Yankauer-Sauger</td><td class="umg">Absaugvorrichtung</td><td>Absaugung von Blut + Sekret (Flüssigkeit) im Rachen</td></tr></tbody>
+      </table>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>🗺️ Vollständiger Ablauf mit Entscheidungen</summary>
+    <div class="details-body">
+      <div class="flow-outline">
+<div class="flow-item flow-start">▶ Start</div>
+<div class="flow-item flow-prep"><strong>Vorbereitung</strong><ul><li>Gerinnung (Blutgerinnungswerte): Quick, PTT, Thrombozyten (Blutplättchen) — obligat!</li><li>Antibiotikaprophylaxe (vorbeugende Keimhemmung): Ampicillin/Sulbactam</li><li>Dexamethason i.v. — Kortisongabe zur Ödemprophylaxe (Schwellungsvorbeugung)</li><li>Allgemeinanästhesie (Vollnarkose) + RAE-Tubus (HNO-Beatmungsschlauch), Rückenlage + Schulterrolle</li></ul></div>
+<div class="flow-item flow-step"><span>Lagerung: Rückenlage + Schulterrolle (Lagerungsrolle) + Halsüberstreckung → Einsetzen des Mundsperrers (Mundöffners)</span><span class="flow-tag">🔧 Schulterrolle + Rosenbach-Spatel / Dingman-Mundsperrer</span></div>
+<div class="flow-item flow-step"><span>Inzision (Einschnitt) der Mukosa (Schleimhaut) am Arcus palatoglossus (vorderen Gaumenbogen)</span><span class="flow-tag">🔧 Skalpell / Elektrokauter</span></div>
+<div class="flow-item flow-step"><span>Fassen der Tonsille (Mandel) + stumpfe/scharfe Dissektion (Durchtrennung) entlang der Tonsillärkapsel (Mandelkapsel)</span><span class="flow-tag">🔧 Tonsillenzange + Raspatorium (Ablöselöffel) + Präparierschere</span></div>
+<div class="flow-item flow-step"><span>Umschlingen + Abtrennung des unteren Tonsillenpols → vollständige Entnahme der Tonsille aus der Tonsillarloge (Mandelgrube)</span><span class="flow-tag">🔧 Tonsillenschlinge (Drahtschlinge)</span></div>
+<div class="flow-item flow-decision"><strong>❓ Intraoperative Blutung?</strong><div class="flow-branch flow-no">✗ NEIN → Hämostasekontrolle (Blutstillungsprüfung) der Tonsillarloge (Mandelgrube) → Gegenseite versorgen</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>Kleine Blutung</strong> → Tupferkompression (Drucktupfer) + Bipolare Koagulation (Wärmebehandlung)</li><li><strong>Große Blutung (A. palatina / Gaumenarterie)</strong> → Kompression → Ligatur (Abbinden) → ggf. Angiographie + Embolisation (Gefäßverschluss)</li></ul></div></div>
+<div class="flow-item flow-step"><span>Gegenseite: identischer Ablauf + Abschlusskontrolle beider Tonsillarlogen → Entfernung des Mundsperrers</span><span class="flow-tag">🔧 Identische Instrumente + Yankauer-Sauger</span></div>
+<div class="flow-item flow-decision"><strong>❓ Postoperative Komplikation?</strong><div class="flow-branch flow-no">✗ NEIN → Überwachung (24–48h stationär), Schmerztherapie, Ibuprofen oder Paracetamol — KEIN Aspirin!</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>⚠ Tonsillarnachblutung (Tag 5–7!)</strong> → Notaufnahme → Revisionsoperation in Allgemeinanästhesie (Vollnarkose)</li><li><strong>Aspiration (Einatmen von Blut)</strong> → Seitenlage + Absaugen → O₂ → Antibiose</li><li><strong>Wundinfektion</strong> → Antibiose → ggf. Drainage (Ableitungsschlauch)</li></ul></div></div>
+<div class="flow-item flow-end">■ Ende</div>
+      </div>
+    </div>
+  </details>
+</section>
+
+
+<section class="proc-card" id="proc-z">
+  <div class="proc-header">
+    <span class="proc-icon">🫀</span>
+    <div>
+      <h2>Zervikale Lymphknotenexstirpation</h2>
+      <p class="proc-sub">Halslymphknotenentfernung</p>
+    </div>
+  </div>
+
+  <details open>
+    <summary>📖 Definition &amp; Ziel</summary>
+    <div class="details-body">
+      <p>Die <strong>zervikale Lymphknotenexstirpation (Halslymphknotenentfernung)</strong> ist die operative Entfernung eines oder mehrerer Lymphknoten (Lymphdrüsen) im Bereich des <strong>Collum (Halses)</strong> zur histologischen Sicherung (Gewebeuntersuchung) oder therapeutischen Sanierung (Behandlung).</p>
+      <p><strong>Ziel:</strong> Gewinnung von Lymphknotengewebe zur Diagnostik — Ausschluss oder Nachweis eines Lymphoms (Lymphdrüsenkrebses), einer Lymphknotenmetastase (Tochtergeschwulst) oder granulomatösen Erkrankung (entzündlichen Gewebsveränderung).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>✅ Indikationen</summary>
+    <div class="details-body">
+      <ul class="ind-list"><li>Lymphadenopathie (Lymphknotenschwellung) unklarer Genese nach erfolgloser Therapie > 4 Wochen</li><li>Verdacht auf malignes Lymphom (bösartigen Lymphdrüsenkrebs) — Morbus Hodgkin oder Non-Hodgkin-Lymphom</li><li>Verdacht auf Lymphknotenmetastase (Tochtergeschwulst) bei bekanntem oder unbekanntem Primärtumor (Ursprungstumor)</li><li>Persistierende (anhaltende) Lymphadenitis (Lymphknotenentzündung) — z. B. Mykobakteriose (Tuberkulose) oder Aktinomykose</li><li>Sarkoidose (Morbus Boeck — Bindegewebserkrankung) zur histologischen Sicherung</li></ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>🔢 Ablauf — Schritte</summary>
+    <div class="details-body">
+      <ol class="steps-list"><li><div class="step-text">Hautinzision (Einschnitt) von 3–5 cm in einer Halsfalte (natürlichen Hautfalte / Langer-Linie) über dem tastbaren Lymphknoten.</div><div class="step-instr-tag">🔧 Skalpell</div></li><li><div class="step-text">Durchtrennung von Subkutangewebe (Unterhautfettgewebe) und Platysma (Halsmuskel) → Auseinanderziehen mit Wundhaken (Wundspreizern).</div><div class="step-instr-tag">🔧 Elektrokauter, Wundhaken, Präparierschere</div></li><li><div class="step-text">Inzision der Lamina superficialis fasciae cervicalis (oberflächlichen Halsfaszie) → stumpfe + scharfe Präparation (Gewebstrennung) zur Freilegung des Lymphknotens.</div><div class="step-instr-tag">🔧 Präparierschere, Dissektor (Präparationsinstrument), Elektrokauter</div></li><li><div class="step-text">Identifikation + Schonung von: N. accessorius (Schulternerv), N. hypoglossus (Zungennerv), Ramus marginalis mandibulae (Unterkieferrandast), V. jugularis interna (innere Halsvene), A. carotis communis (gemeinsame Halsschlagader).</div><div class="step-instr-tag">🔧 Dissektor, Nervenstimulator (Nervenreizgerät), Neuromonitor (Nervenmessgerät)</div></li><li><div class="step-text">Zirkuläre (ringsumlaufende) Freipräparation des Lymphknotens unter Erhalt der Kapselintegrität (Unversehrtheit der Kapsel) — Kapselruptur (Einriss) bei Malignitätsverdacht unbedingt vermeiden!</div><div class="step-instr-tag">🔧 Präparierschere, Dissektor, atraumatische Faszzange</div></li><li><div class="step-text">Ligatur (Abbinden) oder Koagulation (Veröden) der Lymphgefäßstiele (Lymphgefäße) → vollständige Exstirpation (Entnahme) des Lymphknotens.</div><div class="step-instr-tag">🔧 Ligaturfaden, Bipolare Koagulationszange, Clipapplikator (Klammersetzer)</div></li><li><div class="step-text">Asservierung (Aufbewahrung) des Lymphknotens unfixiert (ohne Konservierungsmittel) und nativ (unbehandelt) in sterilem Gefäß → sofortige Einsendung zur Schnellschnittuntersuchung (intraoperativen Gewebsdiagnose) oder Paraffinhistologie (Gewebeuntersuchung).</div><div class="step-instr-tag">🔧 Steriles Probenröhrchen</div></li><li><div class="step-text">Hämostasekontrolle (Blutstillungsprüfung) + Lymphleckkontrolle → ggf. Redon-Drainage (Saugdrainageröhrchen) → Platysmanaht + Subkutannaht + Intrakutannaht (unter-Haut-Naht).</div><div class="step-instr-tag">🔧 Bipolare Koagulationszange, Redon-Drainage, Nadelhalter, Nahtmaterial</div></li></ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>🛠️ Instrumente</summary>
+    <div class="details-body">
+      <div class="table-scroll">
+      <table class="instr-table">
+        <thead><tr><th></th><th>Fachbegriff</th><th>Umgangssprache</th><th>Funktion</th></tr></thead>
+        <tbody><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="20" x2="14" y2="10"/><path d="M14 10 21 3 18 9 Z" fill="currentColor" stroke="none"/></svg></td><td class="fach">Skalpell</td><td class="umg">Operationsmesser</td><td>Hautinzision (Hauteinschnitt)</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="20" x2="12" y2="12"/><path d="M14 10 18 4 15 9 19 9 14 15 16 10 Z" fill="currentColor" stroke="none"/></svg></td><td class="fach">Elektrokauter</td><td class="umg">Elektrisches Schneid- und Koagulationsinstrument</td><td>Durchtrennung und Blutstillung</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3 12 12 6 21"/><path d="M18 3 12 12 18 21"/></svg></td><td class="fach">Wundhaken</td><td class="umg">Wundspreizer</td><td>Offenhalten der Wunde zur Übersicht</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3 12 12 6 21"/><path d="M18 3 12 12 18 21"/></svg></td><td class="fach">Dissektor</td><td class="umg">Präparationsinstrument</td><td>Stumpfe Freipräparation des Lymphknotens</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="12" rx="2"/><polyline points="6,12 9,8 12,15 15,9 18,12"/></svg></td><td class="fach">Nervenstimulator</td><td class="umg">Nervenreizgerät</td><td>Intraoperative Nervenidentifikation</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="12" rx="2"/><polyline points="6,12 9,8 12,15 15,9 18,12"/></svg></td><td class="fach">Neuromonitor</td><td class="umg">Nervenmessgerät</td><td>Kontinuierliche Nervenfunktionskontrolle</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="4" y1="20" x2="12" y2="12"/><path d="M14 10 18 4 15 9 19 9 14 15 16 10 Z" fill="currentColor" stroke="none"/></svg></td><td class="fach">Bipolare Koagulationszange</td><td class="umg">Gezielte Wärmezange</td><td>Präzise Blutstillung ohne Umgebungsschaden</td></tr><tr><td class="instr-icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="16" cy="16" r="5"/><line x1="12" y1="12" x2="5" y2="5"/></svg></td><td class="fach">Redon-Drainage</td><td class="umg">Saugdrainageröhrchen</td><td>Postoperative Wundsekretion + Hämatomprophylaxe (Blutansammlungsvorbeugung)</td></tr></tbody>
+      </table>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>🗺️ Vollständiger Ablauf mit Entscheidungen</summary>
+    <div class="details-body">
+      <div class="flow-outline">
+<div class="flow-item flow-start">▶ Start</div>
+<div class="flow-item flow-prep"><strong>Vorbereitung</strong><ul><li>Sonographie (Ultraschall) Hals: Größe, Form, Echogenität (Schallverhalten), Vaskularisation (Durchblutung)</li><li>CT/MRT Hals bei Malignitätsverdacht (Krebsverdacht) + Feinnadelpunktion (minimal-invasive Voruntersuchung)</li><li>Blutbild mit Differenzialblutbild + LDH (Laktatdehydrogenase — Tumormarker)</li><li>Allgemeinanästhesie (Vollnarkose), Rückenlage + Schulterrolle, Kopfrotation zur Gegenseite</li></ul></div>
+<div class="flow-item flow-step"><span>Hautinzision (Hauteinschnitt) 3–5 cm in Halsfalte (natürliche Hautfalte) über dem Lymphknoten</span><span class="flow-tag">🔧 Skalpell</span></div>
+<div class="flow-item flow-step"><span>Durchtrennung Subkutis (Unterhautfettgewebe) + Platysma (Halsmuskel) → Auseinanderziehen</span><span class="flow-tag">🔧 Elektrokauter + Wundhaken (Wundspreizer) + Präparierschere</span></div>
+<div class="flow-item flow-step"><span>Eröffnung der Lamina superficialis fasciae cervicalis (oberflächlichen Halsfaszie) → stumpfe + scharfe Präparation (Gewebstrennung) zum Lymphknoten</span><span class="flow-tag">🔧 Präparierschere + Dissektor (Präparationsinstrument)</span></div>
+<div class="flow-item flow-step"><span>Identifikation + Schonung neurovaskulärer Strukturen (Nerven + Gefäße): N. accessorius (Schulternerv), N. hypoglossus (Zungennerv), Ramus marginalis (Unterkieferrandast), V. jugularis (Halsvene), A. carotis (Halsschlagader)</span><span class="flow-tag">🔧 Nervenstimulator (Nervenreizgerät) + Neuromonitor (Nervenmessgerät)</span></div>
+<div class="flow-item flow-decision"><strong>❓ Intraoperative Nervenläsion (Nervenverletzung)?</strong><div class="flow-branch flow-no">✗ NEIN → Zirkuläre (ringsumlaufende) Freipräparation des Lymphknotens — Kapselintegrität (Kapselunversehrtheit) erhalten!</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>N. accessorius (Schulternerv)</strong> → Dokumentation → postoperative Physiotherapie (Krankengymnastik)</li><li><strong>Ramus marginalis mandibulae (Unterkieferrandast)</strong> → Dokumentation → Logopädie (Sprachtherapie)</li><li><strong>N. hypoglossus (Zungennerv)</strong> → Dokumentation → Logopädie (Sprachtherapie)</li></ul></div></div>
+<div class="flow-item flow-step"><span>Ligatur (Abbinden) der Lymphgefäßstiele (Lymphgefäße) → Exstirpation (Entnahme) des Lymphknotens</span><span class="flow-tag">🔧 Ligaturfaden + Bipolare Koagulationszange + Clipapplikator (Klammersetzer)</span></div>
+<div class="flow-item flow-step"><span>Asservierung (Aufbewahrung): nativ + unfixiert (ohne Konservierungsmittel) → sofort zum Pathologen (Gewebespezialisten)</span><span class="flow-tag">🔧 Steriles Probenröhrchen → Schnellschnitt oder Paraffinhistologie (Gewebeuntersuchung)</span></div>
+<div class="flow-item flow-decision"><strong>❓ Gefäßverletzung?</strong><div class="flow-branch flow-no">✗ NEIN → Hämostasekontrolle (Blutstillungsprüfung) + Lymphleckkontrolle → Redon-Drainage (Saugdrainageröhrchen) → Schichtweiser Wundverschluss</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>V. jugularis interna (innere Halsvene)</strong> → Sofortige Kompression → Gefäßnaht (Venennaht)</li><li><strong>A. carotis communis (gemeinsame Halsschlagader)</strong> → Kompression → Gefäßchirurgie (Gefäßoperation) → notfallmäßige Rekonstruktion (Wiederherstellung)</li></ul></div></div>
+<div class="flow-item flow-decision"><strong>❓ Postoperative Komplikation?</strong><div class="flow-branch flow-no">✗ NEIN → Drainage beobachten, Histologiebefund (Gewebsbefund) abwarten</div><div class="flow-branch flow-yes"><strong>✓ Ja:</strong><ul><li><strong>⚠ Hämatom (Blutansammlung) mit Atemwegskompression</strong> → sofortige operative Ausräumung + Reintubation (erneute Beatmungsschlaucheinführung)!</li><li><strong>Chylusfistel (Milchsaftfistel, linksseitig)</strong> → Drainage + Druckverband + fettarme Ernährung → ggf. operative Revision</li><li><strong>Pneumothorax (Luftansammlung im Brustkorb)</strong> → Thoraxröntgen → Thoraxdrainage (Brustdrainageröhrchen)</li></ul></div></div>
+<div class="flow-item flow-end">■ Ende</div>
+      </div>
+    </div>
+  </details>
+</section>
+
+
+</main>
+
+<footer class="page-footer">
+  FSP-Rostock-Vorbereitung — Teil 3: Operationen &amp; Untersuchungen | <a href="index.html">Zurück zum Hauptmenü</a>
+</footer>
+
+<a href="#toc" class="toc-float-btn" id="tocBtn">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+  Inhaltsverzeichnis
+</a>
+
+<script>
+  const tocBtn = document.getElementById('tocBtn');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) { tocBtn.classList.add('visible'); }
+    else { tocBtn.classList.remove('visible'); }
+  });
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js').catch(() => {});
+    });
+  }
+</script>
+
+</body>
+</html>
