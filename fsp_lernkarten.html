@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSP Lernkarten – Fachsprachprüfung</title>
+<style>
+  :root {
+    --bg1: #6D5DF6;
+    --bg2: #8B5CF6;
+    --card-front: #1f1b2e;
+    --card-back: #ffffff;
+    --accent: #6D5DF6;
+    --accent2: #22c55e;
+    --text-dark: #1f2937;
+    --text-mid: #6b7280;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 12px 40px;
+    color: white;
+  }
+  .app { width: 100%; max-width: 780px; }
+  header.top {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  header.top h1 {
+    font-size: 1.5rem;
+    margin: 0 0 4px 0;
+    font-weight: 700;
+  }
+  header.top p {
+    margin: 0;
+    opacity: 0.85;
+    font-size: 0.92rem;
+  }
+
+  .controls {
+    background: rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 16px;
+    backdrop-filter: blur(6px);
+  }
+  .control-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .control-row:last-child { margin-bottom: 0; }
+  .control-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+    width: 100%;
+    margin-bottom: 2px;
+  }
+  select {
+    flex: 1;
+    min-width: 180px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: none;
+    font-size: 0.95rem;
+    background: white;
+    color: var(--text-dark);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .seg {
+    display: flex;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 3px;
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+  .seg button {
+    border: none;
+    background: transparent;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .seg button.active {
+    background: white;
+    color: var(--accent);
+  }
+  .seg button:hover:not(.active) {
+    background: rgba(255,255,255,0.2);
+  }
+
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-bottom: 10px;
+    padding: 0 4px;
+  }
+  .type-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .badge-AA { background: #dbeafe; color: #1e40af; }
+  .badge-AP { background: #dcfce7; color: #166534; }
+  .badge-tableau { background: #fef3c7; color: #92400e; }
+  .badge-dd { background: #fce7f3; color: #9d174d; }
+
+  .card-wrap {
+    perspective: 1600px;
+    width: 100%;
+    height: 440px;
+    margin-bottom: 16px;
+  }
+  .card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 28px 26px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+    overflow-y: auto;
+  }
+  .face.front {
+    background: var(--card-front);
+    color: white;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .face.front .theme-tag {
+    position: absolute;
+    top: 18px;
+    left: 20px;
+    font-size: 0.72rem;
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .face.front .qtext {
+    font-size: 1.32rem;
+    line-height: 1.5;
+    font-weight: 600;
+    max-width: 560px;
+  }
+  .face.front .hint {
+    position: absolute;
+    bottom: 20px;
+    font-size: 0.8rem;
+    opacity: 0.55;
+  }
+  .face.back {
+    background: var(--card-back);
+    color: var(--text-dark);
+    transform: rotateY(180deg);
+    justify-content: flex-start;
+  }
+  .face.back .theme-tag {
+    font-size: 0.72rem;
+    color: var(--text-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+  .face.back .qtext-small {
+    font-size: 0.95rem;
+    color: var(--text-mid);
+    font-weight: 600;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .face.back .atext {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    text-align: left;
+    white-space: pre-line;
+  }
+
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .nav-btn {
+    background: white;
+    color: var(--accent);
+    border: none;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: transform 0.1s;
+  }
+  .nav-btn:hover { transform: scale(1.08); }
+  .nav-btn:active { transform: scale(0.95); }
+  .nav-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+  .progress-text {
+    font-weight: 700;
+    font-size: 1rem;
+    min-width: 90px;
+    text-align: center;
+  }
+
+  .bottom-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.85rem;
+  }
+  .pill-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+  }
+  .pill-btn:hover { background: rgba(255,255,255,0.28); }
+
+  .kbd-hint {
+    text-align: center;
+    font-size: 0.78rem;
+    opacity: 0.65;
+    margin-top: 14px;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 1.05rem;
+    opacity: 0.8;
+  }
+
+  @media (max-width: 600px) {
+    .card-wrap { height: 420px; }
+    .face.front .qtext { font-size: 1.1rem; }
+    select { min-width: 140px; }
+  }
+</style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b4965">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FSP Rostock">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  .home-btn {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    background: #1b4965;
+    color: #ffffff;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 1000;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .home-btn:hover { background: #5fa8d3; transform: scale(1.08); }
+  .home-btn svg { width: 20px; height: 20px; }
+  @media (max-width: 600px) {
+    .home-btn { top: 10px; left: 10px; width: 38px; height: 38px; }
+    .home-btn svg { width: 18px; height: 18px; }
+  }
+</style>
+</head>
+<body>
+<a href="index.html" class="home-btn" title="Zum Hauptmenü" aria-label="Zum Hauptmenü">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+</a>
+
+<div class="app">
+  <header class="top">
+    <h1>FSP Lernkarten</h1>
+    <p>Arzt-Arzt · Patient-Arzt · Tableau clinique · Differentialdiagnosen</p>
+  </header>
+
+  <div class="controls">
+    <div class="control-row">
+      <div class="control-label">Thema</div>
+      <select id="themeSelect"></select>
+    </div>
+    <div class="control-row">
+      <div class="control-label">Gesprächsart</div>
+      <div class="seg" id="sectionSeg"></div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <span id="typeBadgeWrap"></span>
+    <span id="deckInfo"></span>
+  </div>
+
+  <div id="cardArea">
+    <div class="card-wrap">
+      <div class="card" id="card">
+        <div class="face front">
+          <div class="theme-tag" id="frontTag"></div>
+          <div class="qtext" id="frontQ"></div>
+          <div class="hint">Klicken oder Leertaste zum Umdrehen</div>
+        </div>
+        <div class="face back">
+          <div class="theme-tag" id="backTag"></div>
+          <div class="qtext-small" id="backQ"></div>
+          <div class="atext" id="backA"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" id="prevBtn">&#8592;</button>
+    <div class="progress-text" id="progressText">1 / 1</div>
+    <button class="nav-btn" id="nextBtn">&#8594;</button>
+  </div>
+
+  <div class="bottom-controls">
+    <button class="pill-btn" id="shuffleBtn">&#128256; Mischen</button>
+    <button class="pill-btn" id="resetBtn">&#8635; Neu starten</button>
+    <button class="pill-btn" id="csvBtn">&#8595; CSV Export</button>
+  </div>
+
+  <div class="kbd-hint">Leertaste = umdrehen · &larr; / &rarr; = navigieren</div>
+</div>
+
+<script>
+const ALL_CARDS = [{"theme": "1. Hämaturie", "section": "AP", "type": "qa", "q": "Gibt es keine Alternative zur Blasenspiegelung?", "a": "Es gibt Alternativen wie Ultraschall oder MRT, aber die zeigen die Blase nur von außen. Bei der Spiegelung sehen wir direkt hinein, können Proben nehmen und kleine Veränderungen sofort behandeln – ganz ohne Strahlenbelastung."}, {"theme": "1. Hämaturie", "section": "AP", "type": "qa", "q": "Was ist diese Blaulichtmethode / Fluoreszenzzystoskopie?", "a": "Dabei geben wir einen Farbstoff in die Blase. Bösartige Zellen leuchten dann unter blauem Licht auf. Wir nutzen das nur bei dringendem Verdacht – für heute reicht die normale Spiegelung völlig aus."}, {"theme": "1. Hämaturie", "section": "AP", "type": "qa", "q": "Ein Gerät in die Harnröhre? Das klingt schrecklich! Kann man das nicht in Vollnarkose machen?", "a": "Ich verstehe Ihre Angst vollkommen. Ein betäubendes Gleitgel macht die Harnröhre unempfindlich – Sie spüren höchstens einen leichten Druck. Eine Vollnarkose dauert viel länger, belastet den Kreislauf und bringt mehr Risiken mit sich als dieser kurze, fünfminütige Eingriff."}, {"theme": "1. Hämaturie", "section": "AP", "type": "qa", "q": "Und wenn Sie eine Gewebeprobe entnehmen – tut das weh?", "a": "Ich kann Sie beruhigen: Die Blasenschleimhaut hat fast keine Schmerznerven. Sie spüren höchstens ein kurzes Ziehen, aber es tut nicht weh."}, {"theme": "1. Hämaturie", "section": "AP", "type": "qa", "q": "Was machen Sie, wenn Sie da drinnen etwas verletzen?", "a": "Sollte es zu einer kleinen Verletzung kommen, können wir diese meist direkt während des Eingriffs versorgen. Größere Komplikationen sind die absolute Ausnahme, und unser Team ist für jeden Notfall sofort bereit."}, {"theme": "1. Hämaturie", "section": "AP", "type": "qa", "q": "Wie häufig kommt es zu ernsthaften Komplikationen?", "a": "Die genaue Zahl habe ich gerade nicht im Kopf, aber ich schaue das gerne für Sie nach. Was ich Ihnen sagen kann: Komplikationen sind bei diesem Routineeingriff wirklich sehr selten."}, {"theme": "1. Hämaturie", "section": "AP", "type": "qa", "q": "Sie machen mich mit diesen Risiken nur noch ängstlicher!", "a": "Das tut mir leid, das ist absolut nicht meine Absicht. Ich bin gesetzlich verpflichtet, Sie über alle Möglichkeiten aufzuklären – Sie sind hier in sicheren Händen."}, {"theme": "1. Hämaturie", "section": "AP", "type": "qa", "q": "Was passiert, wenn Sie direkt Krebs finden? Behandeln Sie das sofort?", "a": "Wenn wir auffälliges Gewebe sehen, nehmen wir eine Probe und schicken sie ins Labor. Während der Spiegelung selbst können wir keinen Krebs behandeln – wir können nur Blutungen stillen oder Steine entfernen. Eine sichere Diagnose bekommen wir erst, wenn der Laborbericht da ist."}, {"theme": "1. Hämaturie", "section": "AP", "type": "qa", "q": "Darf ich direkt danach nach Hause und alles normal machen?", "a": "Sie bleiben noch etwa zwei Stunden zur Überwachung bei uns. Da Sie ein Beruhigungsmittel bekommen, dürfen Sie 24 Stunden lang nicht Auto fahren, keinen Alkohol trinken und keine wichtigen Entscheidungen treffen. Bitte trinken Sie in den nächsten Tagen viel Wasser, um die Blase durchzuspülen."}, {"theme": "1. Hämaturie", "section": "AA", "type": "qa", "q": "Warum vermuten Sie ein Blasenkarzinom, und welche DD kommen infrage?", "a": "Das Leitsymptom ist die schmerzlose, also indolente Makrohämaturie. Bei schmerzhafter Hämaturie denke ich eher an eine Nephrolithiasis. Differentialdiagnostisch kommen Infektionen wie Zystitis, Pyelonephritis, Glomerulonephritis oder Urogenitaltuberkulose infrage, außerdem Parasiten wie Schistosomiasis, Konkremente, Tumoren der Niere, des Harnleiters oder der Prostata, gutartige Polypen, eine Prostataerkrankung wie BPH oder Prostatitis, eine Endometriose der Blase, Medikamente wie Antikoagulantien oder Cyclophosphamid, und eine Marschhämaturie. Bei jungen Frauen schließe ich vorher die Menstruation als Störquelle aus."}, {"theme": "1. Hämaturie", "section": "AA", "type": "qa", "q": "Wie sieht Ihr diagnostisches Vorgehen bei V.a. Blasenkarzinom aus?", "a": "Bei der körperlichen Untersuchung achte ich bei der Inspektion auf Genitale und Hoden, bei der Palpation auf Abdomen, Lymphknoten und Klopfschmerz der Flanken, dazu Auskultation und eine DRU für Prostata und Raumforderung. Im Labor bestimme ich Blutbild, CRP, BSG, Kreatinin, Harnstoff, Harnsäure, Elektrolyte, Urinstatus mit Sediment, Urinkultur und Urinzytologie. Bildgebend veranlasse ich eine Abdomensonographie und eine CT-Pyelographie mit Kontrastmittel. Goldstandard ist die Urozystoskopie mit Biopsie."}, {"theme": "1. Hämaturie", "section": "AA", "type": "qa", "q": "Was versteht man unter Hämaturie, und wie wird sie eingeteilt?", "a": "Das sind Erythrozyten im Urin, abzugrenzen von der Hämoglobinurie, bei der nur freies Hämoglobin nachweisbar ist. Man unterscheidet die Mikrohämaturie, bei der der Urin makroskopisch unauffällig ist und man das Blut nur per Teststreifen oder Sediment nachweist, von der Makrohämaturie mit sichtbarer Rotfärbung des Urins. Dysmorphe Erythrozyten, zum Beispiel Akanthozyten, im Sediment sprechen für eine glomeruläre Ursache."}, {"theme": "1. Hämaturie", "section": "AA", "type": "qa", "q": "Was bedeuten die Befunde „zottig“ und „gestielt“?", "a": "Zottig bedeutet eine nicht glatte, blumenkohlartige Oberfläche, das spricht für Malignität. Gestielt bedeutet polypenähnlich mit klar abgrenzbarem Hals, das ist eher gutartig."}, {"theme": "1. Hämaturie", "section": "AA", "type": "qa", "q": "Nennen Sie die wichtigen urologischen Begriffe zur Miktion.", "a": "Dysurie ist erschwertes, behindertes Wasserlassen, typischerweise mit schwachem Harnstrahl. Algurie sind Schmerzen beim Wasserlassen, häufig im Rahmen einer Urethritis oder Zystitis. Pollakisurie ist häufiges Wasserlassen in kleinen Mengen. Und Strangurie sind brennende, krampfartige Schmerzen in Harnröhre oder Blase beim Wasserlassen, typisch bei Reizung oder Entzündung des unteren Harntrakts."}, {"theme": "1. Hämaturie", "section": "AA", "type": "qa", "q": "Welche Risikofaktoren für ein Urothelkarzinom kennen Sie?", "a": "Dazu zählen ein höheres Lebensalter, das männliche Geschlecht, das doppelt so häufig betroffen ist, Nikotinabusus, berufliche Exposition gegenüber aromatischen Aminen bei Malern, in der Gummiindustrie, bei Friseuren oder LKW-Fahrern, und Medikamente wie Cyclophosphamid oder Pioglitazon."}, {"theme": "1. Hämaturie", "section": "AA", "type": "qa", "q": "Wie wird das Urothelkarzinom therapiert?", "a": "Im nicht-muskelinvasiven Stadium mache ich eine TUR-B, danach eine intravesikale Instillation mit BCG oder Mitomycin-C zur Rezidivprophylaxe. Beim Carcinoma in situ ist die BCG-Instillation Standard, gefolgt von einer Kontroll-Zystoskopie nach ein bis vier Wochen. Im muskelinvasiven Stadium mache ich eine radikale Zystektomie mit pelviner Lymphadenektomie, eine Harnableitung als Ileum-Neoblase oder Harnleiterhautfistel, plus perioperative Chemotherapie. Im metastasierten Stadium behandle ich palliativ mit Chemotherapie."}, {"theme": "1. Hämaturie", "section": "AA", "type": "qa", "q": "Besteht ein Zusammenhang zwischen Urethrozystoskopie und Hirnschädigung?", "a": "In extrem seltenen Fällen kann das Gleitgel oder ein Medikament einen anaphylaktischen Schock auslösen. Der Blutdruckabfall führt dann zu zerebraler Hypoxie und damit zu einer Hirnschädigung."}, {"theme": "1. Hämaturie", "section": "AA", "type": "qa", "q": "Die Patientin trinkt Kirschlikör – besteht hier ein Zusammenhang zu den Beschwerden?", "a": "Nein. Kirschlikör ist ein süßes, stark alkoholisches Getränk. Da die Patientin ihn schon seit Jahren vor Auftreten der Beschwerden konsumiert, besteht kein kausaler Zusammenhang zur akuten Hämaturie."}, {"theme": "1. Hämaturie", "section": "AA", "type": "qa", "q": "Wie sieht die Thromboseprophylaxe aus?", "a": "Ich gebe niedermolekulares Heparin, zum Beispiel Clexane 10.000 IE subkutan."}, {"theme": "1. Hämaturie", "section": "AA", "type": "tableau", "q": "Wie sieht das klinische Bild der Hämaturie / des Urothelkarzinoms aus?", "a": "Schmerzlose Makrohämaturie (sichtbares Blut ohne Schmerzen) – das Leitsymptom. Mikrohämaturie (nur laborchemisch nachweisbar). Dysurie (Schmerzen, Brennen beim Wasserlassen). Pollakisurie (häufiges Wasserlassen in kleinen Mengen). Drangsymptomatik (plötzlicher, starker Harndrang). Flankenschmerz (bei Harnstau). Gewichtsverlust, Kachexie – ein Spätsymptom. Anämie (durch chronischen Blutverlust)."}, {"theme": "1. Hämaturie", "section": "AA", "type": "dd", "q": "Welche Differentialdiagnosen der Hämaturie kennen Sie?", "a": "Urolithiasis (Nieren- oder Blasensteine). Zystitis (Harnwegsinfekt, Blasenentzündung). Nierenzellkarzinom (Nierenkrebs). Prostatakarzinom (Prostatakrebs). Benigne Prostatahyperplasie, kurz BPH (gutartige Prostatavergrößerung). Strahlenzystitis (Blasenschleimhautschaden nach Bestrahlung). Koagulopathie oder Antikoagulation (Gerinnungsstörung beziehungsweise blutverdünnende Medikamente)."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AP", "type": "qa", "q": "Gibt es Alternativen zur Magenspiegelung?", "a": "Ja, Ultraschall oder CT. Die tun nicht weh, aber wir sehen dabei nicht direkt auf die Schleimhaut und können keine Gewebeprobe nehmen. Für eine sichere Diagnose brauchen wir die Spiegelung."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AP", "type": "qa", "q": "Was ist eine Färbeendoskopie?", "a": "Wir spritzen dabei eine blaue Flüssigkeit auf die Magenschleimhaut – dadurch sieht man kranke Stellen besser. Das machen wir aber kaum noch, weil unsere normalen Kameras heute schon sehr gut sind."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AP", "type": "qa", "q": "Wie oft gibt es schwere Komplikationen?", "a": "Die genaue Zahl für unser Haus weiß ich nicht auswendig – das frage ich nachher nach. Das Risiko ist aber extrem gering. Wir machen den Eingriff nur, weil er für Ihre Gesundheit sehr wichtig ist."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AP", "type": "qa", "q": "Sie machen mich noch ängstlicher!", "a": "Das tut mir leid, das ist nicht meine Absicht. Ich bin gesetzlich verpflichtet, Ihnen alle theoretischen Risiken aufzuzählen. Die Magenspiegelung ist ein sehr sicherer Routineeingriff, den wir hier täglich problemlos durchführen."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Warum vermuten Sie ein Ulcus ventriculi, und welche DD kommen infrage?", "a": "Ich vermute das aufgrund der typischen Klinik: epigastrischer Schmerz, der direkt nach dem Essen oder nahrungsunabhängig auftritt. Differentialdiagnostisch denke ich an ein Ulcus duodeni mit Nüchternschmerz, das sich nach dem Essen bessert, ein Magenkarzinom, das ich nur histologisch ausschließen kann, eine Cholezystitis, die ich per Sonographie ausschließe, eine Pankreatitis mit Amylase und Lipase, einen Hinterwandinfarkt mit EKG und Troponin, eine GERD mit pH-Metrie oder ÖGD, ein Ulcus simplex Dieulafoy, ein Mallory-Weiss-Syndrom, Ösophagusvarizen und eine Hiatushernie."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Wie sieht Ihr diagnostisches Vorgehen bei V.a. Ulcus ventriculi aus?", "a": "Bei der Palpation achte ich auf epigastrischen Druckschmerz und Abwehrspannung als Hinweis auf eine Perforation. Bei der Auskultation prüfe ich die Darmgeräusche, fehlen sie, denke ich an einen paralytischen Ileus. Im Labor bestimme ich Blutbild, CRP, BSG und Leukozyten, außerdem Amylase, Lipase und bei Verdacht auf ein Zollinger-Ellison-Syndrom das Serumgastrin. Goldstandard ist die ÖGD mit mindestens sechs Biopsien aus Ulkusrand und -grund, das ist obligat bei einer Größe über 2 cm. Zur Helicobacter-Diagnostik nutze ich den Urease-Schnelltest oder die Histologie invasiv, sowie den Atemtest oder das Stuhl-Antigen nicht-invasiv. Im Röntgen-Abdomen im Stehen achte ich auf freie Luft unter dem Zwerchfell als Zeichen einer Perforation."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Was ist ein Ulkus, und wie entsteht es?", "a": "Das ist ein Schleimhautdefekt, der die Lamina muscularis mucosae durchbricht. Pathophysiologisch entsteht ein Ungleichgewicht zwischen aggressiven Faktoren wie Magensäure, Pepsin und Gallensäuren und Schutzfaktoren wie der Muzinbarriere, guter Durchblutung und Prostaglandinen."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Nennen Sie die Johnson-Klassifikation des Magenulkus.", "a": "Typ I liegt an der kleinen Kurvatur und ist meist subazid, mit etwa 60 Prozent der häufigste Typ. Typ II betrifft Magen und Duodenum kombiniert und ist normal- oder hyperazid, etwa 20 Prozent. Typ III liegt präpylorisch und ist meist hyperazid."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Nennen Sie die ABC-Klassifikation der chronischen Gastritis.", "a": "Typ A ist autoimmun bedingt, mit Antikörpern gegen Belegzellen, was zu einem Vitamin-B12-Mangel und einer perniziösen Anämie führt. Typ B ist bakteriell bedingt durch Helicobacter pylori und die häufigste Form. Typ C ist chemisch bedingt, durch NSAR, Alkohol, Gallereflux oder Rauchen."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Welche Komplikationen kann ein Ulcus ventriculi haben?", "a": "Dazu zählen eine Blutung mit Hämatemesis, Meläna und Anämie, eine Perforation mit freier Luft und akuter Peritonitis, eine Pylorusstenose als Sanduhrmagen mit Narbenstrikturen, und eine maligne Entartung zum Magenkarzinom."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Was ist ein Ulcus simplex Dieulafoy?", "a": "Das ist eine Schleimhautläsion durch eine fehlangelegte, aneurysmatisch veränderte Arteriole, die zu einer plötzlichen, lebensbedrohlichen Blutung führt."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Was ist ein Mallory-Weiss-Syndrom?", "a": "Das sind longitudinale Schleimhauteinrisse am gastroösophagealen Übergang durch forciertes Erbrechen, typisch bei chronischem Alkoholabusus, mit schmerzhafter Hämatemesis."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Was ist ein Zollinger-Ellison-Syndrom?", "a": "Das ist ein gastrinproduzierender Tumor, ein Gastrinom, im Pankreas oder Duodenum, der durch die Hypergastrinämie zu schweren, rezidivierenden peptischen Ulzera führt."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Wie unterscheiden sich Ulcus duodeni und Ulcus ventriculi klinisch?", "a": "Beim Ulcus duodeni besteht ein Nüchternschmerz, der sich nach dem Essen bessert. Beim Ulcus ventriculi tritt der Schmerz nach dem Essen oder nahrungsunabhängig auf."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Wo liegt die häufigste Lokalisation von Ulcus ventriculi und Ulcus duodeni?", "a": "Das Ulcus ventriculi sitzt meist an der kleinen Kurvatur und im Antrum. Das Ulcus duodeni sitzt meist im Bulbus duodeni."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Warum entnimmt man Biopsien aus Ulkusrand und -grund?", "a": "Erstens, um ein Magenkarzinom auszuschließen, und zweitens, um Helicobacter pylori nachzuweisen oder auszuschließen."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Wie sieht die Eradikationstherapie, die Triple-Therapie, bei Helicobacter pylori aus?", "a": "Ich gebe einen PPI, zum Beispiel Pantoprazol 40 mg zweimal täglich, plus Amoxicillin 1000 mg und Clarithromycin 500 mg, für sieben Tage. Danach führe ich den PPI in Standarddosis weiter."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Wann erfolgt die Kontrollendoskopie nach Ulcus ventriculi?", "a": "Nach vier bis sechs Wochen, zur Kontrolle des Therapieerfolgs und zum Ausschluss einer Malignität."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Wie wirken Protonenpumpeninhibitoren, kurz PPI?", "a": "Sie hemmen irreversibel die H-K-ATPase, die Protonenpumpe, in den Belegzellen, dadurch wird die Säureproduktion blockiert."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Wie sieht die Thromboseprophylaxe bei Ulkus aus?", "a": "Ich gebe niedermolekulares Heparin, zum Beispiel Clexane 10.000 IE subkutan, aber nur, wenn keine akute gastrointestinale Blutung vorliegt."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Wie gehen Sie bei einer oberen gastrointestinalen Blutung vor?", "a": "Ich nehme den Patienten stationär auf, überwache die Vitalzeichen, halte ihn nüchtern, gebe Sauerstoff und lege einen i.v.-Zugang. Dann folgt eine Infusionstherapie, bei Bedarf mit Erythrozytenkonzentraten. Zur Blutstillung mache ich eine Notfall-ÖGD, mit Adrenalin-Unterspritzung, Fibrinkleber, Hämoclips oder Thermokoagulation."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Wie behandeln Sie blutende Ösophagusvarizen?", "a": "Goldstandard ist die endoskopische Gummibandligatur. Alternativ mache ich eine Polidocanol-Sklerosierung. Medikamentös gebe ich Somatostatin oder Vasopressin. Als Ultima Ratio nutze ich die Sengstaken-Blakemore-Ballonsonde."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Nennen Sie die Forrest-Klassifikation der oberen gastrointestinalen Blutung.", "a": "Ia ist eine arteriell spritzende Blutung. Ib ist eine Sickerblutung. IIa zeigt einen sichtbaren Gefäßstumpf. IIb zeigt eine Koagelauflagerung. IIc zeigt eine Hämatinauflagerung, also schwarz. Und III ist ein sauberer Ulkusgrund ohne Blutung."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Was ist ein Barrett-Ösophagus?", "a": "Ein Barrett-Ösophagus ist eine Umwandlung von Plattenepithel zu Zylinderepithel, eine intestinale Metaplasie, bei chronischem GERD, und eine Präkanzerose für das Adenokarzinom."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Was ist portale Hypertension?", "a": "Das ist ein dauerhafter Pfortaderdruck über 12 mmHg, normal sind 3 bis 6 mmHg. Ursachen sind eine Leberzirrhose oder eine Pfortaderthrombose. Komplikationen sind Ösophagus-, Fundus- und anorektale Varizen. Therapeutisch gebe ich Propranolol, Spironolacton oder Nitrate."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Was ist ein Krukenberg-Tumor?", "a": "Das ist eine Metastase des Magenkarzinoms, meist vom diffusen Typ mit Siegelringzellen, in die Ovarien, typischerweise beidseitig."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "qa", "q": "Definieren Sie Hämatemesis, Kaffeesatzerbrechen, Meläna und Hämatochezie.", "a": "Hämatemesis ist Erbrechen von frischem Blut, das spricht für eine proximale, akute Blutung. Kaffeesatzerbrechen entsteht durch Blut und Magensäure, also Hämatin, und ist braun-schwarz. Meläna, der Teerstuhl, ist glänzend-schwarzer Stuhl, wenn das Blut fünf bis acht Stunden im GI-Trakt war. Hämatochezie ist frisches rotes Blut per rectum und spricht für eine untere gastrointestinale Blutung."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "tableau", "q": "Wie sieht das klinische Bild des Ulkus aus?", "a": "Epigastrischer Schmerz (Epigastralgie). Nüchternschmerz oder nächtlicher Schmerz, typisch für das Duodenalulkus. Postprandialer Schmerz, typisch für das Magenulkus. Sodbrennen (Pyrosis). Übelkeit, Erbrechen (Nausea, Emesis). Appetitlosigkeit (Inappetenz). Besserung durch Essen oder Antazida, beim Duodenalulkus. Hämatemesis – ein Alarmsymptom. Meläna, Teerstuhl – ein Alarmsymptom. Perforation, mit brettartigem Bauch und akutem Abdomen – ein chirurgischer Notfall."}, {"theme": "2. Ulkus (Magengeschwür)", "section": "AA", "type": "dd", "q": "Welche Differentialdiagnosen des Ulkus kennen Sie?", "a": "Gastritis (Magenschleimhautentzündung). Gastroösophageale Refluxkrankheit, kurz GERD (Sodbrennen durch Magensäurerückfluss). Funktionelle Dyspepsie (Oberbauchbeschwerden ohne organischen Befund). Magenkarzinom (Magenkrebs). Pankreatitis (Bauchspeicheldrüsenentzündung). Cholezystitis oder Cholelithiasis (Gallenblasenentzündung beziehungsweise Gallensteine). Myokardinfarkt, atypisch verlaufend."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AP", "type": "qa", "q": "Gibt es Alternativen zur Darmspiegelung?", "a": "Ja: Ultraschall, CT, Röntgen oder Kapselkamera. Vorteil: kein Schmerz. Nachteil: wir sehen nicht direkt auf die Schleimhaut, können keine Gewebeprobe nehmen, und es gibt oft Strahlenbelastung."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AP", "type": "qa", "q": "Was ist eine Färbeendoskopie?", "a": "Wir sprühen einen harmlosen Farbstoff auf die Schleimhaut – damit sieht man kranke Stellen besser. Das machen wir aber kaum noch, weil unsere normalen Kameras heute sehr gut sind."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AP", "type": "qa", "q": "Was ist das CO2, das Sie bei der Darmspiegelung verwenden?", "a": "Das ist Kohlendioxid – ein harmloses Gas, das wir auch selbst ausatmen. Wir nutzen es, um den Darm für die Untersuchung leicht aufzuweiten."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AP", "type": "qa", "q": "Ich will eine Vollnarkose!", "a": "Das ist möglich, wenn Sie es unbedingt wünschen. Wir empfehlen aber eine Beruhigungsspritze, eine Sedierung – das ist schonender und hat weniger Risiken als eine echte Vollnarkose."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AP", "type": "qa", "q": "Was machen Sie, falls ein Durchbruch, eine Perforation, passiert?", "a": "Das ist extrem selten. Falls es passiert, müssen wir operieren: Wir nähen das Loch sofort zu, und Sie bekommen ein Antibiotikum gegen Entzündungen."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AP", "type": "qa", "q": "Was machen Sie bei einer Blutung?", "a": "Blutungen können wir meistens direkt bei der Spiegelung stoppen – mit einem Medikament, Hitze oder einer kleinen Metallklammer. Eine Operation ist fast nie nötig."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AP", "type": "qa", "q": "Was ist ein Polyp?", "a": "Das ist eine gutartige Wucherung der Schleimhaut. Ursachen können fettiges Essen, Bewegungsmangel, Übergewicht, Alkohol, Rauchen oder Vererbung sein."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AP", "type": "qa", "q": "Wie wird ein Polyp entfernt?", "a": "Direkt bei der Spiegelung. Wir schieben eine feine Drahtschlinge durch das Gerät, trennen den Polypen mit Strom ab und ziehen ihn heraus. Davon spüren Sie gar nichts."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AP", "type": "qa", "q": "Habe ich danach Blähungen?", "a": "Ja, das ist ganz normal. Am besten hilft Bewegung und Herumlaufen. Meiden Sie in den ersten Tagen blähende Lebensmittel wie Bohnen oder Kohl."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Welche endoskopischen Befunde sehen Sie bei Colitis ulcerosa und Morbus Crohn?", "a": "Bei der Colitis ulcerosa sehe ich eine diffuse Rötung, Kontaktblutungen, unscharf begrenzte Ulzerationen und Pseudopolypen. Beim Morbus Crohn sehe ich aphthöse Läsionen, scharf begrenzte, landkartenartige Ulzerationen, Stenosen, Fisteln und ein Pflastersteinrelief."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Welche Risiko- und Schutzfaktoren kennen Sie beim Kolonkarzinom?", "a": "Risikofaktoren sind eine positive Familienanamnese, FAP, HNPCC, kolorektale Adenome, Colitis ulcerosa, Diabetes Typ 2, ein Alter über 40 Jahre, Adipositas und eine fleisch- und fettreiche Ernährung. Schützend wirken körperliche Aktivität sowie eine ballaststoff-, gemüse- und kalziumreiche Ernährung."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Wie behandeln Sie ein Reizdarmsyndrom?", "a": "Symptomatisch gebe ich Spasmolytika wie Buscopan oder Mebeverin, Laxantien oder Antidiarrhoika. Zusätzlich empfehle ich eine ballaststoffreiche Kost, regelmäßige Mahlzeiten, Stressabbau und bei Bedarf eine Psychotherapie."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Wie ist das Polypenmanagement und die Kontrollintervalle geregelt?", "a": "Polypen bis 5 mm entferne ich mit der Biopsiezange, größer als 5 mm mit der elektrischen Schlinge. Bei der Kontrollkoloskopie gilt: alle 10 Jahre bei einem kleinen, nicht-neoplastischen Polypen, alle 5 Jahre bei ein bis zwei Adenomen unter 1 cm, und alle 3 Jahre bei drei bis zehn Adenomen, bei einer Größe über 1 cm oder bei villöser Histologie beziehungsweise High-grade-Dysplasie."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Wie sieht die Therapie des Morbus Crohn aus?", "a": "Im Schub gebe ich Mesalazin und Glukokortikoide wie Prednison. Zur Erhaltung Azathioprin oder Methotrexat. Chirurgisch behandle ich nur bei Komplikationen wie Fisteln, Abszessen oder einer Perforation."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Was ist eine Zöliakie?", "a": "Das ist eine immunologische Unverträglichkeit der Dünndarmschleimhaut gegenüber Gluten, die zu einer Zottenatrophie und Malabsorption führt. Klinisch zeigen sich reizdarmähnliche Beschwerden, ein Fettstuhl, also eine Steatorrhö, ein vorgewölbtes Abdomen und ein Tabaksbeutelgesäß durch Lipoatrophie."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Was sind Pseudopolypen?", "a": "Das sind harmlose Schleimhautinseln, die bei schwerer Colitis ulcerosa stehen bleiben, während die Umgebung geschwürig zerstört ist. Es sind keine echten Tumorneubildungen."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Unterscheiden Sie LGIN und HGIN.", "a": "LGIN, low-grade, ist eine leichte Zellveränderung mit geringem Entartungsrisiko. HGIN, high-grade, ist eine schwere Zellveränderung und eine ernsthafte Präkanzerose."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Was ist eine Piecemeal-Resektion?", "a": "Das ist die stückweise Abtragung eines großen, flachen Polypen mit der Schlinge, weil man ihn nicht en bloc entfernen kann. Dabei besteht ein höheres Risiko für Gewebereste."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Wie definieren Sie eine Diarrhö, und wie unterteilen Sie die Ursachen?", "a": "Das sind mindestens drei flüssige Stühle pro Tag. Ich unterscheide infektiöse Ursachen wie Bakterien, Viren und Parasiten von nicht-infektiösen Ursachen wie CED, Tumor, Reizdarmsyndrom, Unverträglichkeiten oder Medikamenten. Therapeutisch gebe ich Flüssigkeits- und Volumenersatz, oral oder intravenös mit Ringer-Laktat oder NaCl."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Was ist eine FAP?", "a": "Das ist die familiäre adenomatöse Polyposis, autosomal-dominant vererbt, mit über 100 Adenomen im Kolon. Sie entartet unweigerlich maligne, deshalb mache ich eine prophylaktische Proktokolektomie mit ileoanaler Pouch-Anastomose."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Charakterisieren Sie den Morbus Crohn.", "a": "Das ist eine chronisch-entzündliche Darmerkrankung mit diskontinuierlichem, transmuralem Befall des gesamten GI-Trakts, meist des terminalen Ileums und des Kolons. Ursächlich ist eine Autoimmunreaktion."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Charakterisieren Sie die Colitis ulcerosa.", "a": "Das ist eine kontinuierliche Ausbreitung von distal nach proximal, streng auf Kolon, Mukosa und Submukosa beschränkt, immer mit blutig-schleimiger Diarrhö."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Was ist ein toxisches Megakolon?", "a": "Das ist eine akute, lebensbedrohliche Erweiterung des Dickdarms bei schwerer Kolitis, meist als Komplikation einer CED. Es braucht sofort eine Intensivtherapie oder eine Operation."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Welche Resektion wählen Sie je nach Lage des Kolonkarzinoms?", "a": "Bei Zäkum oder Ascendens mache ich eine Hemikolektomie rechts. Beim Transversum eine Transversumresektion. Bei Descendens oder Sigma eine Hemikolektomie links beziehungsweise eine Sigmaresektion."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Wie sieht die Vorsorge-Koloskopie aus?", "a": "Ab 50 Jahren alle 10 Jahre, bei familiärer Belastung schon ab 40 bis 45 Jahren."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Was ist der Guajak-Test?", "a": "Das ist der biochemische Nachweis von okkultem, also unsichtbarem Blut im Stuhl."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Was ist eine Divertikulitis?", "a": "Das sind Ausstülpungen von Mukosa und Submukosa durch Muskelschwachstellen des Sigmas, begünstigt durch ballaststoffarme Ernährung und Obstipation. Die Entzündung nennt man Divertikulitis, umgangssprachlich auch Linksappendizitis. Im Labor sehe ich erhöhte Entzündungswerte. Die Therapie ist bei unkompliziertem Verlauf konservativ, bei kompliziertem Verlauf operativ."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "qa", "q": "Wann ist die Diagnose Reizdarmsyndrom zulässig?", "a": "Das Reizdarmsyndrom ist eine Ausschlussdiagnose, ich stelle sie nur, wenn alle organischen Differentialdiagnosen ausgeschlossen sind."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "tableau", "q": "Wie sieht das klinische Bild des Kolonkarzinoms aus?", "a": "Änderung der Stuhlgewohnheiten – das Leitsymptom. Hämatochezie (sichtbares Blut im Stuhl), eher bei linksseitigem Tumor. Okkultes Blut im Stuhl (unsichtbares Blut), oft ein Zufallsbefund beim Screening. Bleistiftdünner Stuhl, ein Zeichen der Einengung. Meteorismus (Blähungen). Abdominelle Schmerzen (Bauchschmerzen). Palpabler Tumor – ein Spätsymptom. Gewichtsverlust, Kachexie – ein Spätsymptom. Anämie (Blutarmut). Ileus (Darmverschluss) – ein Notfall. Beim rechtsseitigen Tumor stehen okkulte Blutung und Anämie im Vordergrund, meist spät symptomatisch. Beim linksseitigen Tumor stehen Hämatochezie und Stenosezeichen im Vordergrund, meist früh symptomatisch."}, {"theme": "3. Reizdarmsyndrom / Kolonkarzinom", "section": "AA", "type": "dd", "q": "Welche Differentialdiagnosen des Kolonkarzinoms kennen Sie?", "a": "Rektumkarzinom (Mastdarmkrebs). Divertikulitis (Entzündung von Darmausstülpungen). Morbus Crohn oder Colitis ulcerosa. Kolonpolypen (gutartige Schleimhautwucherungen). Hämorrhoiden (vergrößerte Gefäßpolster im Analbereich). Ischämische Kolitis (Durchblutungsstörung des Darms). Reizdarmsyndrom, kurz RDS. Appendizitis (Blinddarmentzündung)."}, {"theme": "4. Appendizitis", "section": "AP", "type": "qa", "q": "Warum bin ich erkrankt?", "a": "Die genaue Ursache lässt sich oft nicht sicher feststellen. Eine häufige Theorie: Der Ausgang des Blinddarms war durch einen kleinen Kotstein oder Fremdkörper verstopft – dadurch hat sich das Gewebe entzündet."}, {"theme": "4. Appendizitis", "section": "AP", "type": "qa", "q": "Warum nicht nur Medikamente?", "a": "Bei einer so starken Entzündung sind Medikamente allein nicht sicher genug. Wir müssen operieren, um einen Durchbruch zu verhindern, der zu einer gefährlichen Bauchfellentzündung führen könnte."}, {"theme": "4. Appendizitis", "section": "AP", "type": "qa", "q": "Warum CO2 bei der Operation?", "a": "Das Gas hilft uns, den Bauchraum sanft zu weiten, damit wir besser sehen können. Es ist völlig harmlos – der Rest wird einfach über die Lunge ausgeatmet."}, {"theme": "4. Appendizitis", "section": "AP", "type": "qa", "q": "Warum muss ich nüchtern sein?", "a": "Während der Narkose entspannen sich die Muskeln. Wenn Sie nüchtern sind, minimieren wir das Risiko, dass Mageninhalt zurückfließt und in die Lunge gelangt."}, {"theme": "4. Appendizitis", "section": "AP", "type": "qa", "q": "Warum darf ich nach der OP nicht sofort essen?", "a": "Ihr Darm muss nach der Narkose erst langsam wieder „aufwachen“. Isst man zu früh, kommt es oft zu Übelkeit. Wir fangen mit etwas Wasser oder Tee an."}, {"theme": "4. Appendizitis", "section": "AP", "type": "qa", "q": "Warum wird der Blinddarm ins Labor geschickt?", "a": "Wir schicken ihn routinemäßig zur histologischen Untersuchung, um die Entzündung zu bestätigen und andere Veränderungen wie Tumoren sicher auszuschließen."}, {"theme": "4. Appendizitis", "section": "AP", "type": "qa", "q": "Was ist eine Drainage?", "a": "Ein kleiner, weicher Schlauch, den wir im Bauchraum belassen, um Wundflüssigkeit nach außen zu leiten. Er wird meist nach wenigen Tagen schmerzfrei entfernt."}, {"theme": "4. Appendizitis", "section": "AP", "type": "qa", "q": "Wann kann ich wieder arbeiten oder Sport treiben?", "a": "Arbeit: nach etwa 2 Wochen, je nach Belastung. Sport, besonders Bauchmuskeltraining: nach etwa 4 Wochen. Leichte Spaziergänge sind früher möglich."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Wie entsteht eine Appendizitis?", "a": "Durch eine Lumenobstruktion, entweder intraluminal durch Kotsteine oder extraluminal durch geschwollene Lymphknoten. Dadurch kommt es zu Sekretstau, Druckerhöhung, Minderperfusion und schließlich zu einer bakteriellen Invasion."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Nennen Sie die Entzündungsstadien der Appendizitis.", "a": "Katarrhalisch bedeutet Ödem und Hyperämie, das ist das einzige reversible Stadium. Ulzero-phlegmonös bedeutet eine diffus-eitrige Infiltration der gesamten Appendixwand mit herdförmigen Ulzera. Gangränös bedeutet eine Wandnekrose durch Ischämie, mit hoher Perforationsgefahr. Perforiert bedeutet den Durchbruch, gedeckt als perityphlitischer Abszess oder ungedeckt als diffuse Peritonitis."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Welche therapeutischen Optionen gibt es bei Appendizitis?", "a": "Standard ist die laparoskopische Appendektomie. Konservativ, nur im katarrhalischen Stadium, gebe ich Bettruhe, Nahrungskarenz und Antibiotika wie Cefuroxim mit Metronidazol. Bei freier Perforation mache ich eine offene Appendektomie mit Abdominallavage und Drainage. Bei einem perityphlitischen Abszess mache ich eine CT- oder US-gesteuerte Drainage mit anschließender Intervallappendektomie."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Beschreiben Sie den Ablauf einer laparoskopischen Appendektomie.", "a": "Ich bringe drei Trokare ein, mache eine diagnostische Laparoskopie, stelle die Appendix dar, ligiere die Gefäße im Mesenterium, setze die Appendixbasis mit einer Röder-Schlinge ab und berge sie im Bergebeutel."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Beschreiben Sie den typischen Symptomverlauf der Appendizitis.", "a": "Der Schmerz wandert von epigastrisch oder periumbilikal in den rechten Unterbauch. Begleitend zeigen sich Inappetenz, Übelkeit, Erbrechen und subfebrile Temperaturen mit einer Achsel-Rektum-Differenz über 1 Grad."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Was versteht man unter dem „faulen Frieden“?", "a": "Das ist ein plötzlicher Schmerznachlass nach einer Perforation, weil der Druck im Lumen schlagartig abfällt. Danach folgt durch die Peritonitis wieder stärkster Schmerz – das ist akut lebensbedrohlich."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Nennen Sie die klinischen Appendizitis-Zeichen.", "a": "Der McBurney-Punkt liegt in der Mitte zwischen Bauchnabel und rechtem Beckenkamm. Der Lanz-Punkt liegt im rechten Drittel der Linie zwischen beiden Beckenkämmen. Das Blumberg-Zeichen ist der kontralaterale Loslassschmerz. Das Rovsing-Zeichen ist der Schmerz rechts beim retrograden Ausstreichen des Kolons. Das Psoas-Zeichen ist der Schmerz beim Anheben des rechten Beins, das spricht für eine retrozökale Lage. Und der Douglas-Schmerz ist der Druckschmerz des Peritoneums bei der DRU."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Was bedeutet Loslassschmerz?", "a": "Das ist der Schmerz beim plötzlichen Loslassen der Bauchdecke, ein Zeichen für eine peritoneale Reizung, zum Beispiel bei Peritonitis oder Appendizitis."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Was ist das Kokardenphänomen im Ultraschall?", "a": "Das ist ein zielscheibenförmiges Bild durch den Wechsel von echoarmen und echoreichen Wandschichten der entzündeten Appendix. Es ist das klassische sonografische Zeichen für eine entzündliche Wandverdickung oder Invagination, auch bei Morbus Crohn und Divertikulitis."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Welche Laborbefunde erwarten Sie bei Appendizitis?", "a": "Ich erwarte eine Leukozytose sowie erhöhtes CRP und erhöhte BSG. Zusätzlich bestimme ich Beta-HCG zum Ausschluss einer Eileiterschwangerschaft und den Urinstatus zum Ausschluss eines Harnwegsinfekts oder einer Nephrolithiasis."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Nennen Sie Vor- und Nachteile der konservativen Therapie.", "a": "Vorteile sind, dass kein OP-Risiko besteht und keine unnötige Appendektomie erfolgt. Nachteile sind eine hohe Aggravationsgefahr und eine hohe Rezidivrate."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Unterscheiden Sie mechanischen und paralytischen Ileus.", "a": "Der mechanische Ileus entsteht durch ein physikalisches Hindernis wie Tumor, Adhäsionen oder Kotsteine, und wird operiert. Der paralytische Ileus ist eine funktionelle Darmlähmung, zum Beispiel postoperativ oder bei Peritonitis, und wird konservativ behandelt. Diagnostisch nutze ich das Röntgen-Abdomen im Stehen mit Spiegelbildungen oder ein CT."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Unterscheiden Sie Sepsis und Bakteriämie.", "a": "Die Sepsis ist eine lebensbedrohliche Organdysfunktion durch eine dysregulierte Immunantwort auf eine Infektion. Die Bakteriämie ist nur der laborchemische Nachweis von Bakterien im Blut, ohne zwingende Symptome."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Nennen Sie die SIRS-Kriterien.", "a": "Mindestens zwei von vier Kriterien müssen erfüllt sein: eine Temperatur über 38 Grad oder unter 36 Grad, eine Herzfrequenz über 90 pro Minute, eine Atemfrequenz über 20 pro Minute, und Leukozyten über 12.000 oder unter 4.000 pro Mikroliter."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Unterscheiden Sie Exsudat und Transsudat.", "a": "Das Exsudat ist entzündlich bedingt und protein- sowie zellreich. Das Transsudat ist nicht-entzündlich und protein- sowie zellarm, zum Beispiel bei Herzinsuffizienz oder Leberzirrhose."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Unterscheiden Sie Empyem und Abszess.", "a": "Ein Empyem ist Eiter in einem präformierten, also bereits vorhandenen Hohlraum, zum Beispiel in der Pleura oder der Gallenblase. Ein Abszess ist Eiter in einem neu gebildeten Hohlraum durch Gewebenekrose."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Warum verwendet man CO2 bei Laparoskopien?", "a": "CO2 ist nicht brennbar und damit sicher beim Elektrokauter, und es hat eine hohe Diffusionskapazität, wird also schnell über die Lunge abgeatmet, das bedeutet ein minimales Embolierisiko."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Wie sieht die Thromboseprophylaxe nach Appendektomie aus?", "a": "Medikamentös gebe ich niedermolekulares Heparin, zum Beispiel Enoxaparin, subkutan. Physikalisch nutze ich Thromboseprophylaxestrümpfe. Und funktionell ist die Frühmobilisation die effektivste Maßnahme."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Wie sieht der postoperative Kostaufbau aus?", "a": "Ich beginne mit Nüchternheit, dann Flüssigkeit wie Tee, dann Suppe oder pürierte Kost, dann leichte Vollkost, und schließlich normale Vollkost."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Wann ist eine Laparoskopie kontraindiziert?", "a": "Bei diffuser Peritonitis, dann mache ich eine offene OP mit Abdominallavage, außerdem bei ausgeprägten Adhäsionen, massivem Meteorismus oder hämodynamischer Instabilität, also einem Schock."}, {"theme": "4. Appendizitis", "section": "AA", "type": "qa", "q": "Was ist ein Meckel-Divertikel?", "a": "Das ist eine echte, angeborene Ausstülpung des Ileums, 30 bis 60 cm vor der Ileozökalklappe, verursacht durch eine unvollständige Rückbildung des Ductus omphaloentericus. Es kann ektopes Magenepithel enthalten und dadurch eine schmerzlose Blutung verursachen."}, {"theme": "4. Appendizitis", "section": "AA", "type": "tableau", "q": "Wie sieht das klinische Bild der Appendizitis aus?", "a": "Schmerzwanderung von epigastrisch oder periumbilikal in den rechten Unterbauch. Inappetenz (Appetitlosigkeit), Übelkeit, Erbrechen (Nausea, Emesis). Subfebrile Temperatur, mit einer Achsel-Rektum-Differenz über 1 Grad. Loslassschmerz. Positive Appendizitis-Zeichen: McBurney, Lanz, Blumberg, Rovsing, Psoas und Douglas."}, {"theme": "4. Appendizitis", "section": "AA", "type": "dd", "q": "Welche Differentialdiagnosen der Appendizitis kennen Sie?", "a": "Gastrointestinal denke ich an Gastroenteritis (Magen-Darm-Entzündung), Cholezystitis (Gallenblasenentzündung), Pankreatitis (Bauchspeicheldrüsenentzündung), Morbus Crohn und Divertikulitis. Gynäkologisch an eine Extrauteringravidität (Eileiterschwangerschaft), Adnexitis (Eileiterentzündung) und Ovarialtorsion (Eierstockverdrehung). Urologisch an Urolithiasis (Harnsteine) und Pyelonephritis (Nierenbeckenentzündung)."}, {"theme": "5. Cholezystitis", "section": "AP", "type": "qa", "q": "Kann ich ohne Gallenblase leben?", "a": "Ja, absolut kein Problem. Die Gallenblase ist nur ein kleiner Speicher – produziert wird die Galle in der Leber. Nach der OP fließt die Galle einfach direkt in den Darm. Ihre Verdauung funktioniert genauso gut wie vorher."}, {"theme": "5. Cholezystitis", "section": "AP", "type": "qa", "q": "Warum keine Hybrid-NOTES-Operation?", "a": "Das ist ein sehr neues Verfahren über die Scheide oder den Darm. Wir machen das nicht, weil uns die Routine fehlt. Die normale Bauchspiegelung ist bei uns ein täglicher Standardeingriff und für Sie viel sicherer."}, {"theme": "5. Cholezystitis", "section": "AP", "type": "qa", "q": "Warum keine Single-Port-Operation?", "a": "Dabei operiert man durch nur einen einzigen Schnitt am Nabel. Das sieht zwar besser aus, aber es nimmt uns die Sicht und den Arbeitsraum. Die normale Bauchspiegelung bietet Ihnen einfach mehr Sicherheit."}, {"theme": "5. Cholezystitis", "section": "AP", "type": "qa", "q": "Wie soll ich mich nach der OP ernähren?", "a": "Keine strenge Diät nötig. Am Anfang einfach weniger Fettiges und Blähendes, und lieber mehrere kleine Mahlzeiten über den Tag verteilen."}, {"theme": "5. Cholezystitis", "section": "AP", "type": "qa", "q": "Warum nicht Medikamente statt Operation?", "a": "Tabletten helfen hier leider nicht dauerhaft. Die Entzündung kommt immer wieder, und Gallensteine können den Gallengang verstopfen. Die Operation ist der einzige sichere Weg, das Problem zu lösen."}, {"theme": "5. Cholezystitis", "section": "AP", "type": "qa", "q": "Warum nicht rauchen?", "a": "Rauchen verengt die Blutgefäße. Weniger Sauerstoff führt zu schlechterer Wundheilung und höherem Infektionsrisiko."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Welche Ursachen der Cholezystitis kennen Sie?", "a": "Kalkulös, mit etwa 90 Prozent die häufigste Form: Ein Gallenstein verstopft den Ductus cysticus, es kommt zum Gallestau und zur bakteriellen Entzündung. Akalkulös, etwa 10 Prozent: Das ist die sogenannte Stressgalle bei Schwerkranken, zum Beispiel bei Sepsis oder großen Operationen, verursacht durch Durchblutungsstörungen."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Warum entstehen Gallensteine?", "a": "Durch ein Ungleichgewicht zwischen steinbildenden Stoffen wie Cholesterin und Bilirubin und lösenden Stoffen wie Gallensäuren. Die Galle wird dadurch dickflüssig, kristallisiert, und es bilden sich Steine, das nennt man Cholelithiasis."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Nennen Sie die drei Gallensteintypen mit Häufigkeit.", "a": "Cholesterin- oder Gemischtsteine machen etwa 80 Prozent aus. Pigmentsteine oder Bilirubinsteine etwa 10 Prozent, bei Hämolyse. Und Kalksteine ebenfalls etwa 10 Prozent."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Nennen Sie die 6-F-Regel der Risikofaktoren für Gallensteine.", "a": "Female, Fat, Fertile, Forty, Fair und Family – also weiblich, übergewichtig, fruchtbar, vierzig Jahre, hellhäutig und familiär belastet."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Nennen Sie die Charcot-Trias.", "a": "Schmerzen im rechten Oberbauch, ein Ikterus, und hohes Fieber mit Schüttelfrost – das ist typisch für eine Cholangitis."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Welche Komplikationen kann eine unbehandelte Cholezystitis haben?", "a": "Ein Gallenblasenempyem, eine Gangrän, also eine Wandnekrose, eine Perforation mit Peritonitis oder Abszess, ein Gallensteinileus durch Fistelbildung in den Darm, und eine Porzellangallenblase durch Verkalkung, die eine Präkanzerose darstellt."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Nennen Sie die Cholestaseparameter.", "a": "Erhöhte alkalische Phosphatase, erhöhte Gamma-GT, und erhöhtes direktes Bilirubin."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Unterscheiden Sie indirektes und direktes Bilirubin.", "a": "Indirektes Bilirubin ist wasserunlöslich und lipophil, es wird zur Leber transportiert und ist bei Hämolyse erhöht. Direktes Bilirubin wird in der Leber konjugiert, ist wasserlöslich, wird über die Galle ausgeschieden und ist bei Cholestase erhöht."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Wie ist der Ikterus einzuteilen?", "a": "Prähepatisch entsteht durch Hämolyse, dabei ist das indirekte Bilirubin erhöht. Intrahepatisch entsteht durch einen Leberzellschaden, zum Beispiel bei Hepatitis oder Zirrhose, dabei sind direktes und indirektes Bilirubin erhöht. Posthepatisch entsteht durch mechanischen Gallestau, zum Beispiel durch einen Gallengangstein oder ein Pankreaskopfkarzinom, dabei ist das direkte Bilirubin erhöht, der Urin dunkel und der Stuhl hell."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Ab welchem Wert sieht man einen Ikterus?", "a": "An den Skleren schon ab 2 mg/dl, an der Haut erst ab 3 mg/dl."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Was ist das Murphy-Zeichen?", "a": "Das ist ein schmerzbedingter Inspirationsstopp beim Einatmen, wenn der Untersucher den rechten Oberbauch unter dem Rippenbogen drückt. Es ist pathognomonisch für eine akute Cholezystitis."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Was beschreibt das Courvoisier-Zeichen?", "a": "Das ist eine schmerzlose, prall-elastisch tastbare Gallenblase zusammen mit einem Ikterus. Es tritt auf, wenn der Gallenabfluss langsam blockiert wird, zum Beispiel durch einen Tumor."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Wie entstehen kolikartige Schmerzen?", "a": "Durch wellenartige Schmerzattacken, verursacht durch die krampfhafte Kontraktion glatter Muskulatur, zum Beispiel der Gallenwege oder des Harnleiters, gegen ein Hindernis wie einen Stein."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Nennen Sie die sonografischen Zeichen der Cholezystitis.", "a": "Eine Wandverdickung über 3 mm, eine Dreischichtung durch das Wandödem, Konkremente mit dorsalem Schallschatten, und perichole zystitische Flüssigkeit."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Was ist das Mirizzi-Syndrom?", "a": "Dabei komprimiert ein großer Stein im Ductus cysticus von außen den Ductus hepaticus communis. Das führt zu einem Verschlussikterus, obwohl der Hauptgallengang selbst frei ist."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Wie sieht der Therapie-Algorithmus beim Gallensteinleiden aus?", "a": "Bei asymptomatischer Cholezystolithiasis warte ich ab, ohne Operation. Bei symptomatischer Cholezystitis mache ich eine laparoskopische Cholezystektomie innerhalb von 24 bis 72 Stunden, mit konservativer Begleittherapie. Bei einer Choledocholithiasis mache ich zuerst eine ERCP zur Steinextraktion, danach eine elektive Cholezystektomie."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Warum wird der Stuhl heller und der Urin dunkler bei posthepatischem Gallestau?", "a": "Weil die Galle nicht in den Darm gelangt, fehlt das Sterkobilin, dadurch wird der Stuhl lehmfarben. Das direkte Bilirubin weicht stattdessen ins Blut aus und wird renal ausgeschieden, dadurch wird der Urin dunkel."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Nennen Sie die Virchow-Trias.", "a": "Ein verlangsamter Blutfluss, also eine Stase, zum Beispiel bei Immobilität. Ein Gefäßwandschaden, zum Beispiel durch OP oder Trauma. Und eine erhöhte Gerinnungsneigung, eine Hyperkoagulabilität, zum Beispiel bei Adipositas, der Pille oder einer Faktor-V-Leiden-Mutation."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "qa", "q": "Was ist ein Platzbauch?", "a": "Das ist das plötzliche Aufreißen einer Operationswunde am Bauch nach einem chirurgischen Eingriff."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "tableau", "q": "Wie sieht das klinische Bild der Cholezystitis aus?", "a": "Rechtsseitiger Oberbauchschmerz – das Leitsymptom. Kolikartiger Schmerz, bei einer Gallenkolik. Schmerzausstrahlung in die rechte Schulter oder den Rücken. Übelkeit, Erbrechen. Fieber, Schüttelfrost, als Zeichen der Entzündung. Positives Murphy-Zeichen. Ikterus, bei einem Stein im Hauptgallengang. Abwehrspannung, bei einer Komplikation."}, {"theme": "5. Cholezystitis", "section": "AA", "type": "dd", "q": "Welche Differentialdiagnosen der Cholezystitis kennen Sie?", "a": "Choledocholithiasis. Cholangitis. Pankreatitis. Appendizitis. Magenulkus oder Duodenalulkus. Myokardinfarkt, atypisch verlaufend. Pleuritis oder Pneumonie rechts."}, {"theme": "6. Leistenhernie", "section": "AP", "type": "qa", "q": "Was genau ist ein Leistenbruch?", "a": "Knochen brechen hier nicht. Ein Leistenbruch bedeutet, dass es eine kleine Lücke in Ihrer Bauchwand gibt. Durch dieses Loch drückt sich das Bauchfell wie ein kleiner Sack nach außen – manchmal rutscht auch etwas Darm hinein. Das ist die Beule, die Sie sehen."}, {"theme": "6. Leistenhernie", "section": "AP", "type": "qa", "q": "Wie wird das operiert – offen oder Schlüsselloch?", "a": "Es gibt zwei Wege: Bei der Schlüsselloch-Methode machen wir drei winzige Schnitte und reparieren den Bruch von innen mit einer Kamera und einem Netz. Bei der offenen Methode machen wir einen Schnitt direkt in der Leiste und vernähen die Schichten – meistens auch mit einem Netz."}, {"theme": "6. Leistenhernie", "section": "AP", "type": "qa", "q": "Muss das Netz unbedingt sein?", "a": "Ich verstehe Ihre Sorge. Aber das Netz ist wichtig: Ohne es steht das Gewebe unter Spannung und reißt wieder. Das Netz ist aus einem sehr gut verträglichen Kunststoff, verwächst fest mit Ihrem Gewebe und verhindert zuverlässig, dass der Bruch wiederkommt."}, {"theme": "6. Leistenhernie", "section": "AP", "type": "qa", "q": "Welche Risiken hat die Operation?", "a": "Neben normalen Risiken wie Infektion oder Blutergüssen gibt es in der Leiste drei Besonderheiten: Nerven können gereizt werden (Taubheitsgefühl), beim Mann kann der Samenstrang verletzt werden (sehr selten Hodenschwund), und es kommt häufig zu harmlosen Blutergüssen, die von allein verschwinden."}, {"theme": "6. Leistenhernie", "section": "AP", "type": "qa", "q": "Wie muss ich mich nach der OP verhalten?", "a": "Die innere Heilung braucht Zeit: zwei bis drei Wochen körperlich schonen, nichts über 5 kg heben, kein Sport. Normales Gehen ist ab dem ersten Tag erlaubt und sogar gut."}, {"theme": "6. Leistenhernie", "section": "AA", "type": "qa", "q": "Was ist eine Hernie, und wie ist sie aufgebaut?", "a": "Eine Hernie ist der Austritt von Darmanteilen durch eine Schwachstelle der Bauchwand. Der Bruchsack ist die Ausstülpung des Peritoneum parietale. Der Bruchinhalt ist meist das Omentum majus oder eine Darmschlinge. Und die Bruchpforte ist die Lücke in der Bauchwand."}, {"theme": "6. Leistenhernie", "section": "AA", "type": "qa", "q": "Unterscheiden Sie die direkte und indirekte Leistenhernie.", "a": "Die indirekte Hernie liegt lateral der epigastrischen Gefäße, tritt durch den inneren Leistenring, ist oft angeboren und kann bis ins Skrotum reichen. Die direkte Hernie liegt medial der epigastrischen Gefäße, tritt direkt durch die Bauchwand im Hesselbach-Trigonum, ist immer erworben und betrifft meist ältere Männer."}, {"theme": "6. Leistenhernie", "section": "AA", "type": "qa", "q": "Wann wird eine Leistenhernie operiert?", "a": "Bei Frauen operiere ich immer, wegen der Verwechslungsgefahr mit einer Schenkelhernie und dem hohen Inkarzerationsrisiko. Bei Männern operiere ich bei Symptomen oder Wachstum, bei Beschwerdefreiheit ist ein Watchful Waiting möglich. Und jede Inkarzeration ist ein Notfall."}, {"theme": "6. Leistenhernie", "section": "AA", "type": "qa", "q": "Nennen Sie die Operationsverfahren bei Leistenhernie.", "a": "Beim Shouldice-Verfahren nähe ich ohne Netz, offen-anterior. Beim Lichtenstein-Verfahren setze ich ein Netz, ebenfalls offen-anterior. Und bei TAPP oder TEP setze ich ein Netz laparoskopisch, minimalinvasiv-posterior."}, {"theme": "6. Leistenhernie", "section": "AA", "type": "qa", "q": "Was ist eine Inkarzeration?", "a": "Das ist die akute Einklemmung von Bruchinhalt, meist Darm, in der Bruchpforte. Dadurch entsteht eine Ischämie, dann eine Nekrose, und schließlich ein akutes Abdomen. Die Symptome sind plötzlich stärkste Schmerzen, eine harte, irreponible Schwellung und eine Ileussymptomatik. Das braucht eine sofortige Notfall-OP."}, {"theme": "6. Leistenhernie", "section": "AA", "type": "qa", "q": "Unterscheiden Sie Prolene und Vicryl.", "a": "Prolene ist ein nicht resorbierbarer Faden, er bleibt dauerhaft für das Netz. Vicryl ist resorbierbar und wird für innere Gewebeschichten und die Hautnaht verwendet."}, {"theme": "6. Leistenhernie", "section": "AA", "type": "qa", "q": "Was ist ein Kompartmentsyndrom?", "a": "Das ist ein kritischer Druckanstieg in Muskellogen, der zu einer Ischämie und zum Gewebeuntergang führt. Das ist ein chirurgischer Notfall, ich behandle mit einer Fasziotomie."}, {"theme": "6. Leistenhernie", "section": "AA", "type": "qa", "q": "Wie sieht das postoperative Management nach Leistenhernien-OP aus?", "a": "Ich lege lokal einen Sandsack zur Hämatomprophylaxe, wechsle das Pflaster alle 2 Tage, ziehe die Fäden nach 7 bis 10 Tagen, empfehle 3 bis 5 Tage Schonung und kein Heben über 5 kg für 2 bis 3 Wochen."}, {"theme": "6. Leistenhernie", "section": "AA", "type": "tableau", "q": "Wie sieht das klinische Bild der Leistenhernie aus?", "a": "Eine tastbare, reponible Schwellung in der Leiste, die sich beim Pressen oder Husten verstärkt, meist schmerzlos bei unkomplizierter Hernie. Bei einer Inkarzeration dagegen plötzlich stärkste Schmerzen, eine harte, irreponible Schwellung und eine Ileussymptomatik – das ist ein Notfall."}, {"theme": "6. Leistenhernie", "section": "AA", "type": "dd", "q": "Welche Differentialdiagnosen der Leistenhernie kennen Sie?", "a": "Schenkelhernie. Lymphknotenschwellung. Leistenabszess. Lipome. Varikosis der V. saphena magna."}, {"theme": "7. Tonsillitis", "section": "AP", "type": "qa", "q": "Könnte man das nicht mit Medikamenten behandeln?", "a": "Bei Ihnen wurde die Behandlung schon mehrmals versucht, ohne dauerhaften Erfolg. Da das Risiko für Komplikationen hoch ist, rate ich Ihnen jetzt zur endgültigen Entfernung."}, {"theme": "7. Tonsillitis", "section": "AP", "type": "qa", "q": "Was ist eine Tonsillotomie?", "a": "Bei der Tonsillotomie werden die Mandeln nur verkleinert, bei der Tonsillektomie vollständig entfernt. Die Verkleinerung machen wir vor allem bei Kindern. Bei Erwachsenen ist die vollständige Entfernung der Standard."}, {"theme": "7. Tonsillitis", "section": "AP", "type": "qa", "q": "Besteht durch Bluttransfusionen ein Risiko für HIV oder Hepatitis?", "a": "Dank strengster Kontrollen und moderner Tests ist das Infektionsrisiko durch Blutübertragungen heute extrem gering."}, {"theme": "7. Tonsillitis", "section": "AP", "type": "qa", "q": "Wie kommt es zu Infektionen – benutzen Sie keine sterilen Instrumente?", "a": "Natürlich arbeiten wir mit sterilen Instrumenten. Infektionen entstehen meist durch körpereigene Bakterien aus dem Mund-Rachenraum, die über die Wunde ins Gewebe gelangen können."}, {"theme": "7. Tonsillitis", "section": "AP", "type": "qa", "q": "Kann ich ohne Mandeln leben?", "a": "Ja, absolut. Bei Erwachsenen haben die Mandeln ihre Immunfunktion bereits erfüllt. Andere Lymphknoten übernehmen diese Aufgabe."}, {"theme": "7. Tonsillitis", "section": "AP", "type": "qa", "q": "Warum darf ich nicht rauchen oder heiß duschen?", "a": "Rauchen verschlechtert die Wundheilung. Hitze durch Duschen oder Sonne erweitert die Gefäße und erhöht das Risiko für gefährliche Nachblutungen."}, {"theme": "7. Tonsillitis", "section": "AP", "type": "qa", "q": "Wann kann ich wieder arbeiten oder Sport treiben?", "a": "Sport erst nach 2 Wochen. Bei Berufen mit viel Sprechen, zum Beispiel im Callcenter, ebenfalls 2 Wochen Krankschreibung, um die Wunde nicht zu reizen."}, {"theme": "7. Tonsillitis", "section": "AP", "type": "qa", "q": "Was passiert, wenn ich die OP ablehne?", "a": "Die Entzündung kann sich verschlimmern und einen Abszess im Hals bilden. Außerdem können die Bakterien Herz oder Nieren dauerhaft schädigen."}, {"theme": "7. Tonsillitis", "section": "AP", "type": "qa", "q": "Worauf muss ich vor und nach der OP achten?", "a": "Vor der OP nüchtern bleiben. Nach der OP zwei Wochen weiche, kühle Kost, keine scharfen oder sauren Speisen, nicht heiß duschen oder baden."}, {"theme": "7. Tonsillitis", "section": "AA", "type": "qa", "q": "Nennen Sie den Waldeyer-Rachenring.", "a": "Die Tonsilla pharyngea, das ist die Rachenmandel. Die Tonsilla palatina, das ist die Gaumenmandel, die meist gemeint ist bei „Tonsillitis“. Die Tonsilla lingualis, das ist die Zungenmandel. Und die Tonsilla tubaria, das ist die Tubenmandel."}, {"theme": "7. Tonsillitis", "section": "AA", "type": "qa", "q": "Unterscheiden Sie Tonsillektomie und Tonsillotomie.", "a": "Bei der Tonsillektomie entferne ich die Mandel vollständig, inklusive Kapsel, das ist der Standard bei Erwachsenen. Bei der Tonsillotomie entferne ich nur einen Teil, also eine Verkleinerung, das ist der Standard bei Kindern und hat ein geringeres Nachblutungsrisiko."}, {"theme": "7. Tonsillitis", "section": "AA", "type": "qa", "q": "Welche Ursachen der Tonsillitis kennen Sie?", "a": "Die akute Form ist meist viral, zum Beispiel durch Adenoviren. Die chronisch-rezidivierende Form ist meist bakteriell, verursacht durch beta-hämolysierende Streptokokken der Gruppe A."}, {"theme": "7. Tonsillitis", "section": "AA", "type": "qa", "q": "Nennen Sie die Sorensen-Kriterien zur OP-Indikation.", "a": "Bei unter 3 Episoden pro Jahr besteht keine OP-Indikation. Bei 3 bis 5 Episoden kann man eine OP erwägen. Und ab 6 Episoden pro Jahr besteht eine klare OP-Indikation."}, {"theme": "7. Tonsillitis", "section": "AA", "type": "qa", "q": "Welche weiteren Indikationen zur Tonsillektomie gibt es?", "a": "Ein Peritonsillarabszess, ein Malignomverdacht, ein obstruktives Schlafapnoesyndrom, sowie eine Glomerulonephritis oder ein rheumatisches Fieber nach einer Streptokokkeninfektion."}, {"theme": "7. Tonsillitis", "section": "AA", "type": "qa", "q": "Was ist die häufigste Komplikation der Tonsillektomie?", "a": "Das ist die Nachblutung, entweder am OP-Tag selbst oder zwischen Tag 5 und 8, wenn sich die Fibrinbeläge lösen. Die Blutungsquelle ist meist die Arteria facialis."}, {"theme": "7. Tonsillitis", "section": "AA", "type": "qa", "q": "Welche systemischen Komplikationen der Streptokokkentonsillitis kennen Sie?", "a": "Das rheumatische Fieber mit Herzklappenschäden, Arthritis und Chorea minor, sowie die Poststreptokokken-Glomerulonephritis mit einer Nierenschädigung."}, {"theme": "7. Tonsillitis", "section": "AA", "type": "qa", "q": "Warum wird bei der Tonsillektomie eine Intubationsnarkose durchgeführt?", "a": "Um die Atemwege zu sichern und eine Aspiration von Blut oder Sekret in die Lunge zu verhindern."}, {"theme": "7. Tonsillitis", "section": "AA", "type": "qa", "q": "Wie lange bleibt der Patient nach Tonsillektomie stationär?", "a": "Etwa 3 bis 5 Tage, wegen des hohen Nachblutungsrisikos an Tag 0 und an Tag 5 bis 8."}, {"theme": "7. Tonsillitis", "section": "AA", "type": "qa", "q": "Welche Nerven sind im Operationsgebiet gefährdet?", "a": "Der Nervus lingualis, zuständig für Geschmack und Gefühl der Zunge, und der Nervus hypoglossus, zuständig für die Zungenbewegung."}, {"theme": "7. Tonsillitis", "section": "AA", "type": "qa", "q": "Was ist das Von-Willebrand-Syndrom?", "a": "Das ist die häufigste angeborene Blutgerinnungsstörung, verursacht durch einen Mangel oder eine Fehlfunktion des Von-Willebrand-Faktors. Typisch bei Frauen sind eine starke Regelblutung und häufige blaue Flecken."}, {"theme": "7. Tonsillitis", "section": "AA", "type": "tableau", "q": "Wie sieht das klinische Bild der chronischen Tonsillitis aus?", "a": "Eine rezidivierende Tonsillitis, das Leitsymptom, mindestens 3 bis 7 Mal pro Jahr. Chronische Halsschmerzen. Dysphagie (Schluckbeschwerden). Fötor ex ore (Mundgeruch). Tonsillenhypertrophie (vergrößerte Mandeln). Kryptenfüllung, also Detritus. Zervikale Lymphadenopathie. Chronische Abgeschlagenheit. Subfebrile Temperaturen. Schnarchen oder Schlafstörungen. Immer aktiv erfragen sollte man einen Peritonsillarabszess, das ist ein Notfall, ein rheumatisches Fieber und eine Glomerulonephritis."}, {"theme": "7. Tonsillitis", "section": "AA", "type": "dd", "q": "Welche Differentialdiagnosen der Tonsillitis kennen Sie?", "a": "Die Mononukleose durch EBV, das ist die wichtigste Differentialdiagnose. Außerdem eine Pharyngitis, Scharlach, eine Herpangina, ein Peritonsillarabszess, ein Tonsillenlymphom, eine Plaut-Vincent-Angina und das PFAPA-Syndrom."}, {"theme": "8. Lymphadenopathie", "section": "AP", "type": "qa", "q": "Gibt es Alternativmethoden zum Eingriff?", "a": "Man könnte mit einer feinen Nadel eine kleine Probe absaugen. Das ist aber nicht sicher genug. Nur wenn wir den ganzen Lymphknoten entnehmen, bekommen wir eine wirklich sichere Diagnose."}, {"theme": "8. Lymphadenopathie", "section": "AP", "type": "qa", "q": "Können wir das nicht mit Tabletten behandeln?", "a": "Im Moment wissen wir noch nicht, was die Ursache ist. Tabletten helfen nur, wenn wir den genauen Grund kennen. Wir müssen erst die Ursache finden."}, {"theme": "8. Lymphadenopathie", "section": "AP", "type": "qa", "q": "Kann es Krebs sein?", "a": "Ausschließen können wir es im Moment nicht. Aber eine Schwellung hat sehr oft harmlose Gründe – Erkältung, Entzündung. Genau um das zu klären, machen wir den kleinen Eingriff."}, {"theme": "8. Lymphadenopathie", "section": "AP", "type": "qa", "q": "Was können Sie tun, wenn es zu einer Nervenschädigung kommt?", "a": "In sehr seltenen Fällen kann man den Nerv in einer kleinen Operation wieder zusammennähen. Danach hilft vor allem gezielte Physiotherapie."}, {"theme": "8. Lymphadenopathie", "section": "AP", "type": "qa", "q": "Warum darf kein Wasser an die Wunde?", "a": "Damit keine Bakterien aus dem Leitungswasser in die Wunde gelangen. Die Wunde muss in den ersten Tagen trocken bleiben, um sich nicht zu entzünden."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Wann ist eine Lymphknotenbiopsie indiziert?", "a": "Ich mache eine operative Exzision, also die Ganzentnahme, bei Größenprogredienz oder einer Dauer über 4 Wochen, bei harten, indolenten, nicht verschieblichen Lymphknoten, bei B-Symptomatik mit Fieber, Nachtschweiß und Gewichtsverlust, oder bei generalisiertem Pruritus."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Welche malignen Differentialdiagnosen der Lymphadenopathie kennen Sie?", "a": "Der Morbus Hodgkin und Non-Hodgkin-Lymphome. Metastasen von HNO-Tumoren wie Nasopharynxkarzinom oder Tonsillenkarzinom, oder vom Bronchialkarzinom. Und der Virchow-Lymphknoten links supraklavikulär, der für Metastasen gastrointestinaler Tumoren spricht, vor allem des Magenkarzinoms."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Welche benignen Differentialdiagnosen der Lymphadenopathie kennen Sie?", "a": "Eine reaktive Lymphadenitis, zum Beispiel durch EBV, HIV, Tuberkulose, Toxoplasmose oder Streptokokken, eine Sklerosierung nach einer Infektion, oder medikamentös bedingt, zum Beispiel durch Allopurinol, Phenytoin oder Isoniazid."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Was sagen die Palpationskriterien der Lymphknoten aus?", "a": "Weich, druckdolent und verschieblich spricht für eine akute Entzündung. Indolent und verschieblich spricht für eine Autoimmunerkrankung oder Speicherkrankheit. Hart, indolent, nicht verschieblich und verbacken spricht für ein Malignom oder eine chronische Infektion, zum Beispiel eine Tuberkulose."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Wie sieht die Diagnostik bei Lymphadenopathie aus?", "a": "Im Labor bestimme ich Blutbild, CRP, LDH, HIV-Serologie, EBV-Serologie, Toxoplasma-Serologie, TSH, Leberenzyme, einen Rachenabstrich mit Streptokokken-Schnelltest und den IGRA-Test. Bildgebend mache ich eine Sonographie von Hals und Abdomen, ein Röntgen-Thorax und ein CT oder MRT zum Staging. Invasiv kommen eine Panendoskopie oder eine Knochenmarksbiopsie infrage. Eine Feinnadelpunktion mache ich nicht, weil sie keine Beurteilung der Lymphknotenarchitektur erlaubt."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Beschreiben Sie den Morbus Hodgkin.", "a": "Das ist ein malignes B-Zell-Lymphom mit zwei Häufigkeitsgipfeln, zwischen 20 und 30 Jahren und im hohen Alter. Ätiologisch spielen EBV, HIV, Zytostatika und Strahlung eine Rolle. Klinisch zeigen sich derbe, indolente, nicht verschiebliche Lymphknoten, meist zervikal, dazu B-Symptomatik, eine Hepatosplenomegalie und Pruritus. Goldstandard ist die Lymphknotenexstirpation, pathognomonisch sind Reed-Sternberg-Riesenzellen und Hodgkin-Zellen. Ich behandle mit Radio-Chemotherapie nach dem Ann-Arbor-Stadium."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Nennen Sie die Ann-Arbor-Klassifikation.", "a": "Stadium I bedeutet eine Lymphknotenregion. Stadium II bedeutet mindestens zwei Regionen auf der gleichen Zwerchfellseite. Stadium III bedeutet einen Befall beidseits des Zwerchfells. Stadium IV bedeutet einen diffusen extranodalen Befall, zum Beispiel von Knochenmark oder Leber. Der Zusatz A bedeutet ohne B-Symptomatik, der Zusatz B bedeutet mit B-Symptomatik."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Beschreiben Sie das Pfeiffersche Drüsenfieber, die EBV-Mononukleose.", "a": "Die Leitsymptom-Trias ist eine fieberhafte Tonsillitis, eine generalisierte Lymphadenopathie und eine Splenomegalie. Amoxicillin und Ampicillin sind kontraindiziert wegen der Gefahr eines Exanthems. Bei Splenomegalie gilt ein Sportverbot für 3 bis 4 Wochen wegen der Gefahr einer Milzruptur. Die Therapie ist rein symptomatisch."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Beschreiben Sie die Toxoplasmose.", "a": "Das ist eine Infektion mit Toxoplasma gondii durch Katzenkot oder rohes Fleisch. Bei Immunkompetenten verläuft sie meist asymptomatisch und braucht keine Therapie. Bei Schwangeren unter der 16. Schwangerschaftswoche gebe ich Spiramycin, ab der 16. Woche Pyrimethamin, Sulfadiazin und Folinsäure."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Nennen Sie das Standardtherapieschema der Tuberkulose.", "a": "Das HRZE-Schema für 2 Monate als Initialphase: Isoniazid, Rifampicin, Pyrazinamid und Ethambutol. Danach folgen 4 Monate mit Rifampicin und Isoniazid."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Was ist das Pel-Ebstein-Fieber?", "a": "Das ist ein zyklisch wellenförmiges Fieber bei malignen Lymphomen, dabei wechseln sich fieberhafte Phasen mit fieberfreien Intervallen von je 3 bis 10 Tagen ab."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Nennen Sie die Leukämieklassifikation.", "a": "Die ALL, akut lymphatisch, ist der häufigste Krebs im Kindesalter. Die AML, akut myeloisch, ist häufiger bei Erwachsenen. Die CLL, chronisch lymphatisch, ist ein indolentes Non-Hodgkin-Lymphom. Und die CML, chronisch myeloisch, ist gekennzeichnet durch das Philadelphia-Chromosom."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Was ist die histologische Besonderheit des Hodgkin-Lymphoms?", "a": "Pathognomonisch sind die Reed-Sternberg-Riesenzellen, die mehrkernig sind, und die Hodgkin-Zellen, die einkernig sind. Popcorn-Zellen, auch L&H-Zellen genannt, sind atypische B-Zellen beim nodulären lymphozytenprädominanten Hodgkin-Lymphom, kurz NLPHL."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "qa", "q": "Unterscheiden Sie SCLC und NSCLC beim Bronchialkarzinom.", "a": "Das SCLC, kleinzellig, wächst extrem schnell, metastasiert früh und ist fast immer inoperabel, ich behandle palliativ mit Radio-Chemotherapie. Das NSCLC, nicht-kleinzellig, wächst langsamer und ist im Frühstadium operabel, ich mache eine Lobektomie mit mediastinaler Lymphadenektomie."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "tableau", "q": "Wie sieht das klinische Bild der Lymphadenopathie unklarer Genese aus?", "a": "Eine Lymphknotenschwellung an einer oder mehreren Stellen. Eine schmerzlose Lymphadenopathie ist ein Alarmsignal, dabei muss ich immer ein Malignom ausschließen. Druckdolente Lymphknoten sind eher gutartig und reaktiv. Eine derbe, gummiartige Konsistenz spricht für ein Lymphom. Verbackene Lymphknoten sprechen für ein Malignom. Ich unterscheide lokalisierte von generalisierter Lymphadenopathie. Eine B-Symptomatik frage ich immer aktiv ab: Fieber, Nachtschweiß, Gewichtsverlust. B-Symptomatik zusammen mit Lymphadenopathie spricht immer für ein Lymphom."}, {"theme": "8. Lymphadenopathie", "section": "AA", "type": "dd", "q": "Welche Differentialdiagnosen der Lymphadenopathie kennen Sie?", "a": "Eine reaktive Lymphadenitis. Eine Mononukleose durch EBV. Eine Toxoplasmose. Eine HIV-Infektion. Eine Tuberkulose. Der Morbus Hodgkin. Ein Non-Hodgkin-Lymphom. Lymphknotenmetastasen. Eine Sarkoidose. Und der Lupus erythematodes, kurz SLE."}, {"theme": "9. Akute Pankreatitis", "section": "AA", "type": "qa", "q": "Welche Ursachen der akuten Pankreatitis kennen Sie?", "a": "Am häufigsten ist die biliäre Ursache: Ein Gallenstein verlegt die Papilla Vateri, dadurch kommt es zur Autodigestion der Bauchspeicheldrüse. Außerdem Alkohol, idiopathische Ursachen, iatrogen zum Beispiel nach einer ERCP, metabolisch durch eine Hyperkalzämie oder Hypertriglyzeridämie, sowie ein Trauma oder eine Virusinfektion wie Mumps."}, {"theme": "9. Akute Pankreatitis", "section": "AA", "type": "qa", "q": "Beschreiben Sie die Klinik der akuten Pankreatitis.", "a": "Plötzliche, heftige, gürtelförmige Oberbauchschmerzen mit Ausstrahlung in den Rücken. Dazu Übelkeit, Erbrechen und Meteorismus. Typisch ist der sogenannte Gummibauch, eine elastische Abwehrspannung ohne Loslassschmerz."}, {"theme": "9. Akute Pankreatitis", "section": "AA", "type": "qa", "q": "Wie sieht die Diagnostik der akuten Pankreatitis aus?", "a": "Im Labor bestimme ich die Lipase, sie ist der spezifischste Parameter, erhöht über das Dreifache des Normalwerts, dazu die Amylase, Cholestaseparameter wie GGT, AP und Bilirubin, CRP, Blutbild, Kalzium und Kreatinin. Bildgebend mache ich eine Abdomensonographie, um Ödeme, Nekrosen oder Gallensteine zu erkennen."}, {"theme": "9. Akute Pankreatitis", "section": "AA", "type": "qa", "q": "Wie behandeln Sie eine akute Pankreatitis?", "a": "Ich nehme den Patienten stationär auf, bei Bedarf auf die Intensivstation, und gebe aggressiv Flüssigkeit intravenös mit Ringer-Laktat. Sobald der Patient schmerzfrei ist und nicht erbricht, beginne ich früh mit enteraler Ernährung. Zur Analgesie gebe ich Metamizol oder Pethidin beziehungsweise Buprenorphin, Morphin meide ich wegen des Sphinkter-Oddi-Spasmus. Antibiotika gebe ich nur bei bakteriellen Komplikationen. Bei einer biliären Pankreatitis mit Cholangitis oder persistierender Gallengangsobstruktion mache ich eine ERCP."}, {"theme": "9. Akute Pankreatitis", "section": "AA", "type": "qa", "q": "Welche Komplikationen der akuten Pankreatitis kennen Sie?", "a": "Einen hypovolämischen Schock durch den Flüssigkeitsverlust in den dritten Raum, sowie Pankreasnekrosen, die sekundär infiziert werden können und dann zu Abszessen oder Pseudozysten führen."}, {"theme": "9. Akute Pankreatitis", "section": "AA", "type": "tableau", "q": "Wie sieht das klinische Bild der akuten Pankreatitis aus?", "a": "Plötzliche, heftige, gürtelförmige Oberbauchschmerzen mit Ausstrahlung in den Rücken. Übelkeit, Erbrechen, Meteorismus. Der Gummibauch: eine elastische Abwehrspannung ohne Loslassschmerz. Bei schwerem Verlauf ein hypovolämischer Schock oder infizierte Nekrosen."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Wie behandeln Sie eine Peritonitis?", "a": "Sofort mit einer intravenösen Breitbandantibiose, dazu eine chirurgische Herdsanierung mit Naht und Lavage."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Was bewirken Spasmolytika?", "a": "Sie bewirken eine Relaxation der glatten Muskulatur, wirken also krampflösend, zum Beispiel Buscopan."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Was bedeutet die fraktionierte Gabe von Propofol?", "a": "Das ist eine stufenweise, wirkungsorientierte Titration des Anästhetikums, keine Bolusgabe, um kardiovaskuläre Nebenwirkungen zu vermeiden."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Wie lange dauert ein histologisches Ergebnis in der Regel?", "a": "In der Regel 3 bis 7 Werktage."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Wie teilen Sie einem Patienten eine maligne Diagnose mit?", "a": "Der Patient wird persönlich zu einem Befundgespräch einbestellt, unter vier Augen und einfühlsam."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Was prüfen Sie bei der digital-rektalen Untersuchung, kurz DRU?", "a": "Den Sphinktertonus, die Prostata, Hämorrhoiden, Fissuren, frische Blutspuren und den Douglas-Schmerz."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Warum darf man nach einer Koloskopie nicht sofort essen?", "a": "Um eine iatrogene Perforation sicher auszuschließen. Falls doch eine Perforation vorliegt, muss der Patient für die Notfall-Laparotomie nüchtern sein."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Warum ist der postoperative Nikotinstopp wichtig?", "a": "Nikotin und Kohlenmonoxid führen zu einer Vasokonstriktion, dadurch zu einer Hypoxie im Gewebe, und das begünstigt schwere Wundheilungsstörungen, ein erhöhtes Infektionsrisiko und ein erhöhtes kardiovaskuläres Risiko."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Wie sieht die Therapie der GERD aus?", "a": "Beim Lebensstil rate ich zu Gewichtsabnahme, dem Meiden von Noxen und keinem Essen vor dem Schlafengehen. Medikamentös gebe ich einen PPI als Mittel der Wahl, alternativ H2-Blocker oder Antazida. Operativ mache ich bei therapierefraktärer GERD eine Fundoplikatio nach Nissen."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Welche refluxbegünstigenden Faktoren kennen Sie?", "a": "Alkohol, Nikotin, Adipositas, fettreiches Essen, Anticholinergika, Betablocker, Calciumantagonisten, Theophyllin, eine Schwangerschaft und enge Gürtel."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Unterscheiden Sie die Savary-Miller- und die Los-Angeles-Klassifikation der Refluxösophagitis.", "a": "Beide klassifizieren die Refluxösophagitis nach dem Ausmaß der Schleimhautschäden. Die Savary-Miller-Klassifikation unterteilt in Stadien I bis IV, die Los-Angeles-Klassifikation in Stadien A bis D. Das Savary-Miller-Stadium IV entspricht dabei dem Barrett-Ösophagus."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Wie sieht die kurative Therapie des Magenkarzinoms aus?", "a": "Ich mache eine Gastrektomie mit Sicherheitsabstand, 5 cm beim intestinalen Typ und 8 cm beim diffusen Typ, dazu eine Lymphadenektomie und die Resektion von Omentum majus und minus. In der Nachsorge sehe ich den Patienten im ersten Jahr alle 3 Monate, im zweiten Jahr alle 6 Monate, danach jährlich."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Was ist das Calot-Dreieck?", "a": "Das ist ein anatomischer Raum bei der Gallenblasen-OP, begrenzt durch den Ductus cysticus, den Ductus hepaticus communis und die Leberunterfläche. Darin verläuft die Arteria cystica."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Was ist das Sherren-Dreieck?", "a": "Das ist ein gedachtes Dreieck auf der Bauchwand zwischen Bauchnabel, Symphyse und rechtem Beckenstachel, das zur Beurteilung der Appendizitis dient."}, {"theme": "10. Allgemeine Begriffe & Klassifikationen", "section": "AA", "type": "qa", "q": "Was ist das Baldwin-Zeichen?", "a": "Das sind Schmerzen in der Flanke, die beim Beugen des rechten Beins auftreten."}];
+
+const TYPE_LABELS = {
+  qa: "Frage",
+  tableau: "Tableau clinique",
+  dd: "Differentialdiagnosen"
+};
+const TYPE_BADGE_CLASS = {
+  qa: null, // depends on section
+  tableau: "badge-tableau",
+  dd: "badge-dd"
+};
+
+const themes = [...new Set(ALL_CARDS.map(c => c.theme))];
+
+let currentTheme = themes[0];
+let currentSection = "ALL"; // ALL | AP | AA
+let deck = [];
+let index = 0;
+let flipped = false;
+
+const themeSelect = document.getElementById('themeSelect');
+const sectionSeg = document.getElementById('sectionSeg');
+const cardEl = document.getElementById('card');
+const frontQ = document.getElementById('frontQ');
+const frontTag = document.getElementById('frontTag');
+const backQ = document.getElementById('backQ');
+const backTag = document.getElementById('backTag');
+const backA = document.getElementById('backA');
+const progressText = document.getElementById('progressText');
+const deckInfo = document.getElementById('deckInfo');
+const typeBadgeWrap = document.getElementById('typeBadgeWrap');
+const cardArea = document.getElementById('cardArea');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+function populateThemeSelect() {
+  themeSelect.innerHTML = '';
+  themes.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t;
+    opt.textContent = t;
+    themeSelect.appendChild(opt);
+  });
+  themeSelect.value = currentTheme;
+}
+
+function availableSections() {
+  const secs = new Set(ALL_CARDS.filter(c => c.theme === currentTheme).map(c => c.section));
+  return secs;
+}
+
+function buildSectionSeg() {
+  sectionSeg.innerHTML = '';
+  const secs = availableSections();
+  const options = [];
+  options.push({key: "ALL", label: "Alle"});
+  if (secs.has("AP")) options.push({key: "AP", label: "Patient-Arzt"});
+  if (secs.has("AA")) options.push({key: "AA", label: "Arzt-Arzt"});
+  if (!secs.has(currentSection) && currentSection !== "ALL") currentSection = "ALL";
+  options.forEach(o => {
+    const btn = document.createElement('button');
+    btn.textContent = o.label;
+    btn.dataset.key = o.key;
+    if (o.key === currentSection) btn.classList.add('active');
+    btn.addEventListener('click', () => {
+      currentSection = o.key;
+      buildSectionSeg();
+      buildDeck();
+    });
+    sectionSeg.appendChild(btn);
+  });
+}
+
+function buildDeck() {
+  deck = ALL_CARDS.filter(c => c.theme === currentTheme && (currentSection === "ALL" || c.section === currentSection));
+  index = 0;
+  flipped = false;
+  render();
+}
+
+function badgeHtml(card) {
+  if (card.type === "tableau") return '<span class="type-badge badge-tableau">Tableau clinique</span>';
+  if (card.type === "dd") return '<span class="type-badge badge-dd">DD</span>';
+  if (card.section === "AA") return '<span class="type-badge badge-AA">Arzt-Arzt</span>';
+  return '<span class="type-badge badge-AP">Patient-Arzt</span>';
+}
+
+function render() {
+  cardEl.classList.remove('flipped');
+  flipped = false;
+
+  if (deck.length === 0) {
+    cardArea.innerHTML = '<div class="empty-state">Keine Karten in dieser Auswahl.</div>';
+    progressText.textContent = '0 / 0';
+    deckInfo.textContent = '';
+    typeBadgeWrap.innerHTML = '';
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+    return;
+  } else {
+    // restore card area if it was replaced by empty state
+    if (!document.getElementById('card')) {
+      location.reload();
+      return;
+    }
+  }
+
+  const c = deck[index];
+  frontTag.textContent = c.theme;
+  frontQ.textContent = c.q;
+  backTag.textContent = c.theme;
+  backQ.textContent = c.q;
+  backA.textContent = c.a;
+
+  progressText.textContent = (index + 1) + ' / ' + deck.length;
+  deckInfo.textContent = currentTheme;
+  typeBadgeWrap.innerHTML = badgeHtml(c);
+
+  prevBtn.disabled = index === 0;
+  nextBtn.disabled = index === deck.length - 1;
+}
+
+function flip() {
+  if (deck.length === 0) return;
+  flipped = !flipped;
+  cardEl.classList.toggle('flipped', flipped);
+}
+
+function next() {
+  if (index < deck.length - 1) {
+    index++;
+    flipped = false;
+    cardEl.classList.remove('flipped');
+    render();
+  }
+}
+function prev() {
+  if (index > 0) {
+    index--;
+    flipped = false;
+    cardEl.classList.remove('flipped');
+    render();
+  }
+}
+
+function shuffleDeck() {
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  index = 0;
+  render();
+}
+
+function resetDeck() {
+  buildDeck();
+}
+
+function exportCSV() {
+  let csv = 'theme,section,type,question,answer\n';
+  deck.forEach(c => {
+    const esc = s => '"' + String(s).replace(/"/g, '""').replace(/\n/g, ' | ') + '"';
+    csv += [esc(c.theme), esc(c.section), esc(c.type), esc(c.q), esc(c.a)].join(',') + '\n';
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'fsp_lernkarten_' + currentTheme.replace(/[^a-zA-Z0-9]/g, '_') + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+themeSelect.addEventListener('change', () => {
+  currentTheme = themeSelect.value;
+  currentSection = "ALL";
+  buildSectionSeg();
+  buildDeck();
+});
+
+cardEl.addEventListener('click', flip);
+prevBtn.addEventListener('click', prev);
+nextBtn.addEventListener('click', next);
+document.getElementById('shuffleBtn').addEventListener('click', shuffleDeck);
+document.getElementById('resetBtn').addEventListener('click', resetDeck);
+document.getElementById('csvBtn').addEventListener('click', exportCSV);
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') { e.preventDefault(); flip(); }
+  else if (e.code === 'ArrowRight') { next(); }
+  else if (e.code === 'ArrowLeft') { prev(); }
+});
+
+populateThemeSelect();
+buildSectionSeg();
+buildDeck();
+</script>
+
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("service-worker.js").catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
