@@ -8,12 +8,12 @@ const ASSETS_TO_CACHE = [
   './FSP_Fachbegriffe_NachSystem.html',
   './OP_und_Untersuchungen.html',
   './fsp_lernkarten.html',
+  './fsp_checklisten.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
   './apple-touch-icon.png'
 ];
-
 // Installation: alle Seiten in den Cache legen
 self.addEventListener('install', (event) => {
   self.skipWaiting();
