@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSP Prüfungs-Checklisten</title>
+<style>
+  :root {
+    --primary: #1b4965;
+    --accent: #5fa8d3;
+    --bg: #f7f9fb;
+    --card: #ffffff;
+    --border: #d9e2ec;
+    --text: #1f2937;
+    --muted: #5b6b7c;
+    --green: #166534; --green-bg: #dcfce7;
+    --yellow: #92400e; --yellow-bg: #fef3c7;
+    --pink: #9d174d; --pink-bg: #fce7f3;
+    --blue: #1e40af; --blue-bg: #dbeafe;
+    --red: #991b1b; --red-bg: #fee2e2;
+    --purple: #5b21b6; --purple-bg: #ede9fe;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.55; }
+  header { background: var(--primary); color: white; padding: 26px 20px 20px; text-align: center; }
+  header h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  header p { opacity: 0.85; font-size: 0.88rem; }
+  .tab-bar { display: flex; flex-wrap: wrap; gap: 5px; padding: 12px 14px; background: var(--primary); border-bottom: 2px solid var(--accent); position: sticky; top: 0; z-index: 100; }
+  .tab-btn { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+  .tab-btn:hover, .tab-btn.active { background: var(--accent); border-color: var(--accent); }
+  main { max-width: 920px; margin: 0 auto; padding: 18px 14px 60px; }
+  .theme-block { display: none; }
+  .theme-block.active { display: block; }
+  .theme-title { color: var(--primary); font-size: 1.2rem; border-bottom: 3px solid var(--accent); padding-bottom: 6px; margin-bottom: 16px; }
+  .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 14px; overflow: hidden; }
+  .section-header { display: flex; align-items: center; gap: 9px; padding: 11px 15px; cursor: pointer; user-select: none; font-weight: 700; font-size: 0.93rem; color: var(--primary); }
+  .section-header:hover { background: #f0f6fa; }
+  .section-icon { font-size: 1.05rem; }
+  .section-badge { margin-left: auto; font-size: 0.68rem; padding: 2px 8px; border-radius: 20px; font-weight: 700; flex-shrink: 0; }
+  .badge-tableau { background: var(--yellow-bg); color: var(--yellow); }
+  .badge-def { background: var(--blue-bg); color: var(--blue); }
+  .badge-dd { background: var(--pink-bg); color: var(--pink); }
+  .badge-instr { background: var(--green-bg); color: var(--green); }
+  .badge-komp { background: var(--red-bg); color: var(--red); }
+  .badge-extra { background: var(--purple-bg); color: var(--purple); }
+  .badge-befunde { background: #e0f2f1; color: #00695c; }
+  .chevron { margin-left: 6px; transition: transform 0.2s; font-size: 0.8rem; }
+  .section-header.open .chevron { transform: rotate(90deg); }
+  .section-body { display: none; padding: 12px 16px 16px; border-top: 1px solid var(--border); }
+  .section-body.open { display: block; }
+  .progress-bar-wrap { background: var(--border); border-radius: 4px; height: 5px; margin: 0 15px 3px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 4px; transition: width 0.3s; width: 0%; }
+  .progress-text { font-size: 0.75rem; color: var(--muted); padding: 0 15px 8px; display: block; }
+  .item-list { list-style: none; }
+  .item-list li { display: flex; align-items: flex-start; gap: 9px; padding: 6px 0; border-bottom: 1px dashed var(--border); font-size: 0.89rem; }
+  .item-list li:last-child { border-bottom: none; }
+  .item-list li input[type="checkbox"] { margin-top: 3px; accent-color: var(--primary); width: 15px; height: 15px; flex-shrink: 0; cursor: pointer; }
+  .item-list li label { cursor: pointer; flex: 1; }
+  .item-list li label.checked { text-decoration: line-through; color: var(--muted); }
+  .fach { font-weight: 700; color: var(--primary); }
+  .umg { color: var(--muted); font-style: italic; font-size: 0.84em; }
+  .func { color: #166534; font-size: 0.84em; display: block; margin-top: 1px; }
+  .note { color: var(--muted); font-size: 0.82em; display: block; margin-top: 1px; }
+  .answer { color: #374151; font-size: 0.86em; display: block; margin-top: 3px; padding-left: 4px; border-left: 3px solid var(--accent); }
+  .reset-btn { display: inline-block; margin: 8px 0 0; background: var(--border); border: none; color: var(--muted); padding: 4px 11px; border-radius: 20px; font-size: 0.76rem; cursor: pointer; }
+  .reset-btn:hover { background: #c4d4e0; color: var(--text); }
+  footer { text-align: center; padding: 22px; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--border); margin-top: 28px; }
+  @media (max-width: 600px) {
+    .tab-btn { font-size: 0.66rem; padding: 4px 7px; }
+    .section-header { font-size: 0.85rem; }
+    .item-list li { font-size: 0.84rem; }
+  }
+    .home-btn {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    background: #1b4965;
+    color: #ffffff;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 1000;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .home-btn:hover { background: #5fa8d3; transform: scale(1.08); }
+  .home-btn svg { width: 20px; height: 20px; }
+  @media (max-width: 600px) {
+    .home-btn { top: 10px; left: 10px; width: 38px; height: 38px; }
+    .home-btn svg { width: 18px; height: 18px; }
+  }
+</style>
+</head>
+<body>
+<a href="index.html" class="home-btn" title="Zum Hauptmenü" aria-label="Zum Hauptmenü">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+</a>
+<header>
+  <h1>FSP Rostock – Prüfungs-Checklisten</h1>
+  <p>Tableau clinique · Definitionen AA · DD · Instrumente + Funktion · Komplikationen</p>
+</header>
+<nav class="tab-bar" id="tabBar"></nav>
+<main id="mainContent"></main>
+<footer>FSP-Rostock-Vorbereitung — Alle Inhalte aus dem Projekt</footer>
+
+<script>
+const THEMES = [
+
+// ══════════════════════════════════════════════
+// 1. HÄMATURIE
+// ══════════════════════════════════════════════
+{ id:"haematurie", title:"1. Hämaturie", sections:[
+  { type:"tableau", title:"Tableau clinique (Klinisches Bild)", badge:"badge-tableau", items:[
+    { fach:"Indolente Makrohämaturie", umg:"sichtbares Blut im Urin ohne Schmerzen", note:"⚠ Leitsymptom – immer Malignom ausschließen!" },
+    { fach:"Mikrohämaturie", umg:"nur laborchemisch nachweisbares Blut im Urin" },
+    { fach:"Dysurie", umg:"Schmerzen / Brennen beim Wasserlassen" },
+    { fach:"Pollakisurie", umg:"häufiges Wasserlassen in kleinen Mengen" },
+    { fach:"Drangsymptomatik", umg:"plötzlicher, starker Harndrang" },
+    { fach:"Nykturie", umg:"nächtliches Wasserlassen" },
+    { fach:"Flankenschmerz", umg:"Schmerz in der Flanke bei Harnstau" },
+    { fach:"Kachexie / Gewichtsverlust", umg:"starke Abmagerung", note:"Spätsymptom" },
+    { fach:"Anämie", umg:"Blutarmut durch chronischen Blutverlust" },
+  ]},
+  { type:"def", title:"Definitionen – Arzt-Arzt-Gespräch", badge:"badge-def", items:[
+    { fach:"Hämaturie", umg:"Erythrozyten im Urin", answer:"abzugrenzen von der Hämoglobinurie, bei der nur freies Hämoglobin nachweisbar ist" },
+    { fach:"Makrohämaturie", umg:"sichtbare Rotfärbung des Urins" },
+    { fach:"Mikrohämaturie", umg:"nur per Teststreifen / Sediment nachweisbar; Urin makroskopisch unauffällig" },
+    { fach:"Akanthozyten (dysmorphe Erythrozyten)", umg:"verformte rote Blutkörperchen im Sediment", answer:"sprechen für eine glomeruläre Ursache" },
+    { fach:"Dysurie", umg:"erschwertes, behindertes Wasserlassen mit schwachem Harnstrahl" },
+    { fach:"Algurie", umg:"Schmerzen beim Wasserlassen", answer:"häufig bei Urethritis oder Zystitis" },
+    { fach:"Pollakisurie", umg:"häufiges Wasserlassen in kleinen Mengen" },
+    { fach:"Strangurie", umg:"brennende, krampfartige Schmerzen in Harnröhre / Blase beim Wasserlassen", answer:"typisch bei Reizung oder Entzündung des unteren Harntrakts" },
+    { fach:"Urothelkarzinom", umg:"bösartiger Tumor der Harnwegsschleimhaut" },
+    { fach:"TUR-B (Transurethrale Resektion der Harnblase)", umg:"Tumorentfernung durch die Harnröhre", answer:"Therapie im nicht-muskelinvasiven Stadium; danach intravesikale BCG- oder Mitomycin-C-Instillation" },
+    { fach:"Zystektomie", umg:"operative Entfernung der Harnblase", answer:"bei muskelinvasivem Karzinom; mit pelviner Lymphadenektomie und Harnableitung" },
+    { fach:"Marschhämaturie", umg:"Hämaturie durch intensiven Sport", answer:"mechanische Schädigung der Blasenschleimhaut" },
+    { fach:"Intravesikale Instillation", umg:"Einbringen eines Medikaments direkt in die Blase", answer:"BCG oder Mitomycin-C zur Rezidivprophylaxe nach TUR-B" },
+    { fach:"Carcinoma in situ (CIS)", umg:"flaches, hochgradiges Urothelkarzinom", answer:"Therapie: BCG-Instillation Standard; Kontroll-Zystoskopie nach 4 Wochen" },
+    { fach:"Schistosomiasis", umg:"Parasiteninfektion durch Würmer", answer:"Risikofaktor für Urothelkarzinom; bei Auslandsanamnese (Tropen / Subtropien) erfragen" },
+    { fach:"Via falsa (Falschpassage)", umg:"ungewollte Verletzung der Harnröhrenwand beim Einführen des Zystoskops", answer:"→ sofortiger Abbruch, Dauerkatheter" },
+    { fach:"Urosepsis", umg:"Blutvergiftung ausgehend von den Harnwegen", answer:"→ Blut- + Urinkultur, sofortige Antibiose" },
+    { fach:"Diagnostisches Vorgehen bei V.a. Blasenkarzinom", umg:"", answer:"Körperliche Untersuchung (Inspektion Genitale, Palpation Abdomen + Lymphknoten, DRU), Labor (BB, CRP, Kreatinin, Urinstatus, Urinzytologie), Bildgebung (Abdomensonographie, CT-Pyelographie), Goldstandard: Urozystoskopie mit Biopsie" },
+  ]},
+  { type:"dd", title:"Differentialdiagnosen", badge:"badge-dd", items:[
+    { fach:"Urolithiasis", umg:"Nieren- oder Blasensteine" },
+    { fach:"Zystitis", umg:"Blasenentzündung / Harnwegsinfekt" },
+    { fach:"Nierenzellkarzinom", umg:"Nierenkrebs" },
+    { fach:"Prostatakarzinom", umg:"Prostatakrebs" },
+    { fach:"BPH (Benigne Prostatahyperplasie)", umg:"gutartige Prostatavergrößerung" },
+    { fach:"Glomerulonephritis", umg:"Entzündung der Nierenkörperchen", note:"dysmorphe Erythrozyten im Sediment" },
+    { fach:"Pyelonephritis", umg:"Nierenbeckenentzündung" },
+    { fach:"Strahlenzystitis", umg:"Blasenschleimhautschaden nach Bestrahlung" },
+    { fach:"Koagulopathie / Antikoagulation", umg:"Gerinnungsstörung / blutverdünnende Medikamente" },
+    { fach:"Schistosomiasis", umg:"Parasiten (Auslandsanamnese!)" },
+    { fach:"Marschhämaturie", umg:"durch intensiven Sport" },
+    { fach:"Endometriose der Blase", umg:"Gebärmutterschleimhaut in der Blase" },
+  ]},
+  { type:"instr", title:"Instrumente – Urethrozystoskopie + Funktion", badge:"badge-instr", items:[
+    { fach:"Starres Zystoskop", umg:"starrer Blasenspiegel", func:"→ Visualisierung von Urethra und Blase; v.a. bei Frauen (kurze, gerade Harnröhre)" },
+    { fach:"Flexibles Zystoskop", umg:"biegsamer Blasenspiegel", func:"→ schonendere Inspektion; v.a. beim Mann (lange, gebogene Harnröhre)" },
+    { fach:"30°-Optik", umg:"Schrägblick-Linse", func:"→ Inspektion der Blasenseitenwände" },
+    { fach:"70°-Optik", umg:"Weitwinkel-Linse", func:"→ Inspektion von Blasendach und Trigonum vesicae (Blasendreieck)" },
+    { fach:"Biopsiezange", umg:"Gewebezange", func:"→ Entnahme von Gewebeproben aus verdächtigen Läsionen zur Histologie" },
+    { fach:"Resektionsschlinge", umg:"Schneideinstrument", func:"→ transurethrale Resektion von Blasentumoren (TUR-B)" },
+    { fach:"Instillagel-Spritze", umg:"Betäubungsgel-Spritze", func:"→ Lokalanästhesie + Gleitfähigkeit der Harnröhre" },
+    { fach:"Spülkanal des Zystoskops", umg:"Kanal für sterile NaCl-Lösung", func:"→ Füllung der Blase zur Übersichtsverbesserung; Absaugung von Sekret" },
+  ]},
+  { type:"komp", title:"Komplikationen – Urethrozystoskopie", badge:"badge-komp", items:[
+    { fach:"Hämaturie (Nachblutung)", umg:"Blutung nach dem Eingriff", note:"→ Blasenspülung, ggf. Koagulation" },
+    { fach:"Via falsa (Falschpassage)", umg:"Verletzung der Harnröhrenwand", note:"→ sofortiger Abbruch, Dauerkatheter" },
+    { fach:"Urosepsis", umg:"Blutvergiftung von den Harnwegen", note:"→ Blut- + Urinkultur, sofortige Antibiose" },
+    { fach:"Urethrastriktur", umg:"narbige Verengung der Harnröhre", note:"Spätfolge nach Verletzung" },
+    { fach:"Harnwegsinfekt", umg:"Infektion nach Spiegelung" },
+    { fach:"Anaphylaxie", umg:"schwere allergische Reaktion auf Gel / Medikament", note:"→ extremer Blutdruckabfall → zerebrale Hypoxie → Hirnschädigung (sehr selten)" },
+    { fach:"Harnverhalt", umg:"Unfähigkeit, Urin zu lassen", note:"→ Katheterisierung" },
+  ]},
+  { type:"befunde", title:"Zystoskopische Befunde – Was sage ich dem Oberarzt?", badge:"badge-befunde", items:[
+    { fach:"Gestielt", umg:"polypenförmig mit schmalem Hals", answer:"Der Tumor hat einen schmalen Hals, wie ein Pilz – das spricht eher für einen gutartigen oder oberflächlichen Befund." },
+    { fach:"Zottig / papillär", umg:"blumenkohlförmige Oberfläche", answer:"Die Oberfläche ist unregelmäßig und blumenkohlförmig – das ist ein Zeichen für Bösartigkeit." },
+    { fach:"Sessil / breitbasig", umg:"kein Stiel, breite Basis", answer:"Der Tumor sitzt breit auf der Schleimhaut ohne Stiel – das erhöht das Risiko einer Tiefeninfiltration." },
+    { fach:"Carcinoma in situ (CIS)", umg:"rötliche, samtartige Schleimhaut", answer:"Es handelt sich um bösartige Zellen, die noch auf die Schleimhautoberfläche begrenzt sind – noch kein invasives Wachstum, aber sehr aggressiv." },
+    { fach:"Trabekulierung", umg:"wulstartige Blasenwandverdickung", answer:"Die Blasenwand ist verdickt und balkenartig verändert durch chronischen Druckanstieg, meist bei Prostatavergrößerung." },
+    { fach:"Striktur der Urethra", umg:"Engstelle in der Harnröhre", answer:"Es gibt eine Engstelle in der Harnröhre, die den Harnfluss behindert." },
+    { fach:"Divertikel der Blase", umg:"sackförmige Blasenwandausbuchtung", answer:"Die Blasenwand hat eine sackförmige Ausbuchtung, in der sich Urin ansammeln kann." },
+  ]},
+]},
+
+// ══════════════════════════════════════════════
+// 2. ULKUS
+// ══════════════════════════════════════════════
+{ id:"ulkus", title:"2. Ulkus", sections:[
+  { type:"tableau", title:"Tableau clinique (Klinisches Bild)", badge:"badge-tableau", items:[
+    { fach:"Epigastralgie", umg:"Oberbauchschmerz", note:"Leitsymptom" },
+    { fach:"Nüchternschmerz / nächtlicher Schmerz", umg:"Schmerz ohne Essen", note:"typisch für Ulcus duodeni – bessert sich nach dem Essen" },
+    { fach:"Postprandialer Schmerz", umg:"Schmerz nach dem Essen", note:"typisch für Ulcus ventriculi" },
+    { fach:"Pyrosis", umg:"Sodbrennen" },
+    { fach:"Nausea / Emesis", umg:"Übelkeit / Erbrechen" },
+    { fach:"Inappetenz", umg:"Appetitlosigkeit" },
+    { fach:"Hämatemesis", umg:"Bluterbrechen", note:"⚠ Alarmsymptom" },
+    { fach:"Kaffeesatzerbrechen", umg:"braun-schwarzes Erbrechen durch Blut + Magensäure (Hämatin)" },
+    { fach:"Meläna (Teerstuhl)", umg:"glänzend-schwarzer Stuhl", note:"⚠ Alarmsymptom – Blut > 5–8 Stunden im GI-Trakt" },
+    { fach:"Perforation mit Peritonitis", umg:"Durchbruch mit Bauchfellentzündung", note:"⚠ chirurgischer Notfall – brettartiger Bauch" },
+  ]},
+  { type:"def", title:"Definitionen – Arzt-Arzt-Gespräch", badge:"badge-def", items:[
+    { fach:"Ulkus", umg:"Schleimhautdefekt bis zur Lamina muscularis mucosae", answer:"Pathophysiologie: Ungleichgewicht zwischen aggressiven Faktoren (Magensäure, Pepsin, Gallensäuren) und Schutzfaktoren (Muzinbarriere, Durchblutung, Prostaglandine)" },
+    { fach:"Johnson-Klassifikation Typ I", umg:"kleine Kurvatur, subazid, häufigste Form (~60%)" },
+    { fach:"Johnson Typ II", umg:"Magen + Duodenum kombiniert, normal-/hyperazid (~20%)" },
+    { fach:"Johnson Typ III", umg:"präpylorisch, meist hyperazid" },
+    { fach:"ABC-Klassifikation Gastritis Typ A", umg:"autoimmun – Antikörper gegen Belegzellen", answer:"→ Vitamin-B12-Mangel, perniziöse Anämie" },
+    { fach:"ABC-Klassifikation Gastritis Typ B", umg:"bakteriell – Helicobacter pylori", answer:"häufigste Form" },
+    { fach:"ABC-Klassifikation Gastritis Typ C", umg:"chemisch – NSAR, Alkohol, Gallereflux, Rauchen" },
+    { fach:"Helicobacter pylori", umg:"gram-negatives Bakterium, häufigste Ulkusursache", answer:"Nachweis: Urease-Schnelltest / Histologie (invasiv) oder Atemtest / Stuhl-Antigen (nicht-invasiv)" },
+    { fach:"Eradikationstherapie (Triple-Therapie)", umg:"PPI + Amoxicillin 1000 mg + Clarithromycin 500 mg", answer:"7 Tage; danach PPI in Standarddosis weiterführen" },
+    { fach:"Protonenpumpeninhibitoren (PPI)", umg:"Medikamente zur Säurehemmung", answer:"hemmen irreversibel die H-K-ATPase (Protonenpumpe) in den Belegzellen → Säureproduktion blockiert" },
+    { fach:"Kontrollendoskopie nach Ulcus ventriculi", umg:"Kontrollmagenspiegelung", answer:"nach 4–6 Wochen: Kontrolle des Therapieerfolgs + Ausschluss Malignität" },
+    { fach:"Forrest Ia", umg:"arteriell spritzende Blutung", answer:"sofortige endoskopische Blutstillung" },
+    { fach:"Forrest Ib", umg:"Sickerblutung" },
+    { fach:"Forrest IIa", umg:"sichtbarer Gefäßstumpf" },
+    { fach:"Forrest IIb", umg:"Koagelauflagerung" },
+    { fach:"Forrest IIc", umg:"Hämatinauflagerung (schwarz)" },
+    { fach:"Forrest III", umg:"sauberer Ulkusgrund, keine Blutung" },
+    { fach:"Hämatemesis", umg:"Erbrechen von frischem Blut", answer:"proximale, akute Blutung" },
+    { fach:"Meläna", umg:"Teerstuhl – Blut > 5–8 Stunden im GI-Trakt" },
+    { fach:"Hämatochezie", umg:"frisches rotes Blut per rectum", answer:"→ untere gastrointestinale Blutung" },
+    { fach:"Mallory-Weiss-Syndrom", umg:"longitudinale Schleimhauteinrisse am gastroösophagealen Übergang", answer:"durch forciertes Erbrechen, typisch bei Alkoholabusus; schmerzhafte Hämatemesis" },
+    { fach:"Ulcus simplex Dieulafoy", umg:"Schleimhautläsion durch fehlangelegte, aneurysmatische Arteriole", answer:"plötzliche, lebensbedrohliche Blutung" },
+    { fach:"Zollinger-Ellison-Syndrom", umg:"gastrinproduzierender Tumor (Gastrinom) im Pankreas / Duodenum", answer:"Hypergastrinämie → schwere, rezidivierende peptische Ulzera" },
+    { fach:"Barrett-Ösophagus", umg:"Umwandlung von Platten- zu Zylinderepithel (intestinale Metaplasie)", answer:"bei chronischem GERD; Präkanzerose für das Adenokarzinom" },
+    { fach:"Portale Hypertension", umg:"Pfortaderdruck > 12 mmHg (normal 3–6 mmHg)", answer:"Ursachen: Leberzirrhose, Pfortaderthrombose; Komplikationen: Ösophagus-/Fundus-/anorektale Varizen; Therapie: Propranolol, Spironolacton, Nitrate" },
+    { fach:"Gummibandligatur der Ösophagusvarizen", umg:"Goldstandard bei blutenden Varizen", answer:"alternativ: Polidocanol-Sklerosierung; Ultima Ratio: Sengstaken-Blakemore-Ballonsonde" },
+    { fach:"Krukenberg-Tumor", umg:"Metastase des Magenkarzinoms in die Ovarien", answer:"meist vom diffusen Typ mit Siegelringzellen, typischerweise beidseitig" },
+    { fach:"Kurative Therapie Magenkarzinom", umg:"Gastrektomie + Lymphadenektomie + Resektion von Omentum majus/minus", answer:"Sicherheitsabstand: 5 cm (intestinaler Typ), 8 cm (diffuser Typ)" },
+    { fach:"Diagnostisches Vorgehen bei V.a. Ulcus ventriculi", umg:"", answer:"Palpation (Druckschmerz, Abwehrspannung), Auskultation (Darmgeräusche), Labor (BB, CRP, Amylase, Lipase, Serumgastrin bei V.a. ZES), Goldstandard: ÖGD mit ≥ 6 Biopsien aus Ulkusrand + -grund, Röntgen-Abdomen (freie Luft bei Perforation)" },
+  ]},
+  { type:"dd", title:"Differentialdiagnosen", badge:"badge-dd", items:[
+    { fach:"Gastritis", umg:"Magenschleimhautentzündung" },
+    { fach:"GERD (Refluxkrankheit)", umg:"Sodbrennen durch Magensäurerückfluss" },
+    { fach:"Funktionelle Dyspepsie", umg:"Oberbauchbeschwerden ohne Organbefund" },
+    { fach:"Magenkarzinom", umg:"Magenkrebs", note:"⚠ immer histologisch ausschließen!" },
+    { fach:"Pankreatitis", umg:"Bauchspeicheldrüsenentzündung" },
+    { fach:"Cholezystitis", umg:"Gallenblasenentzündung" },
+    { fach:"Myokardinfarkt (Hinterwand)", umg:"atypisch verlaufend → EKG + Troponin!" },
+    { fach:"Ulcus duodeni", umg:"Zwölffingerdarmgeschwür", note:"Nüchternschmerz, Besserung nach Essen" },
+    { fach:"Hiatushernie", umg:"Zwerchfellbruch mit Magenanteil" },
+  ]},
+  { type:"instr", title:"Instrumente – ÖGD + Funktion", badge:"badge-instr", items:[
+    { fach:"Flexibles Gastroskop", umg:"Magenspiegelgerät", func:"→ Visualisierung von Ösophagus, Magen und Duodenum; Transport der Arbeitsinstrumente" },
+    { fach:"Beißring", umg:"Zahnschutz", func:"→ Schutz des Endoskops vor Biss durch den Patienten" },
+    { fach:"Biopsiezange", umg:"Gewebezange", func:"→ Entnahme von ≥ 6 Gewebeproben aus Ulkusrand und -grund (Histologie + HP-Nachweis)" },
+    { fach:"Hämostaseclip", umg:"Blutstillungsklammer", func:"→ mechanische Blutstillung durch Verschluss des blutenden Gefäßes" },
+    { fach:"Injektionsnadel", umg:"Einspritznadel", func:"→ Unterspritzung mit Adrenalin / NaCl zur Blutstillung (Kompression + Vasokonstriktion)" },
+    { fach:"Koagulationssonde", umg:"Wärme-Blutstillungssonde", func:"→ thermische Hämostase durch Hitzekoagulation des blutenden Gefäßes" },
+    { fach:"Lidocain-Rachenspray", umg:"Betäubungsspray", func:"→ pharyngeale Lokalanästhesie → Würgereiz unterdrücken" },
+    { fach:"Absaugkanal", umg:"Absaugvorrichtung", func:"→ Entfernung von Luft, Sekret und Blut aus dem GI-Trakt" },
+    { fach:"Fibrinkleber", umg:"Gewebeklebstoff", func:"→ Versiegelung blutender Läsionen" },
+  ]},
+  { type:"komp", title:"Komplikationen – ÖGD", badge:"badge-komp", items:[
+    { fach:"Perforation (Durchbruch)", umg:"Verletzung der Wand des Verdauungstrakts", note:"→ sofortiger Abbruch, chirurgische Notfallversorgung" },
+    { fach:"Aspiration", umg:"Einatmen von Mageninhalt", note:"→ Seitenlage + Absaugen + O₂ + Antibiose (Aspirationspneumonie)" },
+    { fach:"Hypoxie", umg:"O₂-Mangel durch Sedierung", note:"→ O₂-Gabe, ggf. Flumazenil (Midazolam-Antagonist)" },
+    { fach:"Nachblutung", umg:"Blutung nach Intervention" },
+    { fach:"Pharyngeal- / Ösophagusverletzung", umg:"Verletzung von Rachen oder Speiseröhre" },
+    { fach:"Anaphylaxie", umg:"allergische Reaktion auf Medikamente" },
+  ]},
+  { type:"befunde", title:"ÖGD-Befunde – Was sage ich dem Oberarzt?", badge:"badge-befunde", items:[
+    { fach:"Refluxösophagitis", umg:"Savary-Miller / Los-Angeles", answer:"Die Schleimhaut der Speiseröhre ist durch Magensäure gereizt und entzündet." },
+    { fach:"Barrett-Ösophagus", umg:"lachsrote Ausdehnung ab der Z-Linie", answer:"Die normale Schleimhaut der Speiseröhre wurde durch Magenepithel ersetzt – das ist eine Krebsvorstufe." },
+    { fach:"Ösophagusvarizen", umg:"bläuliche Venenpolster", answer:"Es handelt sich um erweiterte Venen in der Speiseröhre durch erhöhten Druck in der Pfortader – mit hohem Blutungsrisiko." },
+    { fach:"Ulkus mit Fibrinbelag", umg:"weißlicher Belag auf dem Geschwür", answer:"Es gibt ein Geschwür mit einem weißlichen Belag aus Fibrin – das zeigt, dass es gerade heilt oder entzündet ist." },
+    { fach:"Forrest Ia – arteriell spritzend", umg:"aktive Blutung", answer:"Es blutet aktiv und arteriell spritzend – das ist ein Notfall, sofortige Blutstillung nötig." },
+    { fach:"Forrest IIa – Gefäßstumpf sichtbar", umg:"kein aktives Bluten, aber Risiko", answer:"Man sieht einen offenen Gefäßstumpf ohne aktive Blutung – hohes Risiko für eine Nachblutung." },
+    { fach:"Forrest IIc – Hämatinauflagerung", umg:"schwarzer Belag", answer:"Der Ulkusgrund ist schwarz durch altes Blut – die Blutung hat aufgehört, aber war vorhanden." },
+    { fach:"Forrest III – sauberer Ulkusgrund", umg:"keine Blutungszeichen", answer:"Der Ulkusgrund ist sauber ohne jedes Blutungszeichen." },
+    { fach:"Hyperplastischer Magenpolyp", umg:"gutartige Wucherung", answer:"Eine gutartige Wucherung der Schleimhaut ohne relevantes Krebsrisiko." },
+    { fach:"Adenomatöser Magenpolyp", umg:"Wucherung mit Krebsrisiko", answer:"Eine Wucherung mit echtem Krebsrisiko – muss entfernt werden." },
+    { fach:"Magenkarzinom", umg:"ulzerierte Masse mit aufgeworfenem Rand", answer:"Es gibt eine unregelmäßige, brüchige Gewebemasse mit aufgeworfenem Rand – Verdacht auf Magenkrebs, Biopsien wurden entnommen." },
+    { fach:"Dieulafoy-Läsion", umg:"kleine Erosion über prominenter Arteriole", answer:"Es gibt eine kleine Schleimhauterosion über einer vergrößerten Arterie – die Blutung wirkt harmlos, kann aber lebensbedrohlich sein." },
+  ]},
+]},
+
+// ══════════════════════════════════════════════
+// 3. RDS / KOLONKARZINOM
+// ══════════════════════════════════════════════
+{ id:"rds", title:"3. RDS / Kolon-Ca", sections:[
+  { type:"tableau", title:"Tableau clinique – Kolonkarzinom", badge:"badge-tableau", items:[
+    { fach:"Änderung der Stuhlgewohnheiten", umg:"Leitsymptom", note:"Durchfall ↔ Verstopfung" },
+    { fach:"Hämatochezie", umg:"sichtbares Blut im Stuhl", note:"linksseitiger Tumor" },
+    { fach:"Okkultes Blut im Stuhl", umg:"unsichtbares Blut", note:"rechtsseitiger Tumor / Screening" },
+    { fach:"Bleistiftstuhl", umg:"dünner, bleistiftförmiger Stuhl", note:"Zeichen der Einengung" },
+    { fach:"Meteorismus", umg:"Blähungen" },
+    { fach:"Abdominelle Schmerzen", umg:"Bauchschmerzen" },
+    { fach:"Palpabler Tumor", umg:"tastbarer Tumor im Bauch", note:"Spätsymptom" },
+    { fach:"Kachexie / Gewichtsverlust", umg:"starke Abmagerung", note:"Spätsymptom" },
+    { fach:"Anämie", umg:"Blutarmut" },
+    { fach:"Ileus", umg:"Darmverschluss", note:"⚠ Notfall" },
+  ]},
+  { type:"def", title:"Definitionen – Arzt-Arzt-Gespräch", badge:"badge-def", items:[
+    { fach:"Reizdarmsyndrom (IBS)", umg:"Ausschlussdiagnose", answer:"nur zulässig, wenn alle organischen Differentialdiagnosen ausgeschlossen sind; Therapie: Spasmolytika (Buscopan, Mebeverin), Laxantien, Antidiarrhoika, Stressabbau, Psychotherapie" },
+    { fach:"Diarrhö", umg:"Durchfall", answer:"Definition: ≥ 3 flüssige Stühle/Tag; infektiös (Bakterien, Viren, Parasiten) vs. nicht-infektiös (CED, Tumor, RDS, Unverträglichkeit, Medikamente); Therapie: Flüssigkeitsersatz oral/IV mit Ringer-Laktat oder NaCl" },
+    { fach:"Tenesmen", umg:"schmerzhafter Stuhldrang ohne Entleerung", answer:"typisch bei entzündlichen Darmerkrankungen" },
+    { fach:"FAP (Familiäre adenomatöse Polyposis)", umg:"> 100 Adenome im Kolon", answer:"autosomal-dominant; entartet unweigerlich maligne → prophylaktische Proktokolektomie mit ileoanaler Pouch-Anastomose" },
+    { fach:"HGIN (high-grade intraepitheliale Neoplasie)", umg:"schwere Zellveränderung", answer:"ernsthafte Präkanzerose; im Gegensatz zu LGIN (leichte Veränderung, geringes Entartungsrisiko)" },
+    { fach:"Piecemeal-Resektion", umg:"stückweise Abtragung", answer:"große, flache Polypen können nicht en bloc entfernt werden → höheres Risiko für Gewebereste" },
+    { fach:"Guajak-Test", umg:"biochemischer Nachweis von okkultem (unsichtbarem) Blut im Stuhl", answer:"Screening auf Kolonkarzinom ab 50. Lebensjahr" },
+    { fach:"Vorsorgekoloskopie", umg:"Darmkrebsvorsorge", answer:"ab 50 Jahren alle 10 Jahre; bei familiärer Belastung ab 40–45 Jahren" },
+    { fach:"Kontrollintervalle nach Polypektomie", umg:"", answer:"≤ 5 mm nicht-neoplastisch → alle 10 J.; 1–2 Adenome < 1 cm → alle 5 J.; ≥ 3 Adenome / > 1 cm / villöse Histologie / HGIN → alle 3 J." },
+    { fach:"Endoskopische Befunde bei Colitis ulcerosa", umg:"", answer:"diffuse Rötung, Kontaktblutungen, unscharf begrenzte Ulzerationen, Pseudopolypen" },
+    { fach:"Endoskopische Befunde bei Morbus Crohn", umg:"", answer:"aphthöse Läsionen, scharf begrenzte landkartenartige Ulzerationen, Stenosen, Fisteln, Pflastersteinrelief" },
+    { fach:"Colitis ulcerosa (Charakteristik)", umg:"", answer:"kontinuierliche Ausbreitung von distal nach proximal; streng auf Kolon + Mukosa/Submukosa beschränkt; immer blutig-schleimige Diarrhö" },
+    { fach:"Morbus Crohn (Charakteristik)", umg:"", answer:"diskontinuierlicher, transmuraler Befall des gesamten GI-Trakts; meist terminales Ileum + Kolon; Autoimmunreaktion; Komplikationen: Fisteln, Abszesse, Stenosen" },
+    { fach:"Toxisches Megakolon", umg:"akute, lebensbedrohliche Dickdarmerweiterung bei schwerer Kolitis", answer:"meist Komplikation einer CED → sofortige Intensivtherapie oder Operation" },
+    { fach:"Divertikulitis", umg:"Entzündung von Darmausstülpungen (= Linksappendizitis)", answer:"begünstigt durch ballaststoffarme Ernährung + Obstipation; unkompliziert → konservativ; kompliziert → operativ" },
+    { fach:"Zöliakie", umg:"Glutenunverträglichkeit", answer:"immunologische Reaktion der Dünndarmschleimhaut → Zottenatrophie → Malabsorption; Klinik: reizdarmähnlich + Steatorrhö + vorgewölbtes Abdomen + Tabaksbeutelgesäß" },
+    { fach:"Pseudopolypen", umg:"harmlose Schleimhautinseln bei Colitis ulcerosa", answer:"keine echten Tumorneubildungen; stehen bleibende Inseln bei schwerer entzündlicher Zerstörung der Umgebung" },
+    { fach:"Resektionen nach Lokalisation", umg:"", answer:"Zäkum/Ascendens → Hemikolektomie rechts; Transversum → Transversumresektion; Descendens/Sigma → Hemikolektomie links / Sigmaresektion" },
+    { fach:"Risikofaktoren Kolonkarzinom", umg:"", answer:"positive FA, FAP, HNPCC, kolorektale Adenome, Colitis ulcerosa, Diabetes Typ 2, Alter > 40 J., Adipositas, fleisch-/fettreiche Ernährung" },
+    { fach:"Schutzfaktoren Kolonkarzinom", umg:"", answer:"körperliche Aktivität, ballaststoff-, gemüse- und kalziumreiche Ernährung" },
+  ]},
+  { type:"dd", title:"Differentialdiagnosen", badge:"badge-dd", items:[
+    { fach:"Rektumkarzinom", umg:"Mastdarmkrebs" },
+    { fach:"Divertikulitis", umg:"Entzündung von Darmausstülpungen" },
+    { fach:"Morbus Crohn / Colitis ulcerosa", umg:"chronisch-entzündliche Darmerkrankungen" },
+    { fach:"Kolonpolypen", umg:"gutartige Schleimhautwucherungen" },
+    { fach:"Hämorrhoiden", umg:"vergrößerte Gefäßpolster im Analbereich" },
+    { fach:"Ischämische Kolitis", umg:"Durchblutungsstörung des Darms" },
+    { fach:"Appendizitis", umg:"Blinddarmentzündung" },
+    { fach:"Infektiöse Kolitis", umg:"bakteriell, viral oder parasitär bedingte Darmentzündung" },
+  ]},
+  { type:"instr", title:"Instrumente – Koloskopie + Funktion", badge:"badge-instr", items:[
+    { fach:"Flexibles Koloskop", umg:"Darmspiegelgerät", func:"→ Visualisierung der gesamten Kolonmukosa vom Rektum bis zur Ileozökalklappe" },
+    { fach:"CO₂-Insufflationsgerät", umg:"Kohlendioxideinblasgerät", func:"→ Entfaltung des Kolonlumens für bessere Sicht; CO₂ wird schnell resorbiert → weniger Blähungen als Luft" },
+    { fach:"Diathermieschlinge", umg:"Elektroschneidschlinge", func:"→ Abtragung von Polypen durch elektrischen Strom (Polypektomie)" },
+    { fach:"Biopsiezange", umg:"Gewebezange", func:"→ Entnahme von Gewebeproben; Polypen ≤ 5 mm" },
+    { fach:"Hämostaseclip", umg:"Blutstillungsklammer", func:"→ mechanische Blutstillung nach Polypektomie oder Schleimhautverletzung" },
+    { fach:"Injektionsnadel", umg:"Einspritznadel", func:"→ submuköse Unterspritzung vor Mukosaresektion (Hebung des Gewebes)" },
+    { fach:"Absaugkanal", umg:"Absaugvorrichtung", func:"→ Entfernung von Sekret, Stuhlresten und Luft" },
+    { fach:"Untersuchungshandschuh (DRU)", umg:"für digitale rektale Untersuchung", func:"→ Ausschluss von Stenosen im Analkanal vor Einführen des Koloskops" },
+    { fach:"Spül-Saug-System", umg:"Spülvorrichtung", func:"→ Reinigung der Schleimhaut von Blut und Stuhlresten für bessere Sicht" },
+  ]},
+  { type:"komp", title:"Komplikationen – Koloskopie", badge:"badge-komp", items:[
+    { fach:"Perforation (Darmdurchbruch)", umg:"Durchbruch der Darmwand", note:"→ Clipverschluss oder Notfall-OP; Patient muss nüchtern bleiben!" },
+    { fach:"Postpolypektomie-Blutung", umg:"Nachblutung nach Polypenentfernung", note:"→ Rekoloskopie, Hämostaseclip + Koagulation" },
+    { fach:"Hypoxie", umg:"O₂-Mangel durch Sedierung", note:"→ O₂-Gabe, Flumazenil (Midazolam-Antagonist)" },
+    { fach:"Milzläsion", umg:"Verletzung der Milz durch Zug", note:"selten, bei Mobilisierung der linken Flexur" },
+    { fach:"Vasovagale Reaktion", umg:"Kreislaufkollaps durch Schmerz / Stress" },
+    { fach:"Infektionen / Sepsis", umg:"Keimverschleppung durch das Instrument" },
+  ]},
+  { type:"befunde", title:"Koloskopische Befunde – Was sage ich dem Oberarzt?", badge:"badge-befunde", items:[
+    { fach:"Hyperplastischer Polyp", umg:"klein, glatt, gestielt oder sessil", answer:"Eine kleine, gutartige Schleimhautwucherung ohne Krebsrisiko." },
+    { fach:"Tubuläres Adenom", umg:"drüsige Struktur, gestielt", answer:"Eine Drüsenwucherung mit geringem bis mittlerem Krebsrisiko – muss entfernt werden." },
+    { fach:"Villöses Adenom", umg:"zottig, blumenkohlförmig, breitbasig", answer:"Eine zottige, blumenkohlförmige Wucherung mit hohem Krebsrisiko." },
+    { fach:"LGIN (Low-grade Neoplasie)", umg:"leichte Zellveränderung", answer:"Die Zellen zeigen leichte Veränderungen, aber noch keine ernsthafte Krebsvorstufe." },
+    { fach:"HGIN (High-grade Neoplasie)", umg:"schwere Dysplasie", answer:"Die Zellen sind stark verändert – das ist eine ernsthafte Krebsvorstufe, sofortige Entfernung nötig." },
+    { fach:"Sessiler serratierter Polyp (SSP)", umg:"flach, schwer erkennbar, rechtseitig", answer:"Ein flacher, schwer erkennbarer Polyp vor allem rechts im Dickdarm – erhöhtes Krebsrisiko." },
+    { fach:"Pseudopolypen (bei CU)", umg:"Schleimhautinseln bei Colitis ulcerosa", answer:"Das sind harmlose Schleimhautinseln, die bei einer schweren Colitis stehen geblieben sind – kein echter Tumor." },
+    { fach:"CU-Befund", umg:"diffuse Rötung von rektal aufsteigend", answer:"Die Schleimhaut ist durchgehend gerötet und blutet leicht auf Berührung – typisch für eine Colitis ulcerosa." },
+    { fach:"Crohn-Befund", umg:"diskontinuierlich, Pflastersteinrelief", answer:"Die Entzündung ist fleckenförmig, mit tiefen Geschwüren und einem Pflastersteinmuster – typisch für Morbus Crohn." },
+    { fach:"Kolonkarzinom", umg:"stenosierende, ulzerierte Masse", answer:"Es gibt eine stenosierende, ulzerierte Masse im Dickdarm – Verdacht auf Darmkrebs, Biopsien wurden entnommen." },
+  ]},
+]},
+
+// ══════════════════════════════════════════════
+// 4. APPENDIZITIS
+// ══════════════════════════════════════════════
+{ id:"appendizitis", title:"4. Appendizitis", sections:[
+  { type:"tableau", title:"Tableau clinique (Klinisches Bild)", badge:"badge-tableau", items:[
+    { fach:"Schmerzwanderung", umg:"von periumbilikal → rechter Unterbauch", note:"⚠ Leitsymptom" },
+    { fach:"Inappetenz", umg:"Appetitlosigkeit" },
+    { fach:"Nausea / Emesis", umg:"Übelkeit / Erbrechen" },
+    { fach:"Subfebrile Temperatur", umg:"leicht erhöhte Temperatur 37,5–38°C", note:"Achsel-Rektum-Differenz > 1°C typisch" },
+    { fach:"Loslassschmerz (Blumberg-Zeichen)", umg:"Schmerz beim plötzlichen Loslassen der Bauchdecke" },
+    { fach:"McBurney-Punkt", umg:"Mitte zwischen Nabel und rechtem Beckenkamm" },
+    { fach:"Lanz-Punkt", umg:"rechtes Drittel der Linie zwischen beiden Beckenkämmen" },
+    { fach:"Rovsing-Zeichen", umg:"Schmerz rechts beim retrograden Ausstreichen des Kolons" },
+    { fach:"Psoas-Zeichen", umg:"Schmerz beim Anheben des rechten Beins", note:"→ retrozökale Lage" },
+    { fach:"Douglas-Schmerz", umg:"Druckschmerz des Peritoneums bei der DRU" },
+  ]},
+  { type:"def", title:"Definitionen – Arzt-Arzt-Gespräch", badge:"badge-def", items:[
+    { fach:"Entstehung der Appendizitis", umg:"", answer:"Lumenobstruktion (intraluminal: Kotsteine; extraluminal: geschwollene Lymphknoten) → Sekretstau → Druckerhöhung → Minderperfusion → bakterielle Invasion" },
+    { fach:"Entzündungsstadien", umg:"", answer:"1. Katarrhalisch (Ödem + Hyperämie, einziges reversibles Stadium); 2. Ulzero-phlegmonös (eitrige Infiltration); 3. Gangränös (Wandnekrose, hohe Perforationsgefahr); 4. Perforiert (gedeckt = Abszess / ungedeckt = diffuse Peritonitis)" },
+    { fach:"Fauler Frieden", umg:"plötzlicher Schmerznachlass nach Perforation", answer:"⚠ Druckabfall im Lumen → täuschende Schmerzfreiheit → dann Peritonitis → akut lebensbedrohlich!" },
+    { fach:"Peritonitis", umg:"Bauchfellentzündung", answer:"Zeichen: brettartiger Bauch, Loslassschmerz; Therapie: IV-Breitbandantibiose + chirurgische Herdsanierung mit Naht und Lavage" },
+    { fach:"Therapeutische Optionen Appendizitis", umg:"", answer:"Standard: laparoskopische Appendektomie; Konservativ (nur katarrhalisch): Bettruhe + Nahrungskarenz + Antibiotika (Cefuroxim + Metronidazol); Freie Perforation: offene Appendektomie + Abdominallavage + Drainage; Perityphlitischer Abszess: CT/US-Drainage + Intervallappendektomie" },
+    { fach:"SIRS-Kriterien", umg:"systemisches Entzündungsreaktions-Syndrom", answer:"≥ 2 von 4: Temperatur > 38°C oder < 36°C; Herzfrequenz > 90/min; Atemfrequenz > 20/min; Leukozyten > 12.000 oder < 4.000/µl" },
+    { fach:"Sepsis vs. Bakteriämie", umg:"", answer:"Sepsis: lebensbedrohliche Organdysfunktion durch dysregulierte Immunantwort auf Infektion; Bakteriämie: nur laborchemischer Nachweis von Bakterien im Blut, ohne zwingende Symptome" },
+    { fach:"Kokardenphänomen (Sonographie)", umg:"zielscheibenförmiges Bild", answer:"Wechsel von echoarmen und echoreichen Wandschichten; klassisches Zeichen bei entzündlicher Wandverdickung / Invagination (auch bei Morbus Crohn + Divertikulitis)" },
+    { fach:"Mechanischer vs. paralytischer Ileus", umg:"", answer:"Mechanisch: physikalisches Hindernis (Tumor, Adhäsionen, Kotsteine) → OP; Paralytisch: funktionelle Darmlähmung (postoperativ, Peritonitis) → konservativ; Diagnose: Röntgen-Abdomen stehend (Spiegelbildungen) oder CT" },
+    { fach:"Exsudat vs. Transsudat", umg:"", answer:"Exsudat: entzündlich, protein- und zellreich; Transsudat: nicht-entzündlich, protein- und zellarm (Herzinsuffizienz, Leberzirrhose)" },
+    { fach:"Empyem vs. Abszess", umg:"", answer:"Empyem: Eiter in präformiertem (bereits vorhandenen) Hohlraum (Pleura, Gallenblase); Abszess: Eiter in neu gebildetem Hohlraum durch Gewebenekrose" },
+    { fach:"Warum CO₂ bei Laparoskopie?", umg:"", answer:"nicht brennbar (sicher beim Elektrokauter) + hohe Diffusionskapazität (schnell über Lunge abgeatmet) → minimales Embolierisiko" },
+    { fach:"Thromboseprophylaxe nach Appendektomie", umg:"", answer:"Medikamentös: NMH subkutan (z.B. Enoxaparin); Physikalisch: Thromboseprophylaxestrümpfe; Funktionell: Frühmobilisation (effektivste Maßnahme)" },
+    { fach:"Postoperativer Kostaufbau", umg:"", answer:"Nüchtern → Flüssigkeit (Tee) → Suppe/pürierte Kost → leichte Vollkost → normale Vollkost" },
+    { fach:"Kontraindikationen Laparoskopie", umg:"", answer:"diffuse Peritonitis → offene OP mit Abdominallavage; ausgeprägte Adhäsionen; massiver Meteorismus; hämodynamische Instabilität (Schock)" },
+    { fach:"Meckel-Divertikel", umg:"angeborene Ausstülpung des Ileums", answer:"30–60 cm vor der Ileozökalklappe; unvollständige Rückbildung des Ductus omphaloentericus; kann ektopes Magenepithel enthalten → schmerzlose Blutung" },
+    { fach:"Diagnostik bei V.a. Appendizitis", umg:"", answer:"Labor: BB, CRP, BSG, β-HCG (Ausschluss EUG bei Frauen!), Urinstatus; Bildgebung: Sonographie (Kokardenbild, Appendixdurchmesser ≥ 6mm), CT-Abdomen mit KM" },
+  ]},
+  { type:"dd", title:"Differentialdiagnosen", badge:"badge-dd", items:[
+    { fach:"Gastroenteritis", umg:"Magen-Darm-Entzündung" },
+    { fach:"Cholezystitis", umg:"Gallenblasenentzündung" },
+    { fach:"Pankreatitis", umg:"Bauchspeicheldrüsenentzündung" },
+    { fach:"Morbus Crohn", umg:"chronisch-entzündliche Darmerkrankung" },
+    { fach:"Divertikulitis", umg:"Entzündung von Darmausstülpungen" },
+    { fach:"Extrauteringravidität", umg:"Eileiterschwangerschaft", note:"⚠ β-HCG bei allen Frauen!" },
+    { fach:"Adnexitis", umg:"Eileiterentzündung" },
+    { fach:"Ovarialtorsion", umg:"Eierstockverdrehung" },
+    { fach:"Urolithiasis", umg:"Harnsteine" },
+    { fach:"Pyelonephritis", umg:"Nierenbeckenentzündung" },
+    { fach:"Meckel-Divertikel", umg:"angeborene Dünndarmausstülpung" },
+  ]},
+  { type:"instr", title:"Instrumente – Laparoskopische Appendektomie + Funktion", badge:"badge-instr", items:[
+    { fach:"Veress-Nadel", umg:"Insufflationsnadel", func:"→ Anlage des Pneumoperitoneums (Bauchgasraum) durch periumbilicale Inzision" },
+    { fach:"CO₂-Insufflationsgerät", umg:"Gaseinleitungsgerät", func:"→ Einleitung von CO₂ bis 12–15 mmHg → Sicht + Arbeitsraum in der Bauchhöhle" },
+    { fach:"Trokar 10/12 mm", umg:"Hohlstab (groß)", func:"→ Zugangskanal für Laparoskop; periumbilikal platziert" },
+    { fach:"Trokare 5 mm (2×)", umg:"Hohlstäbe (klein)", func:"→ Zugangskanal für Arbeitsinstrumente (suprapubisch + linker Unterbauch)" },
+    { fach:"30°-Laparoskop", umg:"Bauchspiegelgerät", func:"→ Visualisierung der Bauchhöhle + Führung der Instrumente" },
+    { fach:"Atraumatische Faszzange", umg:"gewebeschonende Greifzange", func:"→ Halten und Mobilisieren der Appendix ohne Gewebsverletzung" },
+    { fach:"Elektrohaken", umg:"Koagulationshaken", func:"→ Durchtrennung + Koagulation des Mesoappendix und der A. appendicularis" },
+    { fach:"Ultraschallschere (Harmonicschere)", umg:"Schneid- und Blutstillungsinstrument", func:"→ gewebeschonende Durchtrennung durch Ultraschallwellen; blutsparender als Elektrohaken" },
+    { fach:"Endoloop (Ligaturchlaufe)", umg:"Abbindeschlinge", func:"→ 2× Ligatur der Appendixbasis vor Durchtrennung" },
+    { fach:"Bergebeutel", umg:"Extraktionsbeutel", func:"→ ⚠ kontaminationsfreie Bergung der Appendix über den Trokarkanal; verhindert Keimverschleppung" },
+    { fach:"Spüll-Saug-System", umg:"Spülvorrichtung", func:"→ Spülung der Bauchhöhle bei Eiter oder Blut; Hämostasekontrolle" },
+    { fach:"Nadelhalter + Nahtmaterial", umg:"Nahtinstrument", func:"→ Fasziennaht am 10/12-mm-Trokarzugang + Hautnaht" },
+  ]},
+  { type:"komp", title:"Komplikationen – Appendektomie", badge:"badge-komp", items:[
+    { fach:"Intraabdomineller Abszess", umg:"Eiteransammlung in der Bauchhöhle", note:"→ CT-Abdomen → CT-gesteuerte Drainage" },
+    { fach:"Stumpfinsuffizienz", umg:"undichte Stumpfnaht der Appendixbasis", note:"→ Relaparoskopie" },
+    { fach:"Ileus (Darmverschluss)", umg:"postoperative Darmlähmung oder Verwachsung", note:"→ Nahrungskarenz, ggf. operative Therapie" },
+    { fach:"Intraoperative Blutung", umg:"", note:"→ Koagulation + Clip; Gefäßverletzung → Konversion" },
+    { fach:"Darmverletzung", umg:"", note:"→ Übernähung oder Resektion" },
+    { fach:"Wundinfekt", umg:"Entzündung der Operationswunde" },
+    { fach:"Narbenbruch (Inzisionshiernie)", umg:"Bruch durch die Operationsnarbe", note:"Spätfolge" },
+  ]},
+  { type:"befunde", title:"Intraoperative Befunde Appendektomie – Was sage ich dem Oberarzt?", badge:"badge-befunde", items:[
+    { fach:"Katarrhalisch", umg:"geschwollen, gerötet, Wand intakt", answer:"Die Appendix ist geschwollen und gerötet, aber die Wand ist noch intakt – das früheste Stadium." },
+    { fach:"Phlegmonös / ulzero-phlegmonös", umg:"eitrige Wandinfiltration", answer:"Die gesamte Wand ist eitrig durchsetzt – das klassische Bild der akuten Appendizitis." },
+    { fach:"Gangränös", umg:"livide, nekrotische Wand", answer:"Die Wand ist abgestorben und livide verfärbt – kurz vor dem Durchbruch." },
+    { fach:"Perforiert – gedeckt", umg:"Abszess hält Perforation ab", answer:"Die Appendix ist durchgebrochen, aber umliegendes Gewebe hat die Perforation abgedichtet – ein Abszess hat sich gebildet." },
+    { fach:"Perforiert – frei", umg:"Darminhalt in der Bauchhöhle", answer:"Die Appendix ist durchgebrochen und Darminhalt hat sich in der Bauchhöhle verteilt – das ist eine Bauchfellentzündung." },
+    { fach:"Appendixkarzinoid", umg:"Tumor an der Appendixspitze", answer:"Es gibt einen kleinen Tumor an der Appendixspitze – unter 2 cm reicht die Entfernung, über 2 cm brauchen wir eine größere Operation." },
+    { fach:"Negative Appendektomie", umg:"makroskopisch unauffällige Appendix", answer:"Die Appendix war makroskopisch unauffällig – wir schicken sie trotzdem zur Gewebeuntersuchung." },
+  ]},
+]},
+
+// ══════════════════════════════════════════════
+// 5. CHOLEZYSTITIS
+// ══════════════════════════════════════════════
+{ id:"cholezystitis", title:"5. Cholezystitis", sections:[
+  { type:"tableau", title:"Tableau clinique (Klinisches Bild)", badge:"badge-tableau", items:[
+    { fach:"Rechtsseitiger Oberbauchschmerz", umg:"Leitsymptom" },
+    { fach:"Kolikartiger Schmerz", umg:"wellenartiger Schmerzanfall", note:"bei Gallenkolik" },
+    { fach:"Schmerzausstrahlung in rechte Schulter / Rücken", umg:"charakteristisch!" },
+    { fach:"Nausea / Emesis", umg:"Übelkeit / Erbrechen" },
+    { fach:"Pyrexie + Rigor", umg:"Fieber + Schüttelfrost" },
+    { fach:"Murphy-Zeichen", umg:"schmerzbedingter Inspirationsstopp", note:"pathognomonisch für akute Cholezystitis!" },
+    { fach:"Ikterus", umg:"Gelbsucht", note:"→ Stein im Hauptgallengang" },
+    { fach:"Abwehrspannung", umg:"harte Bauchdecke", note:"→ Komplikation" },
+    { fach:"Charcot-Trias", umg:"Schmerz + Ikterus + Fieber/Schüttelfrost", note:"typisch für Cholangitis!" },
+    { fach:"Acholischer Stuhl + dunkler Urin", umg:"heller Stuhl + brauner Urin", note:"bei posthepatischem Verschlussikterus" },
+  ]},
+  { type:"def", title:"Definitionen – Arzt-Arzt-Gespräch", badge:"badge-def", items:[
+    { fach:"Cholelithiasis", umg:"Gallensteinleiden", answer:"Ungleichgewicht zwischen steinbildenden Stoffen (Cholesterin, Bilirubin) und lösenden Stoffen (Gallensäuren) → Kristallisation" },
+    { fach:"Cholezystitis", umg:"Gallenblasenentzündung", answer:"kalkulös (~90%): Gallenstein im Ductus cysticus → Gallestau → bakterielle Entzündung; akalkulös (~10%): Stressgalle bei Schwerkranken (Sepsis, große OP) durch Durchblutungsstörung" },
+    { fach:"Gallensteintypen", umg:"", answer:"Cholesterin-/Gemischtsteine ~80%; Pigmentsteine (Bilirubinsteine) ~10% (bei Hämolyse); Kalksteine ~10%" },
+    { fach:"6-F-Regel", umg:"Risikofaktoren für Gallensteine", answer:"Female, Fat, Fertile, Forty, Fair, Family" },
+    { fach:"Charcot-Trias", umg:"typisch für Cholangitis", answer:"Schmerz im rechten Oberbauch + Ikterus + Fieber mit Schüttelfrost" },
+    { fach:"Murphy-Zeichen", umg:"schmerzbedingter Inspirationsstopp beim Einatmen", answer:"Untersucher drückt rechten Oberbauch unter dem Rippenbogen → pathognomonisch für akute Cholezystitis" },
+    { fach:"Courvoisier-Zeichen", umg:"schmerzlose, prall-elastisch tastbare Gallenblase + Ikterus", answer:"bei langsamer Gallengangsobstruktion durch Tumor (≠ Steine: diese führen zu schrumpfender Gallenblase)" },
+    { fach:"Mirizzi-Syndrom", umg:"Stein im Ductus cysticus komprimiert Ductus hepaticus communis von außen", answer:"→ Verschlussikterus, obwohl Hauptgallengang selbst frei ist" },
+    { fach:"Prähepatischer Ikterus", umg:"durch Hämolyse", answer:"indirektes Bilirubin↑" },
+    { fach:"Intrahepatischer Ikterus", umg:"durch Leberzellschaden (Hepatitis, Zirrhose)", answer:"direktes + indirektes Bilirubin↑" },
+    { fach:"Posthepatischer Ikterus", umg:"durch mechanischen Gallestau", answer:"direktes Bilirubin↑ + dunkler Urin + heller Stuhl; Gallenstein oder Pankreaskopfkarzinom" },
+    { fach:"Ikterus-Schwellenwerte", umg:"", answer:"an Skleren ab 2 mg/dl; an der Haut ab 3 mg/dl sichtbar" },
+    { fach:"Cholestaseparameter", umg:"Zeichen von Gallestau im Labor", answer:"AP↑, GGT↑, direktes Bilirubin↑" },
+    { fach:"Kolikartige Schmerzen (Entstehung)", umg:"wellenartige Schmerzattacken", answer:"durch krampfhafte Kontraktion glatter Muskulatur (Gallenwege / Harnleiter) gegen ein Hindernis (Stein)" },
+    { fach:"Sonographische Zeichen der Cholezystitis", umg:"", answer:"Wandverdickung > 3 mm; Dreischichtung (Wandödem); Konkremente mit dorsalem Schallschatten; perizystische Flüssigkeit" },
+    { fach:"Calot-Dreieck", umg:"anatomisches Präparationsdreieck", answer:"begrenzt durch: Ductus cysticus + Ductus hepaticus communis + Leberunterfläche; darin verläuft die A. cystica" },
+    { fach:"Critical View of Safety (CVS)", umg:"sichere Sichtbestätigung vor dem Clippen", answer:"⚠ Ductus cysticus + A. cystica müssen klar isoliert sein; niemals blind clippen → Gallengangsläsion!" },
+    { fach:"Therapie-Algorithmus Gallensteinleiden", umg:"", answer:"Asymptomatische Cholezystolithiasis → Watchful Waiting; Symptomatische Cholezystitis → laparoskopische Cholezystektomie innerhalb 24–72h; Choledocholithiasis → ERCP zur Steinextraktion → dann elektive Cholezystektomie" },
+    { fach:"Warum heller Stuhl + dunkler Urin bei Gallestau?", umg:"", answer:"Fehlende Galle im Darm → kein Sterkobilin → heller (lehmfarbener) Stuhl; direktes Bilirubin weicht ins Blut → renale Ausscheidung → dunkler Urin" },
+    { fach:"Virchow-Trias (Thrombose)", umg:"", answer:"Verlangsamter Blutfluss (Stase z.B. Immobilität) + Gefäßwandschaden (OP, Trauma) + Hyperkoagulabilität (Adipositas, Pille, Faktor-V-Leiden)" },
+    { fach:"Platzbauch", umg:"plötzliches Aufreißen der Operationswunde am Bauch", answer:"nach chirurgischem Eingriff; Risikofaktoren: Adipositas, Nikotin, schlechte Wundheilung" },
+    { fach:"Komplikationen unbehandelte Cholezystitis", umg:"", answer:"Gallenblasenempyem; Gangrän (Wandnekrose); Perforation → Peritonitis / Abszess; Gallensteinileus (Fistelbildung in Darm); Porzellangallenblase (Verkalkung = Präkanzerose)" },
+  ]},
+  { type:"dd", title:"Differentialdiagnosen", badge:"badge-dd", items:[
+    { fach:"Choledocholithiasis", umg:"Gallensteine im Hauptgallengang" },
+    { fach:"Cholangitis", umg:"Gallengangsentzündung" },
+    { fach:"Pankreatitis", umg:"Bauchspeicheldrüsenentzündung" },
+    { fach:"Appendizitis", umg:"Blinddarmentzündung" },
+    { fach:"Ulcus ventriculi / duodeni", umg:"Magengeschwür" },
+    { fach:"Myokardinfarkt (Hinterwand)", umg:"atypisch → EKG + Troponin!" },
+    { fach:"Pleuritis / Pneumonie rechts", umg:"Brust-/Lungenentzündung rechts" },
+  ]},
+  { type:"instr", title:"Instrumente – Laparoskopische Cholezystektomie + Funktion", badge:"badge-instr", items:[
+    { fach:"Veress-Nadel", umg:"Insufflationsnadel", func:"→ Anlage des Pneumoperitoneums (CO₂-Gasfüllung der Bauchhöhle)" },
+    { fach:"Trokare (4×: 1×10mm + 3×5mm)", umg:"Hohlstäbe", func:"→ Zugangskanäle für Laparoskop und Arbeitsinstrumente" },
+    { fach:"30°-Laparoskop", umg:"Bauchspiegelgerät", func:"→ Visualisierung der Bauchhöhle; Darstellung des Calot-Dreiecks" },
+    { fach:"Atraumatische Faszzange", umg:"gewebeschonende Greifzange", func:"→ Retraktion der Gallenblase am Fundus für kraniale Sicht auf Calot-Dreieck" },
+    { fach:"Elektrohaken", umg:"Koagulationshaken", func:"→ Präparation des Calot-Dreiecks; Ablösung der Gallenblase vom Leberbett" },
+    { fach:"Dissektor", umg:"Präparationsinstrument", func:"→ stumpfe Präparation zur Darstellung von Ductus cysticus + A. cystica" },
+    { fach:"Clipapplikator + Titanclips", umg:"Klammersetzer + Metallklammern", func:"→ je 2× Ligatur von Ductus cysticus und A. cystica vor Durchtrennung" },
+    { fach:"Ultraschallschere (Harmonicschere)", umg:"Schneid- und Koagulationsinstrument", func:"→ gewebeschonende Ablösung der Gallenblase vom Leberbett" },
+    { fach:"Cholangiographiekatheter", umg:"Gallengangskatheter", func:"→ intraoperative Röntgendarstellung der Gallengänge; zum Ausschluss von Choledocholithiasis" },
+    { fach:"C-Bogen (Röntgengerät)", umg:"mobiles Röntgengerät", func:"→ intraoperative Bildgebung der Gallengänge bei Cholangiographie" },
+    { fach:"Bergebeutel", umg:"Extraktionsbeutel", func:"→ kontaminationsfreie Bergung der Gallenblase über den Trokarkanal" },
+    { fach:"Drainage (optional)", umg:"Ableitungsschlauch", func:"→ Ableitung von Blut oder Gallensekret postoperativ; bei kompliziertem Verlauf" },
+  ]},
+  { type:"komp", title:"Komplikationen – Cholezystektomie", badge:"badge-komp", items:[
+    { fach:"Gallengangsläsion", umg:"Verletzung des Ductus hepaticus oder choledochus", note:"⚠ schwerwiegend → Abbruch + Cholangiographie + Hepatikojejunostomie" },
+    { fach:"Galleleck", umg:"Gallenaustritt aus Stumpf oder Leckage", note:"→ Sonographie → ERCP → Stenteinlage" },
+    { fach:"Nachblutung aus A. cystica", umg:"Blutung nach Clip-Dislokation", note:"→ Clip + Koagulation, ggf. Konversion zur offenen OP" },
+    { fach:"Gallenblasenruptur", umg:"Einriss der Gallenblase intraoperativ", note:"→ Bergebeutel + ausgiebige Peritonealspülung (cave: Gallensteinsaat!)" },
+    { fach:"Postoperative Cholangitis", umg:"Gallengangsentzündung", note:"→ Antibiose → ERCP-Drainage" },
+    { fach:"Konversion (Umstieg auf offene OP)", umg:"bei unübersichtlicher Anatomie oder Komplikation" },
+    { fach:"Pneumothorax / Gasembolie", umg:"durch CO₂-Insufflation", note:"sehr selten" },
+  ]},
+  { type:"befunde", title:"Intraoperative Befunde Cholezystektomie – Was sage ich dem Oberarzt?", badge:"badge-befunde", items:[
+    { fach:"Cholezystolithiasis", umg:"Steine in der Gallenblase", answer:"Die Gallenblase enthält Steine." },
+    { fach:"Wandverdickung > 3 mm", umg:"entzündlich verdickte Wand", answer:"Die Gallenblasenwand ist über 3 mm verdickt – ein Zeichen der Entzündung." },
+    { fach:"Empyem der Gallenblase", umg:"Gallenblase mit Eiter gefüllt", answer:"Die Gallenblase ist mit Eiter gefüllt – eine bakterielle Infektion hat sich dazugesellt." },
+    { fach:"Gangränöse Cholezystitis", umg:"nekrotische Wandanteile", answer:"Teile der Gallenblasenwand sind abgestorben – hohes Durchbruchrisiko." },
+    { fach:"Hydrops der Gallenblase", umg:"prall mit klarem Schleim gefüllt", answer:"Die Gallenblase ist prall mit klarem Schleim gefüllt, weil ein Stein den Ausgang blockiert." },
+    { fach:"Porzellangallenblase", umg:"vollständig verkalkte Wand", answer:"Die Gallenblasenwand ist vollständig verkalkt – das ist eine Krebsvorstufe." },
+    { fach:"Critical View of Safety nicht erreicht", umg:"Anatomie unklar, Clippen gefährlich", answer:"Die Anatomie ist nicht sicher genug dargestellt – ich clippe nicht und steige auf die offene Operation um." },
+    { fach:"Gallenblasenruptur intraoperativ", umg:"Gallenblase eingerissen", answer:"Die Gallenblase ist eingerissen, Steine sind in die Bauchhöhle gefallen – wir spülen ausgiebig und bergen alle Steine." },
+  ]},
+]},
+
+// ══════════════════════════════════════════════
+// 6. LEISTENHERNIE
+// ══════════════════════════════════════════════
+{ id:"hernie", title:"6. Leistenhernie", sections:[
+  { type:"tableau", title:"Tableau clinique (Klinisches Bild)", badge:"badge-tableau", items:[
+    { fach:"Reponible Schwellung in der Leiste", umg:"zurückschiebbare Beule", note:"beim Pressen / Husten stärker" },
+    { fach:"Hustenanprall", umg:"Zunahme der Schwellung beim Husten" },
+    { fach:"Indolente Hernie", umg:"schmerzlose Beule", note:"bei unkomplizierter Hernie" },
+    { fach:"Inkarzeration (Einklemmung)", umg:"", note:"⚠ NOTFALL: plötzlich stärkste Schmerzen + harte irreponible Schwellung + Ileussymptomatik (kein Stuhl, kein Wind, Erbrechen)" },
+  ]},
+  { type:"def", title:"Definitionen – Arzt-Arzt-Gespräch", badge:"badge-def", items:[
+    { fach:"Hernie – Aufbau", umg:"Leistenbruch", answer:"Bruchsack (Ausstülpung des Peritoneum parietale) + Bruchinhalt (Omentum majus / Darmschlinge) + Bruchpforte (Lücke in der Bauchwand)" },
+    { fach:"Indirekte Leistenhernie", umg:"", answer:"lateral der epigastrischen Gefäße; tritt durch inneren Leistenring; oft angeboren; kann bis ins Skrotum reichen" },
+    { fach:"Direkte Leistenhernie", umg:"", answer:"medial der epigastrischen Gefäße; tritt direkt durch Bauchwand im Hesselbach-Trigonum; immer erworben; meist ältere Männer" },
+    { fach:"Lichtenstein-Verfahren", umg:"offene Netzimplantation", answer:"spannungsfreier Verschluss der Bruchpforte; Polypropylennetz ~6×11 cm; Rezidivrate < 1%; Standard bei Erwachsenen" },
+    { fach:"TAPP / TEP", umg:"laparoskopische Netzverfahren", answer:"TAPP (transabdominell) / TEP (extraperitoneal); minimalinvasiv-posterior; bei Rezidivhernie nach anteriorem Zugang bevorzugt" },
+    { fach:"Shouldice-Verfahren", umg:"offene OP ohne Netz", answer:"Raffung der Hinterwand des Leistenkanals; heute selten" },
+    { fach:"Inkarzeration", umg:"akute Einklemmung von Bruchinhalt in der Bruchpforte", answer:"→ Ischämie → Nekrose → akutes Abdomen; Symptome: plötzlich stärkste Schmerzen + harte irreponible Schwellung + Ileussymptomatik; Therapie: sofortige Notfall-OP" },
+    { fach:"Operationsindikation bei Frauen", umg:"", answer:"immer operieren! Verwechslungsgefahr mit Schenkelhernie (höheres Inkarzerationsrisiko) + schlechteres Ansprechen auf konservative Therapie" },
+    { fach:"Operationsindikation bei Männern", umg:"", answer:"bei Symptomen oder Wachstum; bei Beschwerdefreiheit: Watchful Waiting möglich; jede Inkarzeration ist Notfall" },
+    { fach:"Prolene vs. Vicryl", umg:"", answer:"Prolene: nicht-resorbierbar → dauerhaft für Netzfixation; Vicryl: resorbierbar → innere Gewebeschichten + Hautnaht" },
+    { fach:"Kompartmentsyndrom", umg:"kritischer Druckanstieg in Muskellogen", answer:"→ Ischämie → Gewebeuntergang; chirurgischer Notfall → Fasziotomie" },
+    { fach:"Postoperatives Management nach Leistenhernie", umg:"", answer:"Sandsack lokal (Hämatomprophylaxe); Pflasterwechsel alle 2 Tage; Fadenzug nach 7–10 Tagen; Schonung 3–5 Tage; kein Heben > 5 kg für 2–3 Wochen" },
+    { fach:"3 gefährdete Nerven im OP-Feld", umg:"", answer:"N. ilioinguinalis (Leistennerv); N. iliohypogastricus (Bauchnerv); R. genitalis des N. genitofemoralis (Genitalast)" },
+  ]},
+  { type:"dd", title:"Differentialdiagnosen", badge:"badge-dd", items:[
+    { fach:"Schenkelhernie", umg:"unterhalb des Leistenbands", note:"höheres Inkarzerationsrisiko! → bei Frauen immer ausschließen" },
+    { fach:"Lymphknotenschwellung inguinal", umg:"reaktiv oder maligne" },
+    { fach:"Leistenabszess", umg:"Eiteransammlung in der Leiste" },
+    { fach:"Lipom", umg:"gutartige Fettgeschwulst" },
+    { fach:"Varikosis der V. saphena magna", umg:"Krampfader in der Leiste" },
+    { fach:"Hydrozele", umg:"Wasseransammlung im Hodensack" },
+  ]},
+  { type:"instr", title:"Instrumente – Lichtenstein-OP + Funktion", badge:"badge-instr", items:[
+    { fach:"Skalpell", umg:"Operationsmesser", func:"→ Hautinzision von 6–8 cm parallel zum Ligamentum inguinale" },
+    { fach:"Elektrokauter", umg:"elektrisches Schneid- und Koagulationsinstrument", func:"→ Durchtrennung von Fascia Camper + Fascia Scarpa + Blutstillung" },
+    { fach:"Wundhaken (Wundspreizer)", umg:"Gewebehaken", func:"→ Offenhalten der Wunde für gute Übersicht" },
+    { fach:"Präparierschere + Dissektor", umg:"Präparationsinstrumente", func:"→ Identifikation + Schonung der 3 Leistennerven (N. ilioinguinalis, N. iliohypogastricus, R. genitalis)" },
+    { fach:"Vessel-Loop", umg:"Gummizügel", func:"→ Anschlingen des Funiculus spermaticus (Samenstrangs) für bessere Übersicht auf die Hinterwand" },
+    { fach:"Polypropylennetz (~6×11 cm)", umg:"Kunststoffnetz", func:"→ spannungsfreie Verstärkung der Hinterwand des Canalis inguinalis; verhindert Rezidiv; lateraler Schlitz für Samenstrang" },
+    { fach:"Nadelhalter", umg:"Nahtinstrument", func:"→ Führen der Nadel bei Netzfixation und Wundverschluss" },
+    { fach:"Prolene (nichtresorbierbares Nahtmaterial)", umg:"bleibendes Nahtmaterial", func:"→ dauerhafte Fixation des Netzes am Tuberculum pubicum und Ligamentum inguinale" },
+    { fach:"Resorbierbares Nahtmaterial (Vicryl)", umg:"lösendes Nahtmaterial", func:"→ Verschluss der Externusaponeurose + Subkutannaht + Hautnaht" },
+  ]},
+  { type:"komp", title:"Komplikationen – Lichtenstein-OP", badge:"badge-komp", items:[
+    { fach:"Nervenläsion (N. ilioinguinalis)", umg:"Leistennerv-Verletzung", note:"→ Taubheitsgefühl / chronischer Schmerz → Physiotherapie, ggf. Neurektomie" },
+    { fach:"Netzinfektion", umg:"Infektion des Kunststoffnetzes", note:"→ Antibiose → ggf. Netzexplantation" },
+    { fach:"Hämatom", umg:"Blutansammlung in der Leiste", note:"→ Kompressionsverband, ggf. Ausräumung" },
+    { fach:"Serom", umg:"Flüssigkeitsansammlung", note:"→ Punktion bei symptomatischem Befund" },
+    { fach:"Rezidivhernie", umg:"erneuter Bruch", note:"→ laparoskopische Revision: TAPP oder TEP" },
+    { fach:"Hodenschrumpfung (Atrophie)", umg:"durch Verletzung der Hodengefäße", note:"sehr selten" },
+    { fach:"Darmverletzung bei Inkarzeration", umg:"durch Nekrose", note:"→ Laparotomie → Darmnaht / Resektion" },
+  ]},
+  { type:"befunde", title:"Intraoperative Befunde Lichtenstein – Was sage ich dem Oberarzt?", badge:"badge-befunde", items:[
+    { fach:"Indirekte Leistenhernie", umg:"durch inneren Leistenring, oft angeboren", answer:"Der Bruch geht durch den natürlichen Kanal in der Leiste – oft angeboren." },
+    { fach:"Direkte Leistenhernie", umg:"durch Hesselbach-Trigonum, immer erworben", answer:"Der Bruch drückt direkt durch eine Schwachstelle der Bauchwand – immer erworben." },
+    { fach:"Pantalon-Hernie", umg:"beide Hernientypen gleichzeitig", answer:"Es gibt beide Hernientypen gleichzeitig auf derselben Seite." },
+    { fach:"Leerer Bruchsack", umg:"nur Bauchfell ausgestülpt", answer:"Der Bruchsack enthält kein Organ – nur das Bauchfell hat sich ausgestülpt." },
+    { fach:"Bruchinhalt Omentum majus", umg:"Bauchfettgewebe im Bruchsack", answer:"Bauchfettgewebe ist in den Bruchsack eingetreten." },
+    { fach:"Bruchinhalt Darm", umg:"Darmschlinge im Bruchsack", answer:"Eine Darmschlinge ist in den Bruchsack eingetreten." },
+    { fach:"Inkarzeration", umg:"Darm eingeklemmt und nicht mehr durchblutet", answer:"Der Darm im Bruchsack ist eingeklemmt und nicht mehr durchblutet – das ist ein chirurgischer Notfall." },
+  ]},
+]},
+
+// ══════════════════════════════════════════════
+// 7. TONSILLITIS
+// ══════════════════════════════════════════════
+{ id:"tonsillitis", title:"7. Tonsillitis", sections:[
+  { type:"tableau", title:"Tableau clinique – Chronische Tonsillitis", badge:"badge-tableau", items:[
+    { fach:"Rezidivierende Tonsillitis", umg:"Leitsymptom: ≥ 3–7× / Jahr" },
+    { fach:"Odynophagie", umg:"Schluckschmerz" },
+    { fach:"Dysphagie", umg:"Schluckbeschwerden" },
+    { fach:"Foetor ex ore", umg:"Mundgeruch" },
+    { fach:"Tonsillenhypertrophie", umg:"vergrößerte Mandeln" },
+    { fach:"Kryptenfüllung (Detritus)", umg:"weißliche Beläge in den Mandelgrübchen" },
+    { fach:"Zervikale Lymphadenopathie", umg:"Halsdrüsenschwellung beidseits" },
+    { fach:"Subfebrile Temperaturen", umg:"leicht erhöhte Temperatur" },
+    { fach:"Peritonsillarabszess", umg:"Mandelabszess", note:"⚠ NOTFALL: unilateral, Uvula-Deviation, Kieferklemme" },
+    { fach:"Rheumatisches Fieber / Glomerulonephritis", umg:"systemische Komplikationen nach Streptokokken", note:"immer aktiv erfragen!" },
+  ]},
+  { type:"def", title:"Definitionen – Arzt-Arzt-Gespräch", badge:"badge-def", items:[
+    { fach:"Waldeyer-Rachenring", umg:"lymphatischer Ring im Rachen", answer:"Tonsilla pharyngea (Rachenmandel) + Tonsilla palatina (Gaumenmandel) + Tonsilla lingualis (Zungenmandel) + Tonsilla tubaria (Tubenmandel)" },
+    { fach:"Tonsillektomie", umg:"vollständige Mandelentfernung inklusive Kapsel", answer:"Standard bei Erwachsenen; Indikation: Sorensen-Kriterien; immer Vollnarkose wegen Aspirationsrisiko" },
+    { fach:"Tonsillotomie", umg:"Mandelverkleinerung (nur Teil der Mandel)", answer:"Standard bei Kindern; geringeres Nachblutungsrisiko; kein vollständiges Entfernen der Kapsel" },
+    { fach:"Sorensen-Kriterien", umg:"OP-Indikationsschlüssel", answer:"< 3 Episoden/Jahr → keine OP; 3–5 → OP erwägen; ≥ 6 → klare OP-Indikation" },
+    { fach:"Weitere OP-Indikationen", umg:"", answer:"Peritonsillarabszess (Intervalltonsillektomie); Malignomverdacht; obstruktives Schlafapnoesyndrom (OSAS); Glomerulonephritis / rheumatisches Fieber nach Streptokokken; PFAPA-Syndrom" },
+    { fach:"Nachblutung (häufigste Komplikation)", umg:"", answer:"Tag 0 (intraoperativ) ODER Tag 5–8 (Fibrinlyse!); Blutungsquelle meist A. facialis; ⚠ → sofortige Notaufnahme → Revisionsoperation in Vollnarkose" },
+    { fach:"Warum Vollnarkose bei Tonsillektomie?", umg:"", answer:"Sicherung der Atemwege; Verhinderung einer Aspiration von Blut / Sekret in die Lunge; RAE-Tubus (geformter HNO-Beatmungsschlauch)" },
+    { fach:"Stationäre Verweildauer nach Tonsillektomie", umg:"", answer:"3–5 Tage wegen hohem Nachblutungsrisiko an Tag 0 und Tag 5–8" },
+    { fach:"Rheumatisches Fieber", umg:"systemische Komplikation nach Streptokokken-Tonsillitis", answer:"Herzklappenschäden + Arthritis + Chorea minor (Bewegungsstörung)" },
+    { fach:"Poststreptokokken-Glomerulonephritis", umg:"Nierenschädigung nach Streptokokkeninfektion", answer:"→ Proteinurie, Hämaturie, Ödembildung" },
+    { fach:"Von-Willebrand-Syndrom", umg:"häufigste angeborene Blutgerinnungsstörung", answer:"Mangel / Fehlfunktion des Von-Willebrand-Faktors; typisch bei Frauen: starke Regelblutung + blaue Flecken; ⚠ präoperativ immer Gerinnung prüfen! (Quick, PTT, Thrombozyten)" },
+    { fach:"Ursachen der Tonsillitis", umg:"", answer:"Akut: meist viral (Adenoviren); Chronisch-rezidivierend: meist bakteriell (beta-hämolysierende Streptokokken Gruppe A)" },
+    { fach:"Gefährdete Nerven bei Tonsillektomie", umg:"", answer:"N. lingualis (Geschmack + Gefühl der Zunge); N. hypoglossus (Zungenbewegung)" },
+  ]},
+  { type:"dd", title:"Differentialdiagnosen", badge:"badge-dd", items:[
+    { fach:"Mononukleose (EBV)", umg:"Pfeiffer-Drüsenfieber", note:"⚠ Amoxicillin/Ampicillin KI → Exanthem! Sportverbot 3–4 Wo. wegen Milzruptur-Gefahr" },
+    { fach:"Pharyngitis", umg:"Rachenentzündung" },
+    { fach:"Scharlach (Scarlatina)", umg:"Streptokokken-Exanthem" },
+    { fach:"Herpangina", umg:"Coxsackie-Virus" },
+    { fach:"Peritonsillarabszess", umg:"→ Inzision + Drainage, ggf. Tonsillektomie" },
+    { fach:"Tonsillenlymphom", umg:"bösartiger Tumor der Mandel" },
+    { fach:"PFAPA-Syndrom", umg:"periodisches Fieber + Aphthen + Pharyngitis + Adenitis" },
+    { fach:"Plaut-Vincent-Angina", umg:"einseitige Geschwürbildung durch Fusobakterien" },
+    { fach:"Diphtherie", umg:"Corynebacterium diphtheriae – grau-weißliche Membran" },
+  ]},
+  { type:"instr", title:"Instrumente – Tonsillektomie + Funktion", badge:"badge-instr", items:[
+    { fach:"RAE-Tubus", umg:"geformter HNO-Beatmungsschlauch", func:"→ orotracheale Intubation; nach unten gebogene Form hält das OP-Feld frei" },
+    { fach:"Schulterrolle + Mundsperrer (Rosenbach-Spatel / Dingman)", umg:"Mundöffner", func:"→ Halsüberstreckung + Freilegung der Tonsillarloge (Mandelgrube) für optimale Sicht" },
+    { fach:"Skalpell / Elektrokauter", umg:"Schneidinstrument", func:"→ Inzision der Mukosa am vorderen Gaumenbogen; Eröffnung des Zugangs zur Tonsillärkapsel" },
+    { fach:"Tonsillenzange", umg:"Mandelgreifzange", func:"→ Fassen der Tonsille + mediale Retraktion (Zurückziehen) für Präparation entlang der Kapsel" },
+    { fach:"Raspatorium", umg:"Ablöselöffel", func:"→ stumpfe Ablösung der Tonsille aus der Tonsillarloge entlang der Kapsel" },
+    { fach:"Präparierschere", umg:"chirurgische Schere", func:"→ scharfe Durchtrennung von Gewebsverbindungen bei der Dissektion" },
+    { fach:"Tonsillenschlinge", umg:"Drahtschlinge", func:"→ Umschlingen und Abtrennung des unteren Tonsillenpols; vollständige Entnahme der Tonsille" },
+    { fach:"Bipolare Koagulationszange", umg:"gezielte Wärmezange", func:"→ präzise Blutstillung ohne Schaden an umliegendem Gewebe; nur zwischen den Branchen" },
+    { fach:"Yankauer-Sauger", umg:"Absaugvorrichtung", func:"→ Absaugung von Blut + Sekret im Rachen während der OP" },
+    { fach:"Tupfer + Ligaturfaden", umg:"Kompressionsmaterial / Faden", func:"→ Tupferkompression bei kleinen Blutungen; Ligatur bei größeren Gefäßen" },
+  ]},
+  { type:"komp", title:"Komplikationen – Tonsillektomie", badge:"badge-komp", items:[
+    { fach:"Tonsillarnachblutung (⚠ Tag 5–7!)", umg:"Nachblutung wenn Fibrinbeläge lösen", note:"→ Notaufnahme → Revisionsoperation in Vollnarkose; Blutungsquelle meist A. facialis" },
+    { fach:"Intraoperative Blutung (A. palatina)", umg:"Gaumenarterie-Blutung", note:"→ Kompression → Ligatur → ggf. Angiographie + Embolisation" },
+    { fach:"Aspiration (Blut)", umg:"Einatmen von Blut", note:"→ Seitenlage + Absaugen + O₂ + Antibiose" },
+    { fach:"Wundinfektion", umg:"Infektion der Tonsillarloge" },
+    { fach:"N. lingualis-Läsion", umg:"Geschmacksstörung + Taubheitsgefühl der Zunge" },
+    { fach:"N. hypoglossus-Läsion", umg:"Zungenbewegungsstörung → Logopädie" },
+    { fach:"Verletzung von Zähnen / Gaumen / Uvula", umg:"durch Mundsperrer" },
+    { fach:"Rhinophonie", umg:"nasaler Stimmklang", note:"vorübergehend durch Schwellung des weichen Gaumens" },
+  ]},
+  { type:"befunde", title:"Intraoperative Befunde Tonsillektomie – Was sage ich dem Oberarzt?", badge:"badge-befunde", items:[
+    { fach:"Chronisch entzündete Tonsillen", umg:"vergrößert, Eiter in Krypten", answer:"Die Mandeln sind vergrößert, mit Eiter in den Krypten – typisch für eine chronische Entzündung." },
+    { fach:"Peritonsillarabszess", umg:"Eiter zwischen Kapsel und Rachenwand", answer:"Zwischen der Mandelkapsel und der Rachenwand hat sich Eiter angesammelt – die Uvula ist zur Gegenseite verschoben." },
+    { fach:"Tonsillenhyperplasie ohne Entzündung", umg:"Vergrößerung ohne Entzündungszeichen", answer:"Die Mandeln sind vergrößert, aber nicht entzündet – sie verlegen mechanisch den Atemweg." },
+    { fach:"Tonsillenkarzinom", umg:"einseitig verhärtet, ulzeriert", answer:"Eine Mandel ist einseitig verhärtet und ulzeriert – das ist verdächtig für einen Tumor, Biopsie obligat." },
+    { fach:"Nachblutung Tag 0", umg:"direkt nach OP", answer:"Es blutet direkt nach der Operation aus der Tonsillarloge – sofortige Revision unter Narkose." },
+    { fach:"Nachblutung Tag 5–8", umg:"Fibrinbeläge lösen sich", answer:"Die Fibrinbeläge haben sich gelöst und ein Gefäß hat wieder angefangen zu bluten – erneute Operation nötig." },
+  ]},
+]},
+
+// ══════════════════════════════════════════════
+// 8. LYMPHADENOPATHIE
+// ══════════════════════════════════════════════
+{ id:"lymph", title:"8. Lymphadenopathie", sections:[
+  { type:"tableau", title:"Tableau clinique (Klinisches Bild)", badge:"badge-tableau", items:[
+    { fach:"Schmerzlose Lymphadenopathie", umg:"indolente Lymphknotenschwellung", note:"⚠ Alarmsignal → immer Malignom ausschließen!" },
+    { fach:"Druckdolente Lymphknoten", umg:"schmerzhafte Schwellung", note:"eher reaktiv / benigne (akute Entzündung)" },
+    { fach:"Derbe, gummiartige Konsistenz", umg:"hart, gummiartig", note:"→ Lymphom" },
+    { fach:"Verbackene Lymphknoten", umg:"nicht verschieblich, mit Umgebung verwachsen", note:"→ Malignom / chronische Infektion (TBC)" },
+    { fach:"B-Symptomatik", umg:"Fieber > 38°C + Nachtschweiß + Gewichtsverlust > 10%/6 Mon.", note:"⚠ immer aktiv erfragen! → Lymphom" },
+    { fach:"Hepatosplenomegalie", umg:"vergrößerte Leber + Milz" },
+    { fach:"Pruritus (generalisierter Juckreiz)", umg:"Juckreiz ohne Hautläsion", note:"typisch für Hodgkin-Lymphom" },
+    { fach:"Pel-Ebstein-Fieber", umg:"zyklisch wellenförmiges Fieber", note:"bei malignen Lymphomen" },
+  ]},
+  { type:"def", title:"Definitionen – Arzt-Arzt-Gespräch", badge:"badge-def", items:[
+    { fach:"Indikation zur Lymphknotenbiopsie", umg:"", answer:"operative Exzision (Ganzentnahme!) bei: Größenprogredienz / Dauer > 4 Wochen; harten, indolenten, nicht verschieblichen LK; B-Symptomatik; generalisiertem Pruritus; ⚠ Feinnadelpunktion NICHT ausreichend! (keine Beurteilung der Lymphknotenarchitektur)" },
+    { fach:"Morbus Hodgkin", umg:"malignes B-Zell-Lymphom", answer:"2 Altersgipfel: 20–30 J. und hohes Alter; Ätiologie: EBV, HIV, Zytostatika, Strahlung; Klinik: derbe, indolente, nicht verschiebliche LK meist zervikal + B-Symptomatik + Hepatosplenomegalie + Pruritus; Goldstandard: Lymphknotenexstirpation; Pathognomonisch: Reed-Sternberg-Riesenzellen (mehrkernig) + Hodgkin-Zellen (einkernig); Therapie: Radio-Chemotherapie nach Ann-Arbor-Stadium" },
+    { fach:"Reed-Sternberg-Riesenzellen", umg:"pathognomonische Zellen des Hodgkin-Lymphoms", answer:"mehrkernig; dazu Hodgkin-Zellen (einkernig); Popcorn-Zellen (L&H-Zellen) = atypische B-Zellen beim NLPHL" },
+    { fach:"Ann-Arbor-Klassifikation", umg:"Staging des Lymphoms", answer:"I: 1 Region; II: ≥ 2 Regionen, gleiche Zwerchfellseite; III: beide Zwerchfellseiten; IV: diffuser extranodaler Befall (Knochenmark, Leber); + A (ohne) / B (mit B-Symptomatik)" },
+    { fach:"Palpationskriterien der Lymphknoten", umg:"", answer:"Weich + druckdolent + verschieblich → akute Entzündung; Indolent + verschieblich → Autoimmun / Speicherkrankheit; Hart + indolent + nicht verschieblich + verbacken → Malignom / chronische Infektion (TBC)" },
+    { fach:"Virchow-Lymphknoten", umg:"links supraklavikulärer Lymphknoten", answer:"→ Metastase gastrointestinaler Tumoren, v.a. Magenkarzinom" },
+    { fach:"EBV-Mononukleose (Pfeiffer-Drüsenfieber)", umg:"", answer:"Leitsymptom-Trias: fieberhafte Tonsillitis + generalisierte Lymphadenopathie + Splenomegalie; ⚠ Amoxicillin/Ampicillin KI → Exanthem! Sportverbot 3–4 Wo. (Milzruptur!); Therapie: rein symptomatisch" },
+    { fach:"Toxoplasmose", umg:"Infektion durch Toxoplasma gondii", answer:"durch Katzenkot / rohes Fleisch; Immunkompetente: meist asymptomatisch, keine Therapie; Schwangere < 16. SSW: Spiramycin; ab 16. SSW: Pyrimethamin + Sulfadiazin + Folinsäure" },
+    { fach:"HRZE-Schema (Tuberkulose)", umg:"Standardtherapie der TBC", answer:"2 Monate Initialphase: Isoniazid + Rifampicin + Pyrazinamid + Ethambutol; dann 4 Monate: Rifampicin + Isoniazid" },
+    { fach:"Pel-Ebstein-Fieber", umg:"zyklisch wellenförmiges Fieber", answer:"bei malignen Lymphomen; fieberhafte Phasen wechseln mit fieberfreien Intervallen von je 3–10 Tagen" },
+    { fach:"Leukämieklassifikation", umg:"", answer:"ALL (akut lymphatisch): häufigster Krebs im Kindesalter; AML (akut myeloisch): häufiger bei Erwachsenen; CLL (chronisch lymphatisch): indolentes NHL; CML (chronisch myeloisch): Philadelphia-Chromosom" },
+    { fach:"SCLC vs. NSCLC (Bronchialkarzinom)", umg:"", answer:"SCLC (kleinzellig): extrem schnelles Wachstum, frühe Metastasen, fast immer inoperabel → palliative Radio-Chemotherapie; NSCLC (nicht-kleinzellig): langsameres Wachstum, im Frühstadium operabel → Lobektomie + mediastinale Lymphadenektomie" },
+    { fach:"Diagnostik bei Lymphadenopathie", umg:"", answer:"Labor: BB + Differenzialblutbild, CRP, LDH, HIV-Serologie, EBV, Toxoplasma, TSH, Leberenzyme, Rachenabstrich (Streptokokken-Schnelltest), IGRA-Test (TBC); Bildgebung: Sonographie Hals + Abdomen, Röntgen-Thorax, CT/MRT zum Staging; Invasiv: Panendoskopie, Knochenmarksbiopsie" },
+    { fach:"Benigne DD der Lymphadenopathie", umg:"", answer:"Reaktive Lymphadenitis (EBV, HIV, TBC, Toxoplasmose, Streptokokken); Sklerosierung nach Infektion; Medikamentös bedingt (Allopurinol, Phenytoin, Isoniazid)" },
+    { fach:"Maligne DD der Lymphadenopathie", umg:"", answer:"Morbus Hodgkin; Non-Hodgkin-Lymphome; Metastasen von HNO-Tumoren (Nasopharynx-, Tonsillenkarzinom) oder Bronchialkarzinom; Virchow-Lymphknoten (links supraklavikulär) → GI-Tumor" },
+    { fach:"Warum keine Feinnadelpunktion bei LK-Diagnostik?", umg:"", answer:"erlaubt keine Beurteilung der Lymphknotenarchitektur → für Lymphomdiagnose unzureichend; operative Exzision (Ganzentnahme) ist Standard" },
+  ]},
+  { type:"dd", title:"Differentialdiagnosen", badge:"badge-dd", items:[
+    { fach:"Reaktive Lymphadenitis", umg:"durch Infektion (EBV, Streptokokken, TBC)" },
+    { fach:"Mononukleose (EBV)", umg:"Pfeiffer-Drüsenfieber" },
+    { fach:"Toxoplasmose", umg:"durch Katzenkot / rohes Fleisch" },
+    { fach:"HIV-Infektion", umg:"generalisierte Lymphadenopathie" },
+    { fach:"Tuberkulose", umg:"v.a. nach Auslandsaufenthalt" },
+    { fach:"Morbus Hodgkin", umg:"Hodgkin-Lymphom" },
+    { fach:"Non-Hodgkin-Lymphom (NHL)", umg:"diverse B- und T-Zell-Lymphome" },
+    { fach:"Lymphknotenmetastasen", umg:"Tochtergeschwülste" },
+    { fach:"Sarkoidose (Morbus Boeck)", umg:"Granulomatöse Bindegewebserkrankung" },
+    { fach:"Lupus erythematodes (SLE)", umg:"Autoimmunerkrankung" },
+  ]},
+  { type:"instr", title:"Instrumente – Zervikale Lymphknotenexstirpation + Funktion", badge:"badge-instr", items:[
+    { fach:"Skalpell", umg:"Operationsmesser", func:"→ Hautinzision 3–5 cm in Halsfalte (Langer-Linie) über dem tastbaren Lymphknoten" },
+    { fach:"Elektrokauter", umg:"elektrisches Schneid- und Koagulationsinstrument", func:"→ Durchtrennung von Subkutis + Platysma (Halsmuskel) + Blutstillung" },
+    { fach:"Wundhaken (Wundspreizer)", umg:"Gewebehaken", func:"→ Offenhalten der Wunde für übersichtliche Freilegung des Lymphknotens" },
+    { fach:"Präparierschere", umg:"chirurgische Schere", func:"→ Eröffnung der Lamina superficialis fasciae cervicalis; stumpfe + scharfe Präparation zum Lymphknoten" },
+    { fach:"Dissektor", umg:"Präparationsinstrument", func:"→ stumpfe, gewebeschonende Freipräparation des Lymphknotens; Kapselintegrität erhalten!" },
+    { fach:"Nervenstimulator", umg:"Nervenreizgerät", func:"→ intraoperative Identifikation von Nerven durch elektrischen Impuls" },
+    { fach:"Neuromonitor", umg:"Nervenmessgerät", func:"→ kontinuierliche Überwachung der Nervenfunktion während der Präparation (v.a. N. accessorius, N. hypoglossus)" },
+    { fach:"Bipolare Koagulationszange", umg:"gezielte Wärmezange", func:"→ präzise Blutstillung ohne Schaden an Nerven und Gefäßen der Umgebung" },
+    { fach:"Ligaturfaden + Clipapplikator", umg:"Abbindefaden + Klammersetzer", func:"→ Ligatur / Koagulation / Clipping der Lymphgefäßstiele vor vollständiger Exstirpation" },
+    { fach:"Redon-Drainage", umg:"Saugdrainageröhrchen", func:"→ postoperative Ableitung von Wundsekretion + Blut; Hämatomprophylaxe" },
+    { fach:"Steriles Probenröhrchen", umg:"für den Lymphknoten", func:"→ ⚠ nativ (ohne Konservierungsmittel) + unfixiert → sofortige Einsendung zur Schnellschnittuntersuchung oder Paraffinhistologie" },
+  ]},
+  { type:"komp", title:"Komplikationen – Lymphknotenexstirpation", badge:"badge-komp", items:[
+    { fach:"⚠ Hämatom mit Atemwegskompression", umg:"Blutansammlung komprimiert die Trachea", note:"→ sofortige operative Ausräumung + Reintubation!" },
+    { fach:"N. accessorius-Läsion", umg:"Schulternerv → hängende Schulter", note:"→ Dokumentation + Physiotherapie" },
+    { fach:"Ramus marginalis mandibulae-Läsion", umg:"Unterkieferrandast → hängender Mundwinkel", note:"→ Dokumentation + Logopädie" },
+    { fach:"N. hypoglossus-Läsion", umg:"Zungennerv → Zungenbewegungsstörung", note:"→ Dokumentation + Logopädie" },
+    { fach:"Chylusfistel (linksseitig)", umg:"Milchsaftfistel durch Verletzung des Ductus thoracicus", note:"→ Drainage + Druckverband + fettarme Ernährung; ggf. operative Revision" },
+    { fach:"Pneumothorax", umg:"Luftansammlung im Brustkorb durch Pleuraverletzung", note:"→ Thoraxröntgen → Thoraxdrainage" },
+    { fach:"V. jugularis interna-Verletzung", umg:"innere Halsvene", note:"→ sofortige Kompression → Gefäßnaht" },
+    { fach:"A. carotis communis-Verletzung", umg:"gemeinsame Halsschlagader", note:"⚠ → Kompression → Gefäßchirurgie → notfallmäßige Rekonstruktion" },
+  ]},
+  { type:"befunde", title:"Intraoperative Befunde Lymphknotenexstirpation – Was sage ich dem Oberarzt?", badge:"badge-befunde", items:[
+    { fach:"Reaktiver Lymphknoten", umg:"weich, druckdolent, verschieblich", answer:"Der Lymphknoten ist weich und druckschmerzhaft – das spricht für eine gutartige Entzündungsreaktion." },
+    { fach:"Lymphomverdächtiger Lymphknoten", umg:"gummiartig fest, indolent", answer:"Der Lymphknoten ist gummiartig fest und schmerzlos – das ist verdächtig für ein Lymphom." },
+    { fach:"Metastatischer Lymphknoten", umg:"hart, verbacken, nicht verschieblich", answer:"Der Lymphknoten ist hart und mit dem umliegenden Gewebe verwachsen – das spricht für Krebsabsiedlungen." },
+    { fach:"Virchow-Lymphknoten", umg:"links supraklavikulär, verhärtet", answer:"Ein vergrößerter Lymphknoten links am Schlüsselbein – klassisches Zeichen für einen Magen- oder anderen Bauchkrebs." },
+    { fach:"Kapsel intakt", umg:"Lymphknoten in einem Stück entnommen", answer:"Die Kapsel ist nicht eingerissen – das ist wichtig, damit keine Tumorzellen streuen." },
+    { fach:"Kapselruptur", umg:"Kapsel eingerissen", answer:"Die Kapsel ist eingerissen – das war unbedingt zu vermeiden, weil Tumorzellen sich verteilt haben könnten." },
+    { fach:"Schnellschnitt positiv", umg:"intraoperativer Bösartigkeitsbefund", answer:"Der Pathologe hat intraoperativ bösartige Zellen bestätigt – wir müssen das weitere Vorgehen anpassen." },
+    { fach:"Schnellschnitt negativ", umg:"kein bösartiger Befund intraoperativ", answer:"Der intraoperative Befund zeigt keine bösartigen Zellen – wir warten das endgültige Ergebnis ab." },
+  ]},
+]},
+
+// ══════════════════════════════════════════════
+// 9. AKUTE PANKREATITIS
+// ══════════════════════════════════════════════
+{ id:"pankreatitis", title:"9. Pankreatitis", sections:[
+  { type:"tableau", title:"Tableau clinique (Klinisches Bild)", badge:"badge-tableau", items:[
+    { fach:"Plötzliche, gürtelförmige Oberbauchschmerzen", umg:"Leitsymptom", note:"Ausstrahlung in den Rücken" },
+    { fach:"Nausea / Emesis", umg:"Übelkeit / Erbrechen" },
+    { fach:"Meteorismus", umg:"Blähungen" },
+    { fach:"Gummibauch", umg:"elastische Abwehrspannung OHNE Loslassschmerz", note:"wichtiger Unterschied zur Peritonitis (mit Loslassschmerz)!" },
+    { fach:"Hypovolämischer Schock", umg:"Kreislaufschock", note:"durch Flüssigkeitsverlust in den 3. Raum; bei schwerem Verlauf" },
+    { fach:"Infizierte Nekrosen / Abszesse", umg:"bakterielle Infektion von Gewebeuntergang", note:"schwerer Verlauf" },
+  ]},
+  { type:"def", title:"Definitionen – Arzt-Arzt-Gespräch", badge:"badge-def", items:[
+    { fach:"Ursachen akute Pankreatitis", umg:"", answer:"Biliär (Gallenstein verlegt Papilla Vateri → Autodigestion): häufigste Ursache; Alkohol; Idiopathisch; Iatrogen (nach ERCP); Metabolisch (Hyperkalzämie, Hypertriglyzeridämie); Trauma; Virusinfektion (Mumps)" },
+    { fach:"Autodigestion", umg:"Selbstverdauung der Bauchspeicheldrüse", answer:"durch frühzeitig aktivierte Pankreasenzyme (Trypsin, Lipase) im Pankreasgewebe selbst" },
+    { fach:"Lipase als spezifischster Parameter", umg:"", answer:"> 3× Normalwert → Diagnose der akuten Pankreatitis; Amylase ist weniger spezifisch" },
+    { fach:"Gummibauch vs. Peritonitis", umg:"", answer:"Gummibauch: elastische Abwehrspannung OHNE Loslassschmerz (Pankreatitis); Brettartiger Bauch mit Loslassschmerz: Peritonitis (Perforation, freies Gas)" },
+    { fach:"Therapie akute Pankreatitis", umg:"", answer:"Stationäre Aufnahme (ggf. ICU); aggressive IV-Flüssigkeitsgabe mit Ringer-Laktat; frühe enterale Ernährung sobald schmerzfrei und kein Erbrechen; Analgesie: Metamizol / Pethidin / Buprenorphin (⚠ Morphin vermeiden → Sphinkter-Oddi-Spasmus!); Antibiotika nur bei bakteriellen Komplikationen; bei biliärer Ursache mit Cholangitis/Obstruktion: ERCP" },
+    { fach:"Warum kein Morphin bei Pankreatitis?", umg:"", answer:"Morphin verursacht Sphinkter-Oddi-Spasmus → verschlechtert den Gallenabfluss → Pankreatitis-Aggravation" },
+    { fach:"ERCP bei biliärer Pankreatitis", umg:"endoskopische retrograde Cholangiopankreatikographie", answer:"bei persistierender Gallengangsobstruktion oder Cholangitis → Steinextraktion + Sphinkterotomie; danach elektive Cholezystektomie" },
+    { fach:"Dritter Raum", umg:"Flüssigkeitsverlust ins Gewebe / Bauchhöhle", answer:"bei Pankreatitis: Entzündungsreaktion → massive Exsudation → hypovolämischer Schock → aggressive IV-Flüssigkeitsgabe" },
+    { fach:"Pseudozyste", umg:"Flüssigkeitsansammlung nach Pankreatitis", answer:"entsteht durch Kapselbildung um nekrotisches Gewebe oder Pankreassekret; kann infizieren → Abszess" },
+    { fach:"Komplikationen akute Pankreatitis", umg:"", answer:"Hypovolämischer Schock; Pankreasnekrosen; Infizierte Nekrosen / Abszesse (→ CT-gesteuerte Drainage oder OP); Pseudozysten; ARDS (Lungenversagen); Multiorganversagen bei nekrotisierender Pankreatitis" },
+  ]},
+  { type:"dd", title:"Differentialdiagnosen", badge:"badge-dd", items:[
+    { fach:"Cholezystitis / Cholelithiasis", umg:"Gallenblasenentzündung / Gallensteine" },
+    { fach:"Ulcus ventriculi (Perforation)", umg:"perforiertes Magengeschwür" },
+    { fach:"Mesenterialischämie", umg:"Durchblutungsstörung des Darms" },
+    { fach:"Myokardinfarkt (Hinterwand)", umg:"atypisch → EKG + Troponin!" },
+    { fach:"Nierenkolik", umg:"Harnsteinschmerz" },
+    { fach:"Aortendissektion", umg:"Riss in der Aortenwand → sofortiges CT!" },
+  ]},
+  { type:"instr", title:"Diagnose + Therapieinstrumente – Pankreatitis + Funktion", badge:"badge-instr", items:[
+    { fach:"Abdomensonographie", umg:"Ultraschall Bauch", func:"→ Nachweis von Ödemen, Nekrosen, Gallensteine im Ductus cysticus; erste Bildgebung bei V.a. Pankreatitis" },
+    { fach:"CT-Abdomen mit Kontrastmittel", umg:"Computertomographie", func:"→ Beurteilung von Nekroseausdehnung, Abszessen, Pseudozysten; Schweregradeinteilung (Balthazar-Score)" },
+    { fach:"ERCP + Sphinkterotomie", umg:"Gallengangsspiegelung + Erweiterung des Gallengangsausgangs", func:"→ Steinextraktion bei biliärer Pankreatitis mit Obstruktion oder Cholangitis" },
+    { fach:"Intravenöser Zugang + Ringer-Laktat", umg:"Venenverweilkanüle + Infusion", func:"→ aggressive Volumensubstitution (bis 250–500 ml/h) → Gegensteuerung des dritten Raums" },
+    { fach:"Ernährungssonde (enteral)", umg:"Sonde in Magen / Dünndarm", func:"→ frühe enterale Ernährung schützt die Darmschleimhaut + verhindert Translokation von Bakterien" },
+    { fach:"CT-gesteuerte Drainage", umg:"bildgeführtes Drainagerohr", func:"→ Ableitung infizierter Nekrosen oder Abszesse; Alternative zur offenen OP" },
+  ]},
+  { type:"komp", title:"Komplikationen – Akute Pankreatitis", badge:"badge-komp", items:[
+    { fach:"Hypovolämischer Schock", umg:"Kreislaufversagen durch Flüssigkeitsverlust in 3. Raum" },
+    { fach:"Pankreasnekrosen", umg:"Gewebeuntergang der Bauchspeicheldrüse" },
+    { fach:"Infizierte Nekrosen / Abszess", umg:"bakterielle Infektion der Nekrosen", note:"→ CT-gesteuerte Drainage oder OP" },
+    { fach:"Pseudozysten", umg:"Flüssigkeitsansammlungen nach Nekrose", note:"→ können infizieren" },
+    { fach:"ARDS (Acute Respiratory Distress Syndrome)", umg:"akutes Lungenversagen", note:"durch Entzündungsmediatoren; bei schwerem Verlauf" },
+    { fach:"Multiorganversagen", umg:"bei nekrotisierender Pankreatitis", note:"→ Intensivstation" },
+  ]},
+]},
+
+// ══════════════════════════════════════════════
+// 10. ALLGEMEINE BEGRIFFE
+// ══════════════════════════════════════════════
+{ id:"allgemein", title:"10. Allgemeine Begriffe", sections:[
+  { type:"def", title:"Wichtige klinische Definitionen + Antworten", badge:"badge-def", items:[
+    { fach:"Virchow-Trias (Thrombose)", umg:"", answer:"Stase (verlangsamter Blutfluss, z.B. Immobilität) + Gefäßwandschaden (OP, Trauma) + Hyperkoagulabilität (Adipositas, Pille, Faktor-V-Leiden)" },
+    { fach:"Peritonitis-Therapie", umg:"Bauchfellentzündung", answer:"sofort IV-Breitbandantibiose + chirurgische Herdsanierung mit Naht und Lavage" },
+    { fach:"Platzbauch", umg:"plötzliches Aufreißen der Bauchoperationswunde", answer:"Risikofaktoren: Adipositas, Nikotin, schlechte Wundheilung, Infektionen" },
+    { fach:"Calot-Dreieck", umg:"anatomisches Präparationsdreieck bei Cholezystektomie", answer:"Grenzen: Ductus cysticus + Ductus hepaticus communis + Leberunterfläche; darin: A. cystica" },
+    { fach:"Sherren-Dreieck", umg:"gedachtes Dreieck auf der Bauchwand", answer:"zwischen Bauchnabel, Symphyse und rechtem Beckenstachel; dient zur Beurteilung der Appendizitis" },
+    { fach:"Baldwin-Zeichen", umg:"Flankenschmerz beim Beugen des rechten Beins" },
+    { fach:"DRU (Digital-rektale Untersuchung)", umg:"", answer:"prüft: Sphinktertonus, Prostata/Rektumwand auf Resistenzen, Hämorrhoiden, Fissuren, frische Blutspuren, Douglas-Schmerz" },
+    { fach:"Kostaufbau postoperativ", umg:"stufenweiser Nahrungsaufbau nach OP", answer:"Nüchtern → Flüssigkeit (Tee) → Suppe / pürierte Kost → leichte Vollkost → normale Vollkost" },
+    { fach:"Thromboseprophylaxe", umg:"", answer:"Medikamentös: NMH subkutan (z.B. Enoxaparin / Clexane 10.000 IE); Physikalisch: Thromboseprophylaxestrümpfe; Funktionell: Frühmobilisation (effektivste Maßnahme)" },
+    { fach:"Warum Nikotinstopp postoperativ?", umg:"", answer:"Nikotin + Kohlenmonoxid → Vasokonstriktion → Hypoxie im Gewebe → schwere Wundheilungsstörungen + erhöhtes Infektionsrisiko + erhöhtes kardiovaskuläres Risiko" },
+    { fach:"Propofol fraktioniert", umg:"", answer:"stufenweise, wirkungsorientierte Titration des Anästhetikums; keine Bolusgabe → kardiovaskuläre Nebenwirkungen vermeiden" },
+    { fach:"Histologisches Ergebnis", umg:"", answer:"in der Regel 3–7 Werktage; Schnellschnitt: intraoperativ innerhalb von 20–30 Minuten" },
+    { fach:"Mitteilung maligne Diagnose", umg:"", answer:"Patient persönlich einbestellen; unter vier Augen; ruhige Atmosphäre; einfühlsam und schrittweise" },
+    { fach:"GERD-Therapie", umg:"gastroösophageale Refluxkrankheit", answer:"Lebensstil: Gewichtsabnahme + Noxen meiden + kein Essen vor Schlafengehen; Medikamentös: PPI (Mittel der Wahl) → alternativ H2-Blocker / Antazida; Operativ: Fundoplikatio nach Nissen bei therapierefraktärer GERD" },
+    { fach:"Refluxbegünstigende Faktoren", umg:"", answer:"Alkohol, Nikotin, Adipositas, fettreiches Essen, Anticholinergika, Betablocker, Calciumantagonisten, Theophyllin, Schwangerschaft, enge Gürtel" },
+    { fach:"Savary-Miller vs. Los-Angeles-Klassifikation", umg:"Refluxösophagitis-Einteilung", answer:"beide klassifizieren nach Schleimhautschäden; Savary-Miller: Stadien I–IV (SM-IV = Barrett); Los-Angeles: Stadien A–D" },
+    { fach:"Warum darf man nach Koloskopie nicht sofort essen?", umg:"", answer:"um eine iatrogene Perforation sicher auszuschließen; falls Perforation → Patient muss für Notfall-Laparotomie nüchtern sein" },
+    { fach:"Spasmolytika (Wirkung)", umg:"krampflösende Medikamente", answer:"Relaxation der glatten Muskulatur; Beispiel: Buscopan (Butylscopolamin), Mebeverin" },
+  ]},
+  { type:"extra", title:"Merkhilfen & Klassifikationen im Überblick", badge:"badge-extra", items:[
+    { fach:"6-F-Regel (Gallensteine)", umg:"Female, Fat, Fertile, Forty, Fair, Family" },
+    { fach:"Charcot-Trias (Cholangitis)", umg:"Schmerz OB rechts + Ikterus + Fieber/Schüttelfrost" },
+    { fach:"SIRS-Kriterien (≥ 2 von 4)", umg:"Temp ↑/↓ + HF > 90 + AF > 20 + Leuko ↑/↓" },
+    { fach:"Sorensen-Kriterien (Tonsillitis)", umg:"< 3 kein OP / 3–5 erwägen / ≥ 6 OP-Indikation" },
+    { fach:"Johnson-Klassifikation (Magenulkus)", umg:"I kleine Kurvatur / II Magen+Duodenum / III präpylorisch" },
+    { fach:"Forrest-Klassifikation (GI-Blutung)", umg:"Ia spritzend → Ib sickernd → IIa Gefäßstumpf → IIb Koagel → IIc Hämatin → III sauber" },
+    { fach:"Ann-Arbor (Lymphom)", umg:"I–IV + A (ohne) / B (mit B-Symptomatik)" },
+    { fach:"HRZE-Schema (TBC 2 Monate)", umg:"Isoniazid + Rifampicin + Pyrazinamid + Ethambutol" },
+    { fach:"Thromboseprophylaxe 3 Säulen", umg:"NMH subkutan + Strümpfe + Frühmobilisation" },
+    { fach:"Virchow-Trias (Thrombose)", umg:"Stase + Gefäßwandschaden + Hyperkoagulabilität" },
+    { fach:"McBurney / Lanz / Blumberg / Rovsing / Psoas / Douglas", umg:"6 Appendizitis-Zeichen – alle kennen!" },
+    { fach:"Waldeyer-Rachenring (4 Teile)", umg:"Tonsilla pharyngea + palatina + lingualis + tubaria" },
+  ]},
+]},
+
+]; // END THEMES
+
+// ─────────────────────────────────────────────
+// RENDER ENGINE
+// ─────────────────────────────────────────────
+
+function getKey(themeId, sIdx, iIdx) { return `fsp_cl2_${themeId}_${sIdx}_${iIdx}`; }
+
+function updateProgress(body, card) {
+  const cbs = body.querySelectorAll('input[type="checkbox"]');
+  const total = cbs.length, checked = [...cbs].filter(c => c.checked).length;
+  const fill = card.querySelector('.progress-bar-fill');
+  const txt = card.querySelector('.progress-text');
+  if (fill) fill.style.width = total ? (checked / total * 100) + '%' : '0%';
+  if (txt) txt.textContent = `${checked} / ${total} erledigt`;
+}
+
+function buildSection(theme, sIdx, sec) {
+  const card = document.createElement('div');
+  card.className = 'section-card';
+
+  const icons = { tableau:'🩺', def:'📖', dd:'🔍', instr:'🔧', komp:'⚠️', extra:'⭐', befunde:'🔬' };
+  const hdr = document.createElement('div');
+  hdr.className = 'section-header';
+  hdr.innerHTML = `<span class="section-icon">${icons[sec.type]||'📋'}</span><span>${sec.title}</span><span class="section-badge ${sec.badge}">${sec.badge.replace('badge-','').toUpperCase()}</span><span class="chevron">▶</span>`;
+
+  const pbW = document.createElement('div'); pbW.className = 'progress-bar-wrap';
+  const pbF = document.createElement('div'); pbF.className = 'progress-bar-fill';
+  pbW.appendChild(pbF);
+  const pbT = document.createElement('span'); pbT.className = 'progress-text';
+
+  const body = document.createElement('div');
+  body.className = 'section-body';
+  const ul = document.createElement('ul');
+  ul.className = 'item-list';
+
+  sec.items.forEach((item, iIdx) => {
+    const li = document.createElement('li');
+    const id = `cb_${theme.id}_${sIdx}_${iIdx}`;
+    const key = getKey(theme.id, sIdx, iIdx);
+    const saved = localStorage.getItem(key) === '1';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.id = id; cb.checked = saved;
+    const lbl = document.createElement('label');
+    lbl.htmlFor = id;
+    if (saved) lbl.classList.add('checked');
+
+    let html = `<span class="fach">${item.fach}</span>`;
+    if (item.umg) html += ` <span class="umg">(${item.umg})</span>`;
+    if (item.func) html += `<span class="func">⚙ ${item.func}</span>`;
+    if (item.answer) html += `<span class="answer">→ ${item.answer}</span>`;
+    if (item.note) html += `<span class="note">💡 ${item.note}</span>`;
+    lbl.innerHTML = html;
+
+    cb.addEventListener('change', () => {
+      localStorage.setItem(key, cb.checked ? '1' : '0');
+      lbl.classList.toggle('checked', cb.checked);
+      updateProgress(body, card);
+    });
+    li.appendChild(cb); li.appendChild(lbl); ul.appendChild(li);
+  });
+
+  const resetBtn = document.createElement('button');
+  resetBtn.className = 'reset-btn'; resetBtn.textContent = '↺ Zurücksetzen';
+  resetBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    body.querySelectorAll('input[type="checkbox"]').forEach((cb, i) => {
+      cb.checked = false;
+      localStorage.removeItem(getKey(theme.id, sIdx, i));
+      const lbl = body.querySelector(`label[for="${cb.id}"]`);
+      if (lbl) lbl.classList.remove('checked');
+    });
+    updateProgress(body, card);
+  });
+
+  hdr.addEventListener('click', () => {
+    const open = body.classList.toggle('open');
+    hdr.classList.toggle('open', open);
+    if (open) updateProgress(body, card);
+  });
+
+  body.appendChild(ul); body.appendChild(resetBtn);
+  card.appendChild(hdr); card.appendChild(pbW); card.appendChild(pbT); card.appendChild(body);
+  setTimeout(() => updateProgress(body, card), 0);
+  return card;
+}
+
+const tabBar = document.getElementById('tabBar');
+const mainContent = document.getElementById('mainContent');
+
+THEMES.forEach((theme, idx) => {
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
+  btn.textContent = theme.title;
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.theme-block').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('theme-' + theme.id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  tabBar.appendChild(btn);
+
+  const block = document.createElement('div');
+  block.className = 'theme-block' + (idx === 0 ? ' active' : '');
+  block.id = 'theme-' + theme.id;
+  const title = document.createElement('h2');
+  title.className = 'theme-title'; title.textContent = theme.title;
+  block.appendChild(title);
+  theme.sections.forEach((sec, sIdx) => block.appendChild(buildSection(theme, sIdx, sec)));
+  mainContent.appendChild(block);
+});
+</script>
+</body>
+</html>
